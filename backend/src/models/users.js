@@ -24,11 +24,33 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'Client'
     }
+  }, {
+    tableName: 'users',
+    timestamps: true,
+    underscored: true
   });
 
   User.associate = (models) => {
-    // A User can open many tickets
+    // Tickets opened by this user (as a client)
     User.hasMany(models.Ticket, { foreignKey: 'user_id', as: 'tickets' });
+
+    // Tickets assigned to this user (as an agent)
+    User.hasMany(models.Ticket, { foreignKey: 'assigned_to', as: 'assignedTickets' });
+
+    // Comments posted by this user
+    User.hasMany(models.TicketComment, { foreignKey: 'user_id', as: 'comments' });
+
+    // Attachments uploaded by this user
+    User.hasMany(models.Attachment, { foreignKey: 'user_id', as: 'attachments' });
+
+    // Notifications sent to this user
+    User.hasMany(models.Notification, { foreignKey: 'user_id', as: 'notifications' });
+
+    // Feedback submitted by this user
+    User.hasMany(models.Feedback, { foreignKey: 'user_id', as: 'feedbacks' });
+
+    // Knowledge base articles authored by this user
+    User.hasMany(models.KnowledgeBase, { foreignKey: 'user_id', as: 'articles' });
   };
 
   return User;

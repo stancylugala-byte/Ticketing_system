@@ -20,19 +20,19 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: DataTypes.NOW
     },
-    // FIXED: Changed from INTEGER to UUID
     user_id: {
       type: DataTypes.UUID,
       allowNull: false
     },
-    // FIXED: Changed from INTEGER to UUID
     ticket_id: {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: false,
+      unique: true // one feedback per ticket
     }
   }, {
     tableName: 'feedback',
-    timestamps: false
+    timestamps: false,
+    underscored: true
   });
 
   Feedback.associate = (models) => {

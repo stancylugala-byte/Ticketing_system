@@ -6,10 +6,6 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false
     },
-    uploaded_by: {
-      type: DataTypes.STRING(150),
-      allowNull: false
-    },
     file_name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -18,28 +14,35 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    file_size: {
+      type: DataTypes.INTEGER, // size in bytes
+      allowNull: true
+    },
+    mime_type: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
     uploaded_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW
     },
-    // FIXED: Changed from INTEGER to UUID to match your primary User ID type
     user_id: {
       type: DataTypes.UUID,
       allowNull: false
     },
-    // FIXED: Changed from INTEGER to UUID to match your primary Ticket ID type
     ticket_id: {
       type: DataTypes.UUID,
       allowNull: false
     }
   }, {
     tableName: 'attachments',
-    timestamps: false
+    timestamps: false,
+    underscored: true
   });
 
   Attachment.associate = (models) => {
-    Attachment.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+    Attachment.belongsTo(models.User, { foreignKey: 'user_id', as: 'uploader' });
     Attachment.belongsTo(models.Ticket, { foreignKey: 'ticket_id', as: 'ticket' });
   };
 
