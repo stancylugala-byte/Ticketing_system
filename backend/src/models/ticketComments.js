@@ -22,10 +22,16 @@ module.exports = (sequelize, DataTypes) => {
     ticket_id: {
       type: DataTypes.UUID,
       allowNull: false
+    },
+    // true = internal note (only visible to support staff), false = public reply to client
+    is_internal: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'ticket_comments',
-    timestamps: false, // Explicitly using 'created_at' to match ERD specifications
+    timestamps: false,
     underscored: true
   });
 

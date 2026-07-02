@@ -2,25 +2,39 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const errorHandler = require('./middleware/errorHandler');
+
+const ticketRoutes = require('./routes/ticketRoutes');
+const commentRoutes = require('./routes/commentRoutes');
+const knowledgeBaseRoutes = require('./routes/knowledgeBaseRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
-// Middleware
+// Security & parsing middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// Test route
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Backend is working! 🎉' });
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ success: true, message: 'API is running' });
 });
 
-// Error handler (will add more later)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+// API routes
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/tickets/:id/comments', commentRoutes);
+app.use('/api/knowledge-base', knowledgeBaseRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
+
+// Central error handler
+app.use(errorHandler);
 
 module.exports = app;
