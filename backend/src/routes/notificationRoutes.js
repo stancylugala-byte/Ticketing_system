@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const notifController = require('../controllers/notificationController');
-const mockAuth = require('../middleware/mockAuth');
+const { protect } = require('../middleware/authMiddleware');
 
-router.use(mockAuth);
+router.use(protect);
 
 router.get('/', notifController.getNotifications);
 router.get('/unread-count', notifController.getUnreadCount);

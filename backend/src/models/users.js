@@ -23,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('Client', 'SupportOfficer', 'Developer', 'Admin'),
       allowNull: false,
       defaultValue: 'Client'
+    },
+    reset_token: {
+      type: DataTypes.STRING(64),
+      allowNull: true
+    },
+    reset_token_expires: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     tableName: 'users',

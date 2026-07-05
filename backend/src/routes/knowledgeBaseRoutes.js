@@ -3,9 +3,9 @@ const router = express.Router();
 const kbController = require('../controllers/knowledgeBaseController');
 const { searchKbRules, createArticleRules } = require('../validators/knowledgeBaseValidators');
 const validate = require('../middleware/validate');
-const mockAuth = require('../middleware/mockAuth');
+const { protect } = require('../middleware/authMiddleware');
 
-router.use(mockAuth);
+router.use(protect);
 
 router.get('/search', searchKbRules, validate, kbController.searchArticles);
 router.get('/', kbController.getAllArticles);

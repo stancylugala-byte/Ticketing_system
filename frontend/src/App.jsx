@@ -1,30 +1,62 @@
 import { useState } from 'react';
-import Sidebar from './components/Sidebar';
-import SupportDashboard from './pages/SupportDashboard';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-export default function App() {
-  const [activePage, setActivePage] = useState('support');
+import LandingPage        from './pages/LandingPage';
+import LoginPage          from './pages/LoginPage';
+import SignupPage         from './pages/SignupPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage  from './pages/ResetPasswordPage';
+import SupportDashboard   from './pages/SupportDashboard';
+import Sidebar            from './components/Sidebar';
+import ProtectedRoute     from './components/ProtectedRoute';
+import { useAuth }        from './context/AuthContext';
 
-  const getView = () => {
-    if (activePage === 'kb') return 'kb';
-    if (activePage === 'performance') return 'performance';
-    return 'queue';
-  };
-
+// Wraps Sidebar + SupportDashboard for the support officer route
+function SupportLayout() {
+  const [activeModule, setActiveModule] = useState('ticket-queue');
   return (
     <>
-      <Sidebar activePage={activePage} onNavigate={setActivePage} />
-      {(activePage === 'support' || activePage === 'kb' || activePage === 'performance') ? (
-        <SupportDashboard initialView={getView()} key={activePage} />
-      ) : (
-        <div className="ml-[220px] flex items-center justify-center min-h-screen">
-          <div className="text-center text-gray-400">
-            <p className="text-5xl mb-4">🚧</p>
-            <p className="text-lg font-semibold text-gray-600">Coming Soon</p>
-            <p className="text-sm mt-1">This section is under development.</p>
-          </div>
-        </div>
-      )}
+      <Sidebar activePage={activeModule} onNavigate={setActiveModule} />
+      <SupportDashboard activeModule={activeModule} />
     </>
+  );
+}
+
+// Redirect already-authenticated users away from auth pages
+function PublicRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (user?.role === 'SupportOfficer') return <Navigate to="/dashboard/support" replace />;
+  if (user) return <Navigate to="/dashboard/support" replace />;
+  return children;
+}
+
+export default function App() {
+  return (
+    <Routes>
+      {/* Public */}
+      <Route path="/" element={<LandingPage />} />
+
+      <Route path="/login" element={
+        <PublicRoute><LoginPage /></PublicRoute>
+      } />
+      <Route path="/signup" element={
+        <PublicRoute><SignupPage /></PublicRoute>
+      } />
+      <Route path="/forgot-password" element={
+        <PublicRoute><ForgotPasswordPage /></PublicRoute>
+      } />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      {/* Protected — Support Officer only */}
+      <Route path="/dashboard/support" element={
+        <ProtectedRoute allowedRoles={['SupportOfficer']}>
+          <SupportLayout />
+        </ProtectedRoute>
+      } />
+
+      {/* Catch-all → home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

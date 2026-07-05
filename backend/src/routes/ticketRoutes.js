@@ -3,9 +3,9 @@ const router = express.Router();
 const ticketController = require('../controllers/ticketController');
 const { updateStatusRules, assignTicketRules, listTicketsRules } = require('../validators/ticketValidators');
 const validate = require('../middleware/validate');
-const mockAuth = require('../middleware/mockAuth');
+const { protect } = require('../middleware/authMiddleware');
 
-router.use(mockAuth);
+router.use(protect);
 
 // Dashboard stats
 router.get('/dashboard/stats', ticketController.getDashboardStats);
