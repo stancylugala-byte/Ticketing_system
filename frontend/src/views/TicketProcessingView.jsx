@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { getTicketById, updateTicketStatus, addComment, getComments, getTicketQueue } from '../api/tickets';
 
 const STATUSES = ['Open', 'In Progress', 'Pending', 'Resolved', 'Closed'];
@@ -32,17 +32,15 @@ export default function TicketProcessingView({ initialTicket }) {
   const [note, setNote]             = useState('');
   const [showNoteBox, setShowNoteBox] = useState(false);
   const [saving, setSaving]         = useState(false);
-  const [listLoaded, setListLoaded] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [showStatusDrop, setShowStatusDrop] = useState(false);
 
-  // Load ticket list on first render
-  useState(() => {
+  // Load ticket list once on mount
+  useEffect(() => {
     getTicketQueue({ queue: 'assigned', limit: 20 })
       .then(r => setTicketList(r.data.data.tickets || []))
       .catch(() => {});
-    setListLoaded(true);
-  });
+  }, []);
 
   const loadTicket = useCallback((ticket) => {
     setSelected(ticket);

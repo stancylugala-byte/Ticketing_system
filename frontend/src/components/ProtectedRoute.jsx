@@ -5,6 +5,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
+  // Still resolving stored session — show spinner
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f1f4f9]">
@@ -16,14 +17,20 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     );
   }
 
-  // Not logged in — redirect to login, preserve intended destination
+  // Not logged in
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Logged in but wrong role — send back to login with a message
+  // Wrong role
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/login" state={{ message: `Access denied. This dashboard requires role: ${allowedRoles.join(' or ')}.` }} replace />;
+    return (
+      <Navigate
+        to="/login"
+        state={{ message: `Access denied. Required role: ${allowedRoles.join(' or ')}.` }}
+        replace
+      />
+    );
   }
 
   return children;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 import LandingPage        from './pages/LandingPage';
 import LoginPage          from './pages/LoginPage';
@@ -9,7 +9,6 @@ import ResetPasswordPage  from './pages/ResetPasswordPage';
 import SupportDashboard   from './pages/SupportDashboard';
 import Sidebar            from './components/Sidebar';
 import ProtectedRoute     from './components/ProtectedRoute';
-import { useAuth }        from './context/AuthContext';
 
 // Wraps Sidebar + SupportDashboard for the support officer route
 function SupportLayout() {
@@ -22,41 +21,25 @@ function SupportLayout() {
   );
 }
 
-// Redirect already-authenticated users away from auth pages
-function PublicRoute({ children }) {
-  const { user, loading } = useAuth();
-  if (loading) return null;
-  if (user?.role === 'SupportOfficer') return <Navigate to="/dashboard/support" replace />;
-  if (user) return <Navigate to="/dashboard/support" replace />;
-  return children;
-}
-
 export default function App() {
   return (
     <Routes>
-      {/* Public */}
-      <Route path="/" element={<LandingPage />} />
+      {/* Public — no guards, always accessible */}
+      <Route path="/"                element={<LandingPage />} />
+      <Route path="/login"           element={<LoginPage />} />
+      <Route path="/signup"          element={<SignupPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password"  element={<ResetPasswordPage />} />
 
-      <Route path="/login" element={
-        <PublicRoute><LoginPage /></PublicRoute>
-      } />
-      <Route path="/signup" element={
-        <PublicRoute><SignupPage /></PublicRoute>
-      } />
-      <Route path="/forgot-password" element={
-        <PublicRoute><ForgotPasswordPage /></PublicRoute>
-      } />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-      {/* Protected — Support Officer only */}
+      {/* Protected — requires auth + correct role */}
       <Route path="/dashboard/support" element={
         <ProtectedRoute allowedRoles={['SupportOfficer']}>
           <SupportLayout />
         </ProtectedRoute>
       } />
 
-      {/* Catch-all → home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Any unknown path → landing */}
+      <Route path="*" element={<LandingPage />} />
     </Routes>
   );
 }

@@ -12,11 +12,12 @@ function getStrength(pw) {
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ full_name: '', phone: '', email: '', password: '', role: 'Client' });
-  const [showPw, setShowPw]     = useState(false);
-  const [agreed, setAgreed]     = useState(false);
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState('');
+
+  const [form, setForm]       = useState({ full_name: '', phone: '', email: '', password: '', role: 'Client' });
+  const [showPw, setShowPw]   = useState(false);
+  const [agreed, setAgreed]   = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError]     = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
 
   const strength = getStrength(form.password);
@@ -30,11 +31,18 @@ export default function SignupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!agreed) { setError('You must agree to the Terms of Service and Privacy Policy.'); return; }
-    setLoading(true);
+    if (submitting) return;
+    setSubmitting(true);
     setError('');
     setFieldErrors({});
     try {
-      await registerUser({ full_name: form.full_name, email: form.email, password: form.password, role: form.role });
+      await registerUser({
+        full_name: form.full_name,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      });
+      // Navigate directly after success — no useEffect
       navigate('/login', { state: { message: 'Account created successfully! Please sign in.' } });
     } catch (err) {
       const data = err.response?.data;
@@ -45,22 +53,10 @@ export default function SignupPage() {
       } else {
         setError(data?.message || 'Registration failed. Please try again.');
       }
-    } finally { setLoading(false); }
+    } finally {
+      setSubmitting(false);
+    }
   };
-
-  const Field = ({ id, label, type = 'text', placeholder, name, children }) => (
-    <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
-      {children || (
-        <input id={id} name={name || id} type={type} placeholder={placeholder} required
-          value={form[name || id]} onChange={handleChange}
-          className={`w-full px-4 py-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 transition-all placeholder-gray-400
-            ${fieldErrors[name || id] ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'}`}
-        />
-      )}
-      {fieldErrors[name || id] && <p className="mt-1 text-xs text-red-500">{fieldErrors[name || id]}</p>}
-    </div>
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f4f9]">
@@ -75,7 +71,7 @@ export default function SignupPage() {
             <p className="text-gray-500 text-sm mb-6">Join thousands of teams managing incidents with JavaPA.</p>
 
             {/* Google button */}
-            <button className="w-full py-3 border border-gray-200 rounded-xl flex items-center justify-center gap-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors mb-4">
+            <button type="button" className="w-full py-3 border border-gray-200 rounded-xl flex items-center justify-center gap-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors mb-4">
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -93,7 +89,10 @@ export default function SignupPage() {
 
             {/* Account type toggle */}
             <div className="flex mb-5 border border-gray-200 rounded-xl overflow-hidden">
-              {[{ val: 'Client', icon: '👤', label: 'Individual' }, { val: 'SupportOfficer', icon: '🏢', label: 'Company' }].map(t => (
+              {[
+                { val: 'Client', icon: '👤', label: 'Individual' },
+                { val: 'SupportOfficer', icon: '🏢', label: 'Company' },
+              ].map(t => (
                 <button key={t.val} type="button"
                   onClick={() => setForm(f => ({ ...f, role: t.val }))}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-all
@@ -104,29 +103,54 @@ export default function SignupPage() {
               ))}
             </div>
 
-            {error && <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>}
+            {error && (
+              <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>
+            )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {/* Name + Phone row */}
               <div className="grid grid-cols-2 gap-4">
-                <Field id="full_name" label="Full Name" placeholder="Jane Doe" />
+                <div>
+                  <label htmlFor="full_name" className="block text-sm font-semibold text-gray-700 mb-1.5">Full Name</label>
+                  <input
+                    id="full_name" name="full_name" type="text" required placeholder="Jane Doe"
+                    value={form.full_name} onChange={handleChange}
+                    className={`w-full px-4 py-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400
+                      ${fieldErrors.full_name ? 'border-red-400' : 'border-gray-200 focus:border-blue-500'}`}
+                  />
+                  {fieldErrors.full_name && <p className="mt-1 text-xs text-red-500">{fieldErrors.full_name}</p>}
+                </div>
                 <div>
                   <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-1.5">Phone Number</label>
-                  <input id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000"
+                  <input
+                    id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000"
                     value={form.phone} onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder-gray-400"
                   />
                 </div>
               </div>
 
-              <Field id="email" label="Work Email" type="email" placeholder="jane@company.com" />
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1.5">Work Email</label>
+                <input
+                  id="email" name="email" type="email" required placeholder="jane@company.com"
+                  value={form.email} onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400
+                    ${fieldErrors.email ? 'border-red-400' : 'border-gray-200 focus:border-blue-500'}`}
+                />
+                {fieldErrors.email && <p className="mt-1 text-xs text-red-500">{fieldErrors.email}</p>}
+              </div>
 
-              {/* Password with strength */}
+              {/* Password */}
               <div>
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
                 <div className="relative">
-                  <input id="password" name="password" type={showPw ? 'text' : 'password'} required
+                  <input
+                    id="password" name="password"
+                    type={showPw ? 'text' : 'password'} required
                     placeholder="••••••••" value={form.password} onChange={handleChange}
-                    className={`w-full pl-4 pr-11 py-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 transition-all placeholder-gray-400
+                    className={`w-full pl-4 pr-11 py-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400
                       ${fieldErrors.password ? 'border-red-400' : 'border-gray-200 focus:border-blue-500'}`}
                   />
                   <button type="button" onClick={() => setShowPw(v => !v)}
@@ -141,10 +165,10 @@ export default function SignupPage() {
                 </div>
                 {form.password && (
                   <div className="mt-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Strength: {strength.label}</span>
-                    </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                      Strength: {strength.label}
+                    </span>
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
                       <div className={`h-full ${strength.color} rounded-full transition-all duration-300`} style={{ width: strength.width }} />
                     </div>
                   </div>
@@ -164,11 +188,11 @@ export default function SignupPage() {
                 </span>
               </label>
 
-              <button type="submit" disabled={loading || !agreed}
+              <button type="submit" disabled={submitting || !agreed}
                 className="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 text-sm"
               >
-                {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
-                {loading ? 'Creating account...' : 'Create Account'}
+                {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                {submitting ? 'Creating account...' : 'Create Account'}
               </button>
             </form>
 
@@ -187,7 +211,9 @@ export default function SignupPage() {
             </div>
             <div>
               <h3 className="text-lg font-extrabold text-gray-900 mb-2">The Engine Behind Reliable Teams</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Join 10,000+ organizations that trust JavaPA to monitor, triage, and resolve incidents faster than ever.</p>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Join 10,000+ organizations that trust JavaPA to monitor, triage, and resolve incidents faster than ever.
+              </p>
             </div>
             <div className="flex flex-col gap-3">
               {[
@@ -216,6 +242,7 @@ export default function SignupPage() {
               <p className="text-white/40 text-[11px]">Encryption at rest &amp; in transit</p>
             </div>
           </div>
+
         </div>
       </div>
     </div>
