@@ -9,6 +9,7 @@ const ticketRoutes       = require('./routes/ticketRoutes');
 const commentRoutes      = require('./routes/commentRoutes');
 const knowledgeBaseRoutes = require('./routes/knowledgeBaseRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const clientRoutes = require('./routes/clientRoutes');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/tickets/:id/comments', commentRoutes);
 app.use('/api/knowledge-base', knowledgeBaseRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/client', clientRoutes);
 
 // 404
 app.use((req, res) => res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` }));

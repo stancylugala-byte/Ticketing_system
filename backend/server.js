@@ -17,6 +17,6 @@ db.sequelize.sync({ alter: true })
     });
   })
   .catch((err) => {
-    console.error('❌ Database synchronization failed! Server shutting down...', err.message);
-    process.exit(1); // Terminates process block execution immediately
-  });
+    console.error('❌ Database synchronization failed! Server shutting down...', err);
+    process.exit(1);
+});
