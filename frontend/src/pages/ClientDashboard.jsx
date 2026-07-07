@@ -6,6 +6,12 @@ import NewTicketModal from '../components/client/NewTicketModal';
 import TicketDetailDrawer from '../components/client/TicketDetailDrawer';
 import KnowledgeBaseCard from '../components/client/KnowledgeBaseCard';
 import LiveSupportCard from '../components/client/LiveSupportCard';
+import TrackStatus from '../components/client/tracking/TrackStatus';
+import ViewAssignedStaff from '../components/client/tracking/ViewAssignedStaff';
+import ViewResolutionTimeline from '../components/client/tracking/ViewResolutionTimeline';
+import TicketComments from '../components/client/communication/TicketComments';
+import ChatWithSupport from '../components/client/communication/ChatWithSupport';
+import Notifications from '../components/client/communication/Notifications';
 import { getDashboardStats, getMyTickets, getNotifications } from '../api/clientApi';
 import { useAuth } from '../context/AuthContext';
 
@@ -17,10 +23,13 @@ export default function ClientDashboard() {
   const [selectedTicketId, setSelectedTicketId] = useState(null);
   const [isNewTicketModalOpen, setIsNewTicketModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState('dashboard');
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    if (activeSection === 'dashboard') {
+      loadDashboardData();
+    }
+  }, [activeSection]);
 
   const loadDashboardData = async () => {
     setLoading(true);
@@ -49,29 +58,77 @@ export default function ClientDashboard() {
     loadDashboardData();
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#f4f6fa] flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+  const handleNavigate = (section) => {
+    setActiveSection(section);
+    setSelectedTicketId(null); // Close ticket drawer when navigating
+  };
+
+  // Render content based on active section
+  const renderContent = () => {
+    if (activeSection === 'tracking-status') {
+      return (
+        <div className="animate-fadeIn">
+          <TrackStatus />
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  return (
-    <div className="min-h-screen bg-[#f4f6fa]">
-      {/* Sidebar */}
-      <ClientSidebar 
-        unreadCount={notifications.unreadCount}
-        onNewTicket={() => setIsNewTicketModalOpen(true)}
-      />
+    if (activeSection === 'tracking-staff') {
+      return (
+        <div className="animate-fadeIn">
+          <ViewAssignedStaff />
+        </div>
+      );
+    }
 
-      {/* Main Content */}
-      <div className="ml-[260px] min-h-screen flex flex-col">
+    if (activeSection === 'tracking-timeline') {
+      return (
+        <div className="animate-fadeIn">
+          <ViewResolutionTimeline />
+        </div>
+      );
+    }
+
+    if (activeSection === 'comm-comments') {
+      return (
+        <div className="animate-fadeIn h-[calc(100vh-200px)]">
+          <TicketComments />
+        </div>
+      );
+    }
+
+    if (activeSection === 'comm-chat') {
+      return (
+        <div className="animate-fadeIn h-[calc(100vh-200px)]">
+          <ChatWithSupport />
+        </div>
+      );
+    }
+
+    if (activeSection === 'comm-notifications') {
+      return (
+        <div className="animate-fadeIn h-[calc(100vh-200px)]">
+          <Notifications />
+        </div>
+      );
+    }
+
+    // Default dashboard view
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600">Loading dashboard...</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="animate-fadeIn">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <header className="bg-white border-b border-gray-200 px-6 py-4 mb-6 rounded-xl shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Welcome Back, {user?.full_name?.split(' ')[0] || 'there'}!</h1>
@@ -87,44 +144,58 @@ export default function ClientDashboard() {
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 px-6 py-5">
-          {/* Stats Cards */}
-          {stats && <ClientStatsCards stats={stats} />}
+        {/* Stats Cards */}
+        {stats && <ClientStatsCards stats={stats} />}
 
-          {/* Main Grid Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            {/* Left Column - Tickets (spans 2 columns on large screens) */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Recent Tickets */}
-              <RecentTicketsTable 
-                tickets={tickets} 
-                onViewDetails={(ticketId) => setSelectedTicketId(ticketId)}
-              />
-            </div>
-
-            {/* Right Column - Side Cards */}
-            <div className="space-y-6">
-              {/* Knowledge Base Card */}
-              <KnowledgeBaseCard />
-
-              {/* Live Support Card */}
-              <LiveSupportCard />
-            </div>
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Tickets (spans 2 columns on large screens) */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Recent Tickets */}
+            <RecentTicketsTable 
+              tickets={tickets} 
+              onViewDetails={(ticketId) => setSelectedTicketId(ticketId)}
+            />
           </div>
 
-          {/* Ticket Detail Drawer (Conditional) */}
-          {selectedTicketId && (
-            <div className="fixed inset-0 bg-black bg-opacity-30 z-40 flex items-center justify-end p-6">
-              <div className="w-full max-w-2xl h-full animate-slide-in-right">
-                <TicketDetailDrawer
-                  ticketId={selectedTicketId}
-                  onClose={() => setSelectedTicketId(null)}
-                  onUpdate={handleTicketUpdate}
-                />
-              </div>
+          {/* Right Column - Side Cards */}
+          <div className="space-y-6">
+            {/* Knowledge Base Card */}
+            <KnowledgeBaseCard />
+
+            {/* Live Support Card */}
+            <LiveSupportCard />
+          </div>
+        </div>
+
+        {/* Ticket Detail Drawer (Conditional) */}
+        {selectedTicketId && (
+          <div className="fixed inset-0 bg-black bg-opacity-30 z-40 flex items-center justify-end p-6">
+            <div className="w-full max-w-2xl h-full animate-slide-in-right">
+              <TicketDetailDrawer
+                ticketId={selectedTicketId}
+                onClose={() => setSelectedTicketId(null)}
+                onUpdate={handleTicketUpdate}
+              />
             </div>
-          )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f4f6fa]">
+      {/* Sidebar */}
+      <ClientSidebar 
+        activeSection={activeSection}
+        onNavigate={handleNavigate}
+      />
+
+      {/* Main Content */}
+      <div className="ml-64 min-h-screen flex flex-col">
+        <main className="flex-1 p-6">
+          {renderContent()}
         </main>
 
         {/* Footer */}

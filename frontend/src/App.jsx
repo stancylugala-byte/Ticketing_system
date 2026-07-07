@@ -47,6 +47,13 @@ export default function App() {
         </ProtectedRoute>
       } />
 
+      {/* Client Dashboard */}
+      <Route path="/dashboard/client" element={
+        <ProtectedRoute allowedRoles={['Client']}>
+          <ClientDashboard />
+        </ProtectedRoute>
+      } />
+
       {/* Protected — Client (default for unspecified roles) */}
       <Route path="/dashboard/client" element={
         <ProtectedRoute allowedRoles={['Client']} roleDashboards={ROLE_DASHBOARDS}>
