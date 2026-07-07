@@ -7,8 +7,10 @@ import TicketDetailDrawer from '../components/client/TicketDetailDrawer';
 import KnowledgeBaseCard from '../components/client/KnowledgeBaseCard';
 import LiveSupportCard from '../components/client/LiveSupportCard';
 import { getDashboardStats, getMyTickets, getNotifications } from '../api/clientApi';
+import { useAuth } from '../context/AuthContext';
 
 export default function ClientDashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [tickets, setTickets] = useState([]);
   const [notifications, setNotifications] = useState({ notifications: [], unreadCount: 0 });
@@ -72,7 +74,7 @@ export default function ClientDashboard() {
         <header className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Welcome Back, Alex!</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Welcome Back, {user?.full_name?.split(' ')[0] || 'there'}!</h1>
               <p className="text-sm text-gray-500 mt-1">Here's what's happening with your support tickets</p>
             </div>
             <button

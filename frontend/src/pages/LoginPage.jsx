@@ -6,9 +6,9 @@ import AuthNavbar from '../components/AuthNavbar';
 
 const ROLE_DASHBOARDS = {
   SupportOfficer: '/dashboard/support',
-  Developer:      '/dashboard/support',
-  Admin:          '/dashboard/support',
-  Client:         '/dashboard/support',
+  Developer:      '/dashboard/dev',
+  Admin:          '/dashboard/admin',
+  Client:         '/dashboard/client',
 };
 
 export default function LoginPage() {
