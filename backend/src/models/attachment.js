@@ -1,50 +1,42 @@
+const { DataTypes } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const Attachment = sequelize.define('Attachment', {
-    attachment_id: {
+    id: {
       type: DataTypes.INTEGER,
-      autoIncrement: true,
       primaryKey: true,
+      autoIncrement: true
+    },
+    ticket_id: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     file_name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false
     },
     file_path: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(500),
       allowNull: false
     },
     file_size: {
-      type: DataTypes.INTEGER, // size in bytes
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     mime_type: {
       type: DataTypes.STRING(100),
       allowNull: true
     },
-    uploaded_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
-    },
-    user_id: {
-      type: DataTypes.UUID,
-      allowNull: false
-    },
-    ticket_id: {
-      type: DataTypes.UUID,
+    uploaded_by: {
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
     tableName: 'attachments',
-    timestamps: false,
-    underscored: true
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
-
-  Attachment.associate = (models) => {
-    Attachment.belongsTo(models.User, { foreignKey: 'user_id', as: 'uploader' });
-    Attachment.belongsTo(models.Ticket, { foreignKey: 'ticket_id', as: 'ticket' });
-  };
 
   return Attachment;
 };

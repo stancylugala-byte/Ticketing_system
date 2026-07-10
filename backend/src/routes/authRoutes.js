@@ -1,22 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
 const {
-  registerRules,
-  loginRules,
-  forgotPasswordRules,
-  resetPasswordRules
-} = require('../validators/authValidators');
+    register,
+    login,
+    getMe,
+    forgotPassword,
+    resetPassword
+} = require('../controllers/authController');
+const { protect } = require('../middleware/authMiddleware');  // ✅ Correct path
 const validate = require('../middleware/validate');
-const { protect } = require('../middleware/authMiddleware');
+const {
+    registerRules,
+    loginRules,
+    forgotPasswordRules,
+    resetPasswordRules
+} = require('../validators/authValidators');
 
-// Public auth routes
-router.post('/register',        registerRules,       validate, authController.register);
-router.post('/login',           loginRules,          validate, authController.login);
-router.post('/forgot-password', forgotPasswordRules, validate, authController.forgotPassword);
-router.post('/reset-password',  resetPasswordRules,  validate, authController.resetPassword);
+// ✅ Public routes with validation
+router.post('/register', registerRules, validate, register);
+router.post('/login', loginRules, validate, login);
+router.post('/forgot-password', forgotPasswordRules, validate, forgotPassword);
+router.post('/reset-password', resetPasswordRules, validate, resetPassword);
 
-// Protected — get current logged-in user
-router.get('/me', protect, authController.getMe);
+// ✅ Protected route
+router.get('/me', protect, getMe);
 
 module.exports = router;

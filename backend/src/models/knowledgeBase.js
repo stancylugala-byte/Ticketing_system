@@ -1,10 +1,11 @@
+const { DataTypes } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const KnowledgeBase = sequelize.define('KnowledgeBase', {
-    article_id: {
+    id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
-      allowNull: false
+      autoIncrement: true
     },
     title: {
       type: DataTypes.STRING(255),
@@ -14,24 +15,28 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
+    category: {
+      type: DataTypes.STRING(100),
+      allowNull: true
     },
-    user_id: {
-      type: DataTypes.UUID, // Tracks which Developer or SupportOfficer wrote the guide
+    tags: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    created_by: {
+      type: DataTypes.INTEGER,
       allowNull: false
+    },
+    is_published: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, {
-    tableName: 'knowledge_base',
-    timestamps: false,
-    underscored: true
+    tableName: 'knowledge_bases',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
-
-  KnowledgeBase.associate = (models) => {
-    KnowledgeBase.belongsTo(models.User, { foreignKey: 'user_id', as: 'author' });
-  };
 
   return KnowledgeBase;
 };

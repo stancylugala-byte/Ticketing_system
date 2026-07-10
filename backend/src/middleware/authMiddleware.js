@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const db = require('../models');
+const { User } = require('../models');
 
 /**
  * protect — verifies JWT token from Authorization header and attaches user to req
@@ -8,24 +8,35 @@ const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
+      return res.status(401).json({
+        success: false,
+        message: 'Access denied. No token provided.'
+      });
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
 
-    const user = await db.User.findByPk(decoded.id, {
-      attributes: ['id', 'full_name', 'email', 'role']
+    // ✅ FIX: Use 'userId' from the token (matches your authController)
+    const user = await User.findByPk(decoded.userId, {
+      attributes: { exclude: ['password'] }
     });
 
     if (!user) {
-      return res.status(401).json({ success: false, message: 'User account no longer exists.' });
+      return res.status(401).json({
+        success: false,
+        message: 'User account no longer exists.'
+      });
     }
 
     req.user = user;
     next();
   } catch (err) {
-    return res.status(401).json({ success: false, message: 'Invalid or expired token.' });
+    console.error('Auth middleware error:', err.message);
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid or expired token.'
+    });
   }
 };
 
@@ -35,9 +46,15 @@ const protect = async (req, res, next) => {
  */
 const requireRole = (...roles) => (req, res, next) => {
   if (!req.user) {
-    return res.status(401).json({ success: false, message: 'Not authenticated.' });
+    return res.status(401).json({
+      success: false,
+      message: 'Not authenticated.'
+    });
   }
-  if (!roles.includes(req.user.role)) {
+
+  // ✅ FIX: Use 'account_type' (matches your User model)
+  const userRole = req.user.account_type;
+  if (!roles.includes(userRole)) {
     return res.status(403).json({
       success: false,
       message: `Access denied. This resource requires role: ${roles.join(' or ')}.`

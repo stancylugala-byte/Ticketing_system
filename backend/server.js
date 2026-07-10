@@ -1,22 +1,35 @@
 require('dotenv').config();
 const app = require('./src/app');
-// UPDATED: Points to the models folder inside the src directory
-const db = require('./src/models'); 
+const { sequelize } = require('./src/config/sequelize');
+
+// ✅ Import models to register them
+require('./src/models');
 
 const PORT = process.env.PORT || 5000;
 
-// Execute Database Synchronization with MySQL before initializing server listener
-// { alter: true } matches your Sequelize schema definitions to your live MySQL instances automatically
-db.sequelize.sync({ alter: true })
-  .then(() => {
-    console.log('📦 Database synchronized successfully with MySQL via Sequelize.');
-    
-    // Fire up the network listener only after a verified storage connection handshake
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Database connection established successfully.');
+
+    // ✅ FORCE: Drop and recreate ALL tables
+    console.log('⚠️ Recreating all tables with force:true...');
+    await sequelize.sync({ force: true });
+    console.log('✅ All tables synchronized');
+
+    const [results] = await sequelize.query('SHOW TABLES');
+    console.log('📋 Tables in database:');
+    results.forEach(row => {
+      console.log('  -', Object.values(row)[0]);
+    });
+
     app.listen(PORT, () => {
       console.log(`🚀 Backend server running on http://localhost:${PORT}`);
     });
-  })
-  .catch((err) => {
-    console.error('❌ Database synchronization failed! Server shutting down...', err);
+  } catch (error) {
+    console.error('❌ Server startup failed:', error.message);
     process.exit(1);
-});
+  }
+};
+
+startServer();

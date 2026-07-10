@@ -5,15 +5,11 @@ module.exports = (sequelize, DataTypes) => {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
-      allowNull: false
+      autoIncrement: true
     },
     title: {
       type: DataTypes.STRING(255),
-      allowNull: false,
-      validate: {
-        notEmpty: { msg: 'Title is required' }
-      }
+      allowNull: false
     },
     description: {
       type: DataTypes.TEXT,
@@ -27,16 +23,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('Low', 'Medium', 'High', 'Critical'),
       defaultValue: 'Medium'
     },
-    tag: {
-      type: DataTypes.STRING(100),
+    category_id: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     created_by: {
-      type: DataTypes.STRING(100),
-      allowNull: true
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
     assigned_to: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     resolved_at: {

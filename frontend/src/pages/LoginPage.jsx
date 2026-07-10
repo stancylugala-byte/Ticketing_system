@@ -4,23 +4,24 @@ import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import AuthNavbar from '../components/AuthNavbar';
 
+// ✅ Role → dashboard path mapping
 const ROLE_DASHBOARDS = {
   SupportOfficer: '/dashboard/support',
-  Developer:      '/dashboard/dev',
+  Developer:      '/dashboard/backlog',
   Admin:          '/dashboard/admin',
   Client:         '/dashboard/client',
 };
 
 export default function LoginPage() {
-  const navigate            = useNavigate();
-  const location            = useLocation();
-  const { login }           = useAuth();  // only destructure what we need
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
 
-  const [form, setForm]     = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [showPw, setShowPw] = useState(false);
   const [remember, setRemember] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError]   = useState('');
+  const [error, setError] = useState('');
 
   const successMsg = location.state?.message || '';
 
@@ -34,15 +35,35 @@ export default function LoginPage() {
     if (submitting) return;
     setSubmitting(true);
     setError('');
+
+    console.log('📤 Attempting login with:', form.email);
+
     try {
       const res = await loginUser({ email: form.email, password: form.password });
-      const { token, user: loggedInUser } = res.data.data;
+
+      console.log('📦 Full response:', res);
+      console.log('📦 res.data:', res.data);
+
+      const { token, user: loggedInUser } = res.data;
+
+      console.log('🔑 Token:', token);
+      console.log('👤 Logged in user:', loggedInUser);
+
+      // ✅ FIX: Use account_type (from backend) instead of role
+      const userRole = loggedInUser.account_type || loggedInUser.role || 'Client';
+      console.log('🎯 User role:', userRole);
+
+      // ✅ Call login from AuthContext
       login(token, loggedInUser);
-      // Navigate immediately after login — no useEffect needed
+
+      // ✅ Navigate based on role
       const from = location.state?.from?.pathname;
-      const dest = from || ROLE_DASHBOARDS[loggedInUser.role] || '/dashboard/support';
+      const dest = from || '/';
+      console.log('🚀 Navigating to:', dest);
+
       navigate(dest, { replace: true });
     } catch (err) {
+      console.error('❌ Login error:', err);
       const msg =
         err.response?.data?.message ||
         err.response?.data?.errors?.[0]?.message ||

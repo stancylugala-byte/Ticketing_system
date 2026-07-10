@@ -1,32 +1,44 @@
+const { DataTypes } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const SlaPolicy = sequelize.define('SlaPolicy', {
-    sla_id: {
+    id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: true
+    },
+    name: {
+      type: DataTypes.STRING(100),
       allowNull: false
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    response_time_hours: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 24
+    },
+    resolution_time_hours: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 72
     },
     priority: {
       type: DataTypes.ENUM('Low', 'Medium', 'High', 'Critical'),
-      allowNull: false,
-      unique: true
+      defaultValue: 'Medium'
     },
-    response_time: {
-      type: DataTypes.INTEGER, // Measured in Hours or Minutes (Target response time)
-      allowNull: false
-    },
-    resolution_time: {
-      type: DataTypes.INTEGER, // Measured in Hours (Maximum threshold time)
-      allowNull: false
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     }
   }, {
     tableName: 'sla_policies',
-    timestamps: false
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
-
-  SlaPolicy.associate = (models) => {
-    SlaPolicy.hasMany(models.Ticket, { foreignKey: 'sla_id', as: 'tickets' });
-  };
 
   return SlaPolicy;
 };

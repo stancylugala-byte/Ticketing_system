@@ -4,7 +4,7 @@ import api from '../api/axios';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // On mount: verify any stored token
@@ -19,8 +19,13 @@ export function AuthProvider({ children }) {
     api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
 
     api.get('/auth/me')
-      .then(r => setUser(r.data.data))
+      .then(r => {
+        console.log('✅ Auth check - user data:', r.data);
+        // ✅ Fix: Backend sends user directly, not nested in 'data'
+        setUser(r.data.user);
+      })
       .catch(() => {
+        console.log('❌ Auth check failed');
         localStorage.removeItem('jpa_token');
         delete api.defaults.headers.common['Authorization'];
         setUser(null);
@@ -29,13 +34,16 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback((tokenValue, userData) => {
+    console.log('🔐 Login called with:', { tokenValue, userData });
     localStorage.setItem('jpa_token', tokenValue);
     api.defaults.headers.common['Authorization'] = `Bearer ${tokenValue}`;
     setUser(userData);
-    setLoading(false); // ← critical: mark auth as resolved after login
+    setLoading(false);
+    console.log('✅ User set, loading set to false');
   }, []);
 
   const logout = useCallback(() => {
+    console.log('🔓 Logout called');
     localStorage.removeItem('jpa_token');
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
@@ -49,4 +57,10 @@ export function AuthProvider({ children }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

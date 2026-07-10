@@ -1,32 +1,28 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export default function ProtectedRoute({ children, allowedRoles, roleDashboards = {} }) {
+const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  const location = useLocation();
 
-  // Resolving stored session
+  console.log('🛡️ ProtectedRoute - user:', user, 'loading:', loading);
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f1f4f9]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gray-500 font-medium">Loading...</p>
-        </div>
+      <div className="flex items-center justify-center h-screen bg-[#0A1628]">
+        <div className="text-[#94A3B8]">Loading...</div>
       </div>
     );
   }
 
-  // Not logged in → go to login, remember where they wanted to go
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    console.log('🔒 No user, redirecting to login');
+    return <Navigate to="/login" replace />;
   }
 
-  // Wrong role → redirect silently to their own dashboard (no error message)
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    const correctDash = roleDashboards[user.role] || '/login';
-    return <Navigate to={correctDash} replace />;
-  }
+  // ✅ ALLOW ALL ROLES - go to home page
+  console.log('✅ User authenticated:', user);
+  return <Navigate to="/" replace />;  // ← THIS SENDS TO HOME PAGE
+};
 
-  return children;
-}
+export default ProtectedRoute;
