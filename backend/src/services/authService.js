@@ -97,4 +97,29 @@ const getMe = async (userId) => {
   return user;
 };
 
-module.exports = { register, login, forgotPassword, resetPassword, getMe };
+// ── Update profile ─────────────────────────────────────────────────────────────
+const updateProfile = async (userId, { full_name, current_password, new_password }) => {
+  const user = await db.User.findByPk(userId);
+  if (!user) { const e = new Error('User not found'); e.status = 404; throw e; }
+
+  const updates = {};
+  if (full_name && full_name.trim()) updates.full_name = full_name.trim();
+
+  if (new_password) {
+    if (!current_password) {
+      const e = new Error('Current password is required to set a new password.');
+      e.status = 400; throw e;
+    }
+    const isMatch = await bcrypt.compare(current_password, user.password);
+    if (!isMatch) {
+      const e = new Error('Current password is incorrect.');
+      e.status = 401; throw e;
+    }
+    updates.password = await bcrypt.hash(new_password, 12);
+  }
+
+  await user.update(updates);
+  return { id: user.id, full_name: user.full_name, email: user.email, role: user.role };
+};
+
+module.exports = { register, login, forgotPassword, resetPassword, getMe, updateProfile };

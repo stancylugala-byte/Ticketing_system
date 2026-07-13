@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { Routes, Route } from 'react-router-dom';
 
 import LandingPage        from './pages/LandingPage';
 import LoginPage          from './pages/LoginPage';
@@ -9,133 +8,97 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage  from './pages/ResetPasswordPage';
 import SupportDashboard   from './pages/SupportDashboard';
 import ClientDashboard    from './pages/ClientDashboard';
-import EngineeringBacklog from './pages/dashboard/EngineeringBacklog';
+import ManagerDashboard   from './pages/ManagerDashboard';
+import AdminDashboard     from './pages/AdminDashboard';
+import ProfilePage        from './pages/ProfilePage';
+import EngineeringBacklog from './pages/Dashboard/EngineeringBacklog';
 import DashboardLayout    from './components/layout/DashboardLayout';
 import Sidebar            from './components/Sidebar';
+import ProtectedRoute     from './components/ProtectedRoute';
 
-// ✅ Role → dashboard path mapping
+// Role → dashboard path (single source of truth)
 export const ROLE_DASHBOARDS = {
-  SupportOfficer: '/dashboard/support',
-  Developer:      '/dashboard/backlog',
-  Admin:          '/dashboard/admin',
   Client:         '/dashboard/client',
+  SupportOfficer: '/dashboard/support',
+  Developer:      '/dashboard/dev',
+  Manager:        '/dashboard/manager',
+  Admin:          '/dashboard/admin',
 };
 
-// ✅ Protected Route Component - FIXED
-const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  const { user, loading } = useAuth();
-
-  console.log('🛡️ ProtectedRoute - user:', user, 'loading:', loading);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-[#0A1628]">
-        <div className="text-[#94A3B8]">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    console.log('🔒 No user, redirecting to login');
-    return <Navigate to="/login" replace />;
-  }
-
-  // ✅ Check if user has allowed role
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    console.log('🚫 User role not allowed:', user.role);
-    // ✅ FIX: Redirect to home page instead of dashboard
-    return <Navigate to="/" replace />;
-  }
-
-  console.log('✅ User authenticated, rendering children');
-  return children;
-};
-
-// ✅ Support Layout
+// Support Officer layout — sidebar + dashboard
 function SupportLayout() {
   const [activeModule, setActiveModule] = useState('ticket-queue');
   return (
-    <div className="flex h-screen bg-[#0A1628] overflow-hidden">
-      <Sidebar />
-      <main className="flex-1 ml-64 overflow-y-auto">
-        <SupportDashboard activeModule={activeModule} />
-      </main>
-    </div>
+    <>
+      <Sidebar activePage={activeModule} onNavigate={setActiveModule} />
+      <SupportDashboard activeModule={activeModule} />
+    </>
   );
 }
 
-function App() {
+// Developer dashboard — Engineering Backlog wrapped in DashboardLayout
+function DeveloperDashboard() {
+  return (
+    <DashboardLayout>
+      <EngineeringBacklog />
+    </DashboardLayout>
+  );
+}
+
+export default function App() {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+      {/* Public */}
+      <Route path="/"                element={<LandingPage />} />
+      <Route path="/login"           element={<LoginPage />} />
+      <Route path="/signup"          element={<SignupPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+      <Route path="/reset-password"  element={<ResetPasswordPage />} />
 
-      {/* ✅ Protected - Support Officer */}
-      <Route
-        path="/dashboard/support"
-        element={
-          <ProtectedRoute allowedRoles={['SupportOfficer']}>
-            <SupportLayout />
-          </ProtectedRoute>
-        }
-      />
+      {/* Client */}
+      <Route path="/dashboard/client" element={
+        <ProtectedRoute allowedRoles={['Client']} roleDashboards={ROLE_DASHBOARDS}>
+          <ClientDashboard />
+        </ProtectedRoute>
+      } />
 
-      {/* ✅ Protected - Client */}
-      <Route
-        path="/dashboard/client"
-        element={
-          <ProtectedRoute>
-            <DashboardLayout>
-              <ClientDashboard />
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* Support Officer */}
+      <Route path="/dashboard/support" element={
+        <ProtectedRoute allowedRoles={['SupportOfficer']} roleDashboards={ROLE_DASHBOARDS}>
+          <SupportLayout />
+        </ProtectedRoute>
+      } />
 
-      {/* ✅ Protected - Engineering Backlog (for Developers) */}
-      <Route
-        path="/dashboard/backlog"
-        element={
-          <ProtectedRoute>
-            <DashboardLayout>
-              <EngineeringBacklog />
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* Developer */}
+      <Route path="/dashboard/dev" element={
+        <ProtectedRoute allowedRoles={['Developer']} roleDashboards={ROLE_DASHBOARDS}>
+          <DeveloperDashboard />
+        </ProtectedRoute>
+      } />
 
-      {/* ✅ Protected - Performance (for Developers/Admin) */}
-      <Route
-        path="/dashboard/performance"
-        element={
-          <ProtectedRoute allowedRoles={['Developer', 'Admin']}>
-            <DashboardLayout>
-              <div className="p-8 text-white">Performance Dashboard</div>
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* Support Manager */}
+      <Route path="/dashboard/manager" element={
+        <ProtectedRoute allowedRoles={['Manager']} roleDashboards={ROLE_DASHBOARDS}>
+          <ManagerDashboard />
+        </ProtectedRoute>
+      } />
 
-      {/* ✅ Protected - Admin Settings */}
-      <Route
-        path="/dashboard/admin"
-        element={
-          <ProtectedRoute allowedRoles={['Admin']}>
-            <DashboardLayout>
-              <div className="p-8 text-white">Admin Settings</div>
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* System Administrator */}
+      <Route path="/dashboard/admin" element={
+        <ProtectedRoute allowedRoles={['Admin']} roleDashboards={ROLE_DASHBOARDS}>
+          <AdminDashboard />
+        </ProtectedRoute>
+      } />
 
-      {/* ✅ Fallback: redirect to home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Profile — any authenticated user */}
+      <Route path="/profile" element={
+        <ProtectedRoute roleDashboards={ROLE_DASHBOARDS}>
+          <ProfilePage />
+        </ProtectedRoute>
+      } />
+
+      {/* Catch-all */}
+      <Route path="*" element={<LandingPage />} />
     </Routes>
   );
 }
-
-export default App;

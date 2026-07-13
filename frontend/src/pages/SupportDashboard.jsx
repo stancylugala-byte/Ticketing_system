@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { searchTickets } from '../api/tickets';
 import { getUnreadCount } from '../api/notifications';
 import { useAuth } from '../context/AuthContext';
+import ProfileDropdown from '../components/ProfileDropdown';
 
 import TicketQueueView         from '../views/TicketQueueView';
 import TicketProcessingView    from '../views/TicketProcessingView';

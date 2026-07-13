@@ -11,16 +11,11 @@ const registerRules = [
     .normalizeEmail(),
 
   body('password')
-    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-    .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
-    .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
-    .matches(/[0-9]/).withMessage('Password must contain at least one number')
-    .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must contain at least one special character'),
-
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   body('role')
     .optional()
-    .isIn(['Client', 'SupportOfficer', 'Developer', 'Admin'])
-    .withMessage('Role must be Client, SupportOfficer, Developer, or Admin')
+    .isIn(['Client', 'SupportOfficer', 'Developer', 'Manager', 'Admin'])
+    .withMessage('Role must be Client, SupportOfficer, Developer, Manager, or Admin'),
 ];
 
 const loginRules = [
@@ -41,11 +36,7 @@ const resetPasswordRules = [
   body('token')
     .notEmpty().withMessage('Reset token is required'),
   body('password')
-    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-    .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
-    .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
-    .matches(/[0-9]/).withMessage('Password must contain at least one number')
-    .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must contain at least one special character')
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
 ];
 
 module.exports = {
