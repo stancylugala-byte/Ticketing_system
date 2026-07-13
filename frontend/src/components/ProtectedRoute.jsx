@@ -1,28 +1,41 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const ProtectedRoute = ({ children }) => {
+const ROLE_DASHBOARDS = {
+  Client:         '/dashboard/client',
+  SupportOfficer: '/dashboard/support',
+  Developer:      '/dashboard/dev',
+  Manager:        '/dashboard/manager',
+  Admin:          '/dashboard/admin',
+};
+
+export default function ProtectedRoute({ children, allowedRoles, roleDashboards }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
-  console.log('🛡️ ProtectedRoute - user:', user, 'loading:', loading);
-
+  // Still verifying stored session
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#0A1628]">
-        <div className="text-[#94A3B8]">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#f1f3f8]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-500 font-medium">Verifying session...</p>
+        </div>
       </div>
     );
   }
 
+  // Not logged in → send to login, remember intended destination
   if (!user) {
-    console.log('🔒 No user, redirecting to login');
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // ✅ ALLOW ALL ROLES - go to home page
-  console.log('✅ User authenticated:', user);
-  return <Navigate to="/" replace />;  // ← THIS SENDS TO HOME PAGE
-};
+  // Wrong role → silently redirect to their own dashboard
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    const correct = (roleDashboards || ROLE_DASHBOARDS)[user.role] || '/login';
+    return <Navigate to={correct} replace />;
+  }
 
-export default ProtectedRoute;
+  // Authenticated + correct role → render the page
+  return children;
+}

@@ -5,31 +5,15 @@ import { useAuth } from '../context/AuthContext';
 import AuthNavbar from '../components/AuthNavbar';
 import heroBg from '../assets/hero.png';
 
-// ✅ Role → dashboard path mapping
 const ROLE_DASHBOARDS = {
   Client:         '/dashboard/client',
   SupportOfficer: '/dashboard/support',
-<<<<<<< Updated upstream
-  Developer:      '/dashboard/backlog',
-=======
   Developer:      '/dashboard/dev',
   Manager:        '/dashboard/manager',
->>>>>>> Stashed changes
   Admin:          '/dashboard/admin',
 };
 
 export default function LoginPage() {
-<<<<<<< Updated upstream
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { login } = useAuth();
-
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [showPw, setShowPw] = useState(false);
-  const [remember, setRemember] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-=======
   const navigate        = useNavigate();
   const location        = useLocation();
   const { login }       = useAuth();
@@ -39,7 +23,6 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError]       = useState('');
->>>>>>> Stashed changes
 
   const successMsg = location.state?.message || '';
 
@@ -53,43 +36,15 @@ export default function LoginPage() {
     if (submitting) return;
     setSubmitting(true);
     setError('');
-
-    console.log('📤 Attempting login with:', form.email);
-
     try {
       const res = await loginUser({ email: form.email, password: form.password });
-
-      console.log('📦 Full response:', res);
-      console.log('📦 res.data:', res.data);
-
-      const { token, user: loggedInUser } = res.data;
-
-      console.log('🔑 Token:', token);
-      console.log('👤 Logged in user:', loggedInUser);
-
-      // ✅ FIX: Use account_type (from backend) instead of role
-      const userRole = loggedInUser.account_type || loggedInUser.role || 'Client';
-      console.log('🎯 User role:', userRole);
-
-      // ✅ Call login from AuthContext
+      const { token, user: loggedInUser } = res.data.data;
       login(token, loggedInUser);
-<<<<<<< Updated upstream
-
-      // ✅ Navigate based on role
-=======
->>>>>>> Stashed changes
       const from = location.state?.from?.pathname;
-      const dest = from || '/';
-      console.log('🚀 Navigating to:', dest);
-
+      const dest = from || ROLE_DASHBOARDS[loggedInUser.role] || '/';
       navigate(dest, { replace: true });
     } catch (err) {
-<<<<<<< Updated upstream
-      console.error('❌ Login error:', err);
-      const msg =
-=======
       setError(
->>>>>>> Stashed changes
         err.response?.data?.message ||
         err.response?.data?.errors?.[0]?.message ||
         'Login failed. Please check your credentials.'
@@ -103,10 +58,9 @@ export default function LoginPage() {
     <div className="h-screen flex flex-col overflow-hidden">
       <AuthNavbar showLogin={false} showSignUp showOnlySignUp />
 
-      {/* Two equal halves */}
       <div className="flex-1 flex overflow-hidden">
 
-        {/* ── LEFT half: form card centered ── */}
+        {/* ── LEFT: form card centered ── */}
         <div className="w-1/2 flex items-center justify-center bg-[#f1f4f9] px-8 py-4">
           <div className="w-full max-w-[380px] bg-white rounded-2xl shadow-lg border border-gray-100 px-8 py-7">
 
@@ -161,7 +115,7 @@ export default function LoginPage() {
                     value={form.password} onChange={handleChange} placeholder="••••••••"
                     className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder-gray-400 transition-all" />
                   <button type="button" onClick={() => setShowPw(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       {showPw
                         ? <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -172,7 +126,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Remember me */}
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)}
                   className="w-4 h-4 accent-blue-600 rounded" />
@@ -207,26 +160,16 @@ export default function LoginPage() {
               Don't have an account?{' '}
               <Link to="/signup" className="text-blue-600 font-semibold hover:text-blue-700">Create an account</Link>
             </p>
-
           </div>
         </div>
 
-        {/* ── RIGHT half: full-height image ── */}
+        {/* ── RIGHT: full-height hero image ── */}
         <div className="w-1/2 relative overflow-hidden">
-          <img
-            src={heroBg}
-            alt="JavaPA Support Platform"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          {/* Gradient overlay */}
+          <img src={heroBg} alt="JavaPA" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-slate-900/40 to-slate-900/70" />
-
-          {/* Overlay content */}
           <div className="absolute inset-0 flex flex-col justify-end px-10 py-10">
             <div className="text-white">
-              <p className="text-xs font-semibold uppercase tracking-widest text-blue-300 mb-2">
-                500+ enterprise teams worldwide
-              </p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-300 mb-2">500+ enterprise teams worldwide</p>
               <h2 className="text-2xl font-extrabold leading-snug mb-3">
                 Your Support Command<br />Centre Awaits
               </h2>
