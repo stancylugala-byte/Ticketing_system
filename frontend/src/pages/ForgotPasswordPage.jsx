@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#f1f4f9] overflow-hidden">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-slate-900 overflow-hidden">
       <AuthNavbar showLogin={false} showSignUp showOnlySignUp />
 
       <div className="flex-1 flex flex-col items-center justify-center px-4">
@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Card */}
-        <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-gray-200 px-8 py-7">
+        <div className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 px-8 py-7">
           {!sent ? (
             <>
               <h1 className="text-xl font-extrabold text-gray-900 mb-1">Forgot password?</h1>

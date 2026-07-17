@@ -12,6 +12,7 @@ const notificationRoutes  = require('./routes/notificationRoutes');
 const clientRoutes        = require('./routes/clientRoutes');
 const managerRoutes       = require('./routes/managerRoutes');
 const adminRoutes         = require('./routes/adminRoutes');
+const developerRoutes     = require('./routes/developerRoutes');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/client',   clientRoutes);
 app.use('/api/manager',  managerRoutes);
 app.use('/api/admin',    adminRoutes);
+app.use('/api/developer', developerRoutes);
 
 // 404
 app.use((req, res) => res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` }));

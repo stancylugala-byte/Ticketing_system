@@ -1,189 +1,147 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useSystemSettings } from '../../context/SystemSettingsContext';
+
+function getInitials(name = '') {
+  return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+}
+
+const NAV = [
+  {
+    section: 'Ticket Management',
+    items: [
+      { key: 'create-ticket',    label: 'Create Ticket',              icon: '➕' },
+      { key: 'view-tickets',     label: 'View Tickets',               icon: '🎫' },
+      { key: 'update-ticket',    label: 'Update Ticket',              icon: '✏️' },
+      { key: 'reopen-ticket',    label: 'Reopen Ticket',              icon: '↩️' },
+      { key: 'close-ticket',     label: 'Close Ticket Confirmation',  icon: '✅' },
+    ],
+  },
+  {
+    section: 'Ticket Tracking',
+    items: [
+      { key: 'track-status',     label: 'Track Status',               icon: '📊' },
+      { key: 'assigned-staff',   label: 'View Assigned Staff',        icon: '👤' },
+      { key: 'resolution-timeline', label: 'View Resolution Timeline', icon: '📅' },
+    ],
+  },
+  {
+    section: 'Communication Center',
+    items: [
+      { key: 'ticket-comments',  label: 'Ticket Comments',            icon: '💬' },
+      { key: 'chat-support',     label: 'Chat with Support',          icon: '🗨️' },
+      { key: 'notifications',    label: 'Notifications',              icon: '🔔' },
+    ],
+  },
+  {
+    section: 'Knowledge',
+    items: [
+      { key: 'faqs',             label: 'FAQs',                       icon: '❓' },
+      { key: 'user-manuals',     label: 'User Manuals',               icon: '📖' },
+      { key: 'troubleshooting',  label: 'Troubleshooting Guides',     icon: '🔧' },
+    ],
+  },
+];
 
 export default function ClientSidebar({ activeSection, onNavigate }) {
-  const [trackingExpanded, setTrackingExpanded] = useState(false);
-  const [communicationExpanded, setCommunicationExpanded] = useState(false);
+  const { user, logout } = useAuth();
+  const { settings }     = useSystemSettings();
+  const navigate = useNavigate();
 
-  const handleTrackingClick = () => {
-    setTrackingExpanded(!trackingExpanded);
-    if (!trackingExpanded) {
-      onNavigate?.('tracking-status');
-    }
-  };
-
-  const handleCommunicationClick = () => {
-    setCommunicationExpanded(!communicationExpanded);
-    if (!communicationExpanded) {
-      onNavigate?.('comm-comments');
-    }
-  };
+  const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
-    <div className="w-64 bg-slate-900 h-full flex flex-col text-white fixed left-0 top-0">
+    <aside className="fixed left-0 top-0 bottom-0 w-64 flex flex-col z-50 overflow-y-auto"
+      style={{ background: settings.sidebarBg }}>
+
       {/* Logo */}
-      <div className="px-6 py-5 border-b border-slate-700">
-        <h1 className="text-xl font-bold">JavaPA</h1>
-        <p className="text-xs text-slate-400 mt-1">Support Portal</p>
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-white/10 shrink-0">
+        {settings.logoUrl ? (
+          <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
+        ) : (
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: settings.primaryColor }}>
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+        )}
+        <div>
+          <p className="text-white font-bold text-sm leading-tight">{settings.companyName}</p>
+          <p className="text-white/40 text-[10px]">Client Portal</p>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4">
-        {/* DASHBOARDS */}
-        <div className="px-4 mb-4">
-          <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">
-            Dashboards
-          </p>
-          <button
-            onClick={() => onNavigate?.('dashboard')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-              ${activeSection === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
-          >
-            <span>🏠</span>
-            Client Portal
-          </button>
+      {/* User card */}
+      <div className="mx-3 mt-3 mb-2 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 shrink-0">
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+          style={{ background: settings.primaryColor }}>
+          {getInitials(user?.full_name)}
         </div>
+        <div className="min-w-0">
+          <p className="text-white text-xs font-semibold truncate">{user?.full_name || 'Client'}</p>
+          <p className="text-white/40 text-[10px]">Client Account</p>
+        </div>
+        <span className="ml-auto w-2 h-2 bg-emerald-400 rounded-full shrink-0" />
+      </div>
 
-        {/* TICKET MANAGEMENT */}
-        <div className="px-4 mb-4">
-          <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">
-            Ticket Management
-          </p>
-          
-          {/* Ticket Tracking (Collapsible) */}
-          <div>
-            <button
-              onClick={handleTrackingClick}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-                ${activeSection?.startsWith('tracking') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
-            >
-              <div className="flex items-center gap-3">
-                <span>📍</span>
-                Ticket Tracking
-              </div>
-              <svg
-                className={`w-4 h-4 transition-transform ${trackingExpanded ? 'rotate-180' : ''}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+      {/* Nav */}
+      <nav className="flex-1 px-2 py-2 flex flex-col gap-0.5">
+        {/* Dashboard shortcut */}
+        <button
+          onClick={() => onNavigate('dashboard')}
+          style={activeSection === 'dashboard' ? { background: settings.primaryColor } : {}}
+          className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all mb-1
+            ${activeSection === 'dashboard' ? 'text-white' : 'text-white/55 hover:bg-white/8 hover:text-white'}`}
+        >
+          <span className="text-sm shrink-0">🏠</span>
+          <span>Dashboard Overview</span>
+          {activeSection === 'dashboard' && <span className="ml-auto w-1.5 h-1.5 bg-white/60 rounded-full shrink-0" />}
+        </button>
+
+        {NAV.map(group => (
+          <div key={group.section}>
+            <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2 pt-3 pb-1.5">
+              {group.section}
+            </p>
+            {group.items.map(item => (
+              <button
+                key={item.key}
+                onClick={() => onNavigate(item.key)}
+                style={activeSection === item.key ? { background: settings.primaryColor } : {}}
+                className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all
+                  ${activeSection === item.key ? 'text-white' : 'text-white/55 hover:bg-white/8 hover:text-white'}`}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Sub-items */}
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out
-                ${trackingExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
-            >
-              <div className="ml-4 mt-1 space-y-1 border-l-2 border-slate-700 pl-2">
-                <button
-                  onClick={() => onNavigate?.('tracking-status')}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left
-                    ${activeSection === 'tracking-status' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
-                >
-                  Track Status
-                </button>
-                <button
-                  onClick={() => onNavigate?.('tracking-staff')}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left
-                    ${activeSection === 'tracking-staff' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
-                >
-                  View Assigned Staff
-                </button>
-                <button
-                  onClick={() => onNavigate?.('tracking-timeline')}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left
-                    ${activeSection === 'tracking-timeline' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
-                >
-                  View Resolution Timeline
-                </button>
-              </div>
-            </div>
+                <span className="shrink-0 text-sm">{item.icon}</span>
+                <span className="truncate">{item.label}</span>
+                {activeSection === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white/60 rounded-full shrink-0" />}
+              </button>
+            ))}
           </div>
-
-          {/* Communication Center (Collapsible) */}
-          <div>
-            <button
-              onClick={handleCommunicationClick}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium transition-colors mt-1
-                ${activeSection?.startsWith('comm') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
-            >
-              <div className="flex items-center gap-3">
-                <span>💬</span>
-                Communication Center
-              </div>
-              <svg
-                className={`w-4 h-4 transition-transform ${communicationExpanded ? 'rotate-180' : ''}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Sub-items */}
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out
-                ${communicationExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
-            >
-              <div className="ml-4 mt-1 space-y-1 border-l-2 border-slate-700 pl-2">
-                <button
-                  onClick={() => onNavigate?.('comm-comments')}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left
-                    ${activeSection === 'comm-comments' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
-                >
-                  Ticket Comments
-                </button>
-                <button
-                  onClick={() => onNavigate?.('comm-chat')}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left
-                    ${activeSection === 'comm-chat' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
-                >
-                  Chat with Support
-                </button>
-                <button
-                  onClick={() => onNavigate?.('comm-notifications')}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left
-                    ${activeSection === 'comm-notifications' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
-                >
-                  Notifications
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* RESOURCES */}
-        <div className="px-4 mb-4">
-          <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">
-            Resources
-          </p>
-          <Link to="/knowledge-base">
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 text-sm font-medium transition-colors text-left">
-              <span>📖</span>
-              Knowledge Base
-            </button>
-          </Link>
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 text-sm font-medium transition-colors text-left">
-            <span>🎧</span>
-            Support
-          </button>
-        </div>
+        ))}
       </nav>
 
-      {/* Bottom section */}
-      <div className="border-t border-slate-700 p-4 space-y-1">
-        <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 text-sm font-medium transition-colors text-left">
-          <span>⚙️</span>
-          Settings
+      {/* Bottom */}
+      <div className="px-2 pb-4 pt-2 border-t border-white/10 flex flex-col gap-0.5 shrink-0">
+        <button
+          onClick={() => navigate('/profile')}
+          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white/8 hover:text-white transition-all"
+        >
+          <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          Profile
         </button>
-        <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-400 hover:bg-slate-800 text-sm font-medium transition-colors text-left">
-          <span>🚪</span>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all"
+        >
+          <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
           Logout
         </button>
       </div>
-    </div>
+    </aside>
   );
 }

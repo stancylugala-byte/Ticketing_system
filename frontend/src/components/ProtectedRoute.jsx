@@ -16,7 +16,7 @@ export default function ProtectedRoute({ children, allowedRoles, roleDashboards 
   // Still verifying stored session
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f1f3f8]">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-gray-500 font-medium">Verifying session...</p>

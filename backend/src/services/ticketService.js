@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 const db = require('../models');
+const { createNotification } = require('./notificationService');
 
 const { Ticket, User, TicketCategory, SlaPolicy, TicketComment } = db;
 
@@ -20,18 +21,14 @@ const getDashboardStats = async (officerId) => {
     Ticket.count({ where: { assigned_to: officerId, status: { [Op.in]: ['Open', 'In Progress'] } } }),
     Ticket.count({ where: { assigned_to: officerId, status: 'Pending' } }),
     Ticket.count({ where: { assigned_to: officerId, status: 'Resolved', updated_at: { [Op.gte]: todayStart } } }),
-    // SLA breach: tickets that are overdue — created more than response_time hours ago and still open
-    Ticket.count({
-      where: {
-        assigned_to: officerId,
-        status: { [Op.in]: ['Open', 'In Progress', 'Pending'] }
-      },
-      include: [{
-        model: SlaPolicy,
-        as: 'slaPolicy',
-        required: true
-      }]
-    })
+    // SLA breach: tickets that are open AND past their resolution deadline
+    Ticket.findAll({
+      where: { assigned_to: officerId, status: { [Op.in]: ['Open', 'In Progress', 'Pending'] } },
+      include: [{ model: SlaPolicy, as: 'slaPolicy', required: true }],
+    }).then(tickets => tickets.filter(t => {
+      const limitMs = t.slaPolicy.resolution_time * 60 * 60 * 1000;
+      return Date.now() - new Date(t.created_at).getTime() > limitMs;
+    }).length)
   ]);
 
   return { assigned, pending, resolvedToday, slaBreaches };
@@ -39,7 +36,9 @@ const getDashboardStats = async (officerId) => {
 
 // Get tickets for a queue with filters and pagination
 const getTicketQueue = async ({ queue, officerId, search, page = 1, limit = 20 }) => {
-  const offset = (page - 1) * limit;
+  const limitInt  = parseInt(limit,  10) || 20;
+  const pageInt   = parseInt(page,   10) || 1;
+  const offset    = (pageInt - 1) * limitInt;
   let where = {};
 
   switch (queue) {
@@ -73,11 +72,11 @@ const getTicketQueue = async ({ queue, officerId, search, page = 1, limit = 20 }
     where,
     include: ticketIncludes,
     order: [['created_at', 'DESC']],
-    limit,
+    limit:  limitInt,
     offset
   });
 
-  return { total: count, page, limit, tickets: rows };
+  return { total: count, page: pageInt, limit: limitInt, tickets: rows };
 };
 
 // Get single ticket with full details including comments
@@ -108,6 +107,22 @@ const updateTicketStatus = async (ticketId, status, officerId) => {
   if (!ticket) { const e = new Error('Ticket not found'); e.status = 404; throw e; }
 
   await ticket.update({ status });
+
+  // Notify the client on meaningful status changes
+  if (['Resolved', 'Closed', 'Pending'].includes(status)) {
+    const messages = {
+      Resolved: `Your ticket "${ticket.title}" has been resolved. Please confirm the fix or reopen if needed.`,
+      Closed:   `Your ticket "${ticket.title}" has been closed. Thank you for using our support.`,
+      Pending:  `Your ticket "${ticket.title}" is pending — a support officer needs more information from you.`,
+    };
+    createNotification({
+      userId:  ticket.user_id,
+      title:   `Ticket ${status}`,
+      message: messages[status],
+      type:    status === 'Resolved' || status === 'Closed' ? 'success' : 'warning',
+    });
+  }
+
   return getTicketById(ticketId);
 };
 
@@ -117,6 +132,15 @@ const claimTicket = async (ticketId, officerId) => {
   if (!ticket) { const e = new Error('Ticket not found'); e.status = 404; throw e; }
 
   await ticket.update({ assigned_to: officerId, status: 'In Progress' });
+
+  // Notify the client that their ticket has been picked up
+  createNotification({
+    userId:  ticket.user_id,
+    title:   'Ticket Assigned',
+    message: `Your ticket "${ticket.title}" has been assigned to a support officer and is now In Progress.`,
+    type:    'info',
+  });
+
   return getTicketById(ticketId);
 };
 

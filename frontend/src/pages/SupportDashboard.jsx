@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { searchTickets } from '../api/tickets';
 import { getUnreadCount } from '../api/notifications';
 import { useAuth } from '../context/AuthContext';
+import { useSystemSettings } from '../context/SystemSettingsContext';
 import ProfileDropdown from '../components/ProfileDropdown';
+import DarkModeToggle  from '../components/DarkModeToggle';
 
 import TicketQueueView         from '../views/TicketQueueView';
 import TicketProcessingView    from '../views/TicketProcessingView';
@@ -25,6 +27,7 @@ const VIEW_LABELS = {
 
 export default function SupportDashboard({ activeModule }) {
   const { user, logout } = useAuth();
+  const { settings }     = useSystemSettings();
   const navigate = useNavigate();
   const [query, setQuery]             = useState('');
   const [results, setResults]         = useState([]);
@@ -67,7 +70,7 @@ export default function SupportDashboard({ activeModule }) {
   };
 
   return (
-    <div className="ml-[240px] h-screen flex flex-col bg-[#f1f3f8] overflow-hidden">
+    <div className="ml-[240px] h-screen flex flex-col bg-gray-50 dark:bg-slate-900 overflow-hidden">
 
       {/* Top bar */}
       <header className="h-14 bg-white border-b border-gray-200 flex items-center px-6 gap-4 shrink-0 shadow-sm">
@@ -112,7 +115,9 @@ export default function SupportDashboard({ activeModule }) {
 
         {/* Right */}
         <div className="flex items-center gap-3 shrink-0 ml-auto">
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
+          <DarkModeToggle />
+          <div className="h-6 w-px bg-gray-200 dark:bg-slate-600" />
+          <button className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-slate-400">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
@@ -120,14 +125,8 @@ export default function SupportDashboard({ activeModule }) {
               <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{unread}</span>
             )}
           </button>
-          <div className="h-6 w-px bg-gray-200" />
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{initials}</div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-gray-800 leading-tight">{displayName}</span>
-              <span className="text-[10px] text-gray-400">{user?.role}</span>
-            </div>
-          </div>
+          <div className="h-6 w-px bg-gray-200 dark:bg-slate-600" />
+          <ProfileDropdown />
         </div>
       </header>
 
@@ -147,9 +146,9 @@ export default function SupportDashboard({ activeModule }) {
           <span>© 2026 JavaPA Software Limited.</span>
         </div>
         <div className="flex gap-4">
-          {['Terms', 'Privacy', 'SLA Policy'].map(l => (
-            <a key={l} href="#" className="text-xs text-gray-400 hover:text-blue-600 transition-colors">{l}</a>
-          ))}
+          <a href={settings.termsUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Terms</a>
+          <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Privacy</a>
+          <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">SLA Policy</a>
         </div>
       </footer>
     </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateProfile } from '../api/auth';
+import DarkModeToggle from '../components/DarkModeToggle';
 
 function getInitials(name = '') {
   return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -73,13 +74,13 @@ export default function ProfilePage() {
   const handleLogout = () => { logout(); navigate('/login'); };
   const handleDashboard = () => navigate(ROLE_DASHBOARDS[user?.role] || '/login');
 
-  const inputCls = "w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder-gray-400 bg-white";
-  const readonlyCls = "w-full px-3 py-2.5 border border-gray-100 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed";
+  const inputCls = "w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder-gray-400 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100";
+  const readonlyCls = "w-full px-3 py-2.5 border border-gray-100 dark:border-slate-700 rounded-xl text-sm bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-slate-500 cursor-not-allowed";
 
   return (
-    <div className="min-h-screen bg-[#f1f3f8]">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Topbar */}
-      <header className="h-14 bg-[#0f1623] flex items-center justify-between px-6 shrink-0">
+      <header className="h-14 bg-gray-900 dark:bg-slate-900 border-b border-white/10 flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
             <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -88,22 +89,25 @@ export default function ProfilePage() {
           </div>
           <span className="text-white font-bold text-sm">JavaPA</span>
         </div>
-        <button
-          onClick={handleDashboard}
-          className="text-white/70 text-sm hover:text-white transition-colors flex items-center gap-1.5"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Dashboard
-        </button>
+        <div className="flex items-center gap-4">
+          <DarkModeToggle />
+          <button
+            onClick={handleDashboard}
+            className="text-white/70 text-sm hover:text-white transition-colors flex items-center gap-1.5"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Dashboard
+          </button>
+        </div>
       </header>
 
       {/* Page content */}
       <div className="max-w-3xl mx-auto px-4 py-8">
 
         {/* User identity card */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-5 mb-4 flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm px-6 py-5 mb-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Avatar */}
             <div className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold shrink-0">
@@ -133,8 +137,8 @@ export default function ProfilePage() {
 
         {/* Account Details */}
         <form onSubmit={handleSave}>
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-5 mb-4">
-            <h3 className="text-base font-bold text-gray-900 mb-4">Account Details</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm px-6 py-5 mb-4">
+            <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 mb-4">Account Details</h3>
 
             {success && (
               <div className="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-sm">
@@ -186,8 +190,8 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 gap-4 mb-4">
 
             {/* Security — change password */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-5">
-              <h3 className="text-base font-bold text-gray-900 mb-4">Security</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm px-6 py-5">
+              <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 mb-4">Security</h3>
               <div className="flex flex-col gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Current Password</label>
@@ -241,8 +245,8 @@ export default function ProfilePage() {
             </div>
 
             {/* Account Actions */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-5">
-              <h3 className="text-base font-bold text-gray-900 mb-4">Account Actions</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm px-6 py-5">
+              <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 mb-4">Account Actions</h3>
               <div className="flex flex-col gap-3">
                 <button
                   type="button"

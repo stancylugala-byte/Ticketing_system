@@ -1,221 +1,248 @@
 import { useState, useEffect } from 'react';
-import ClientSidebar from '../components/client/ClientSidebar';
-import ClientStatsCards from '../components/client/ClientStatsCards';
-import RecentTicketsTable from '../components/client/RecentTicketsTable';
-import NewTicketModal from '../components/client/NewTicketModal';
-import TicketDetailDrawer from '../components/client/TicketDetailDrawer';
-import KnowledgeBaseCard from '../components/client/KnowledgeBaseCard';
-import LiveSupportCard from '../components/client/LiveSupportCard';
-import TrackStatus from '../components/client/tracking/TrackStatus';
-import ViewAssignedStaff from '../components/client/tracking/ViewAssignedStaff';
-import ViewResolutionTimeline from '../components/client/tracking/ViewResolutionTimeline';
-import TicketComments from '../components/client/communication/TicketComments';
-import ChatWithSupport from '../components/client/communication/ChatWithSupport';
-import Notifications from '../components/client/communication/Notifications';
-import { getDashboardStats, getMyTickets, getNotifications } from '../api/clientApi';
 import { useAuth } from '../context/AuthContext';
+import { useSystemSettings } from '../context/SystemSettingsContext';
+import ClientSidebar        from '../components/client/ClientSidebar';
+import DarkModeToggle       from '../components/DarkModeToggle';
+import ProfileDropdown      from '../components/ProfileDropdown';
+import NewTicketModal       from '../components/client/NewTicketModal';
 
-export default function ClientDashboard() {
+// Views
+import TicketListView       from '../components/client/views/TicketListView';
+import CreateTicketView     from '../components/client/views/CreateTicketView';
+import UpdateTicketView     from '../components/client/views/UpdateTicketView';
+import ReopenTicketView     from '../components/client/views/ReopenTicketView';
+import CloseTicketView      from '../components/client/views/CloseTicketView';
+import TrackStatusView      from '../components/client/views/TrackStatusView';
+import AssignedStaffView    from '../components/client/views/AssignedStaffView';
+import TimelineView         from '../components/client/views/TimelineView';
+import CommentsView         from '../components/client/views/CommentsView';
+import ChatView             from '../components/client/views/ChatView';
+import NotificationsView    from '../components/client/views/NotificationsView';
+import KnowledgeView        from '../components/client/views/KnowledgeView';
+
+import {
+  getDashboardStats, getMyTickets, getNotifications
+} from '../api/clientApi';
+
+const VIEW_LABELS = {
+  'dashboard':           'Dashboard Overview',
+  'create-ticket':       'Create Ticket',
+  'view-tickets':        'View Tickets',
+  'update-ticket':       'Update Ticket',
+  'reopen-ticket':       'Reopen Ticket',
+  'close-ticket':        'Close Ticket Confirmation',
+  'track-status':        'Track Status',
+  'assigned-staff':      'View Assigned Staff',
+  'resolution-timeline': 'View Resolution Timeline',
+  'ticket-comments':     'Ticket Comments',
+  'chat-support':        'Chat with Support',
+  'notifications':       'Notifications',
+  'faqs':                'FAQs',
+  'user-manuals':        'User Manuals',
+  'troubleshooting':     'Troubleshooting Guides',
+};
+
+function KpiCard({ label, value, icon, color, sub }) {
+  return (
+    <div className={`bg-white dark:bg-slate-800 rounded-xl border ${color} px-5 py-4 shadow-sm flex items-center gap-4`}>
+      <div className="text-2xl shrink-0">{icon}</div>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-gray-400 dark:text-slate-400 uppercase tracking-wider mb-1">{label}</p>
+        {value === null
+          ? <div className="h-7 w-12 bg-gray-200 dark:bg-slate-600 rounded animate-pulse" />
+          : <p className="text-2xl font-bold text-gray-900 dark:text-slate-100 leading-none">{value}</p>
+        }
+        {sub && <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">{sub}</p>}
+      </div>
+    </div>
+  );
+}
+
+function DashboardOverview({ stats, tickets, onNavigate, onNewTicket }) {
   const { user } = useAuth();
-  const [stats, setStats] = useState(null);
-  const [tickets, setTickets] = useState([]);
-  const [notifications, setNotifications] = useState({ notifications: [], unreadCount: 0 });
-  const [selectedTicketId, setSelectedTicketId] = useState(null);
-  const [isNewTicketModalOpen, setIsNewTicketModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState('dashboard');
 
-  useEffect(() => {
-    if (activeSection === 'dashboard') {
-      loadDashboardData();
-    }
-  }, [activeSection]);
+  return (
+    <div className="flex flex-col gap-5">
+      {/* KPIs */}
+      <div className="grid grid-cols-4 gap-4">
+        <KpiCard label="Total Tickets"    value={stats?.totalTickets ?? null}    icon="🎫" color="border-blue-200"    sub="Lifetime requests" />
+        <KpiCard label="Open Tickets"     value={stats?.openTickets ?? null}     icon="🔧" color="border-orange-200"  sub="Currently active" />
+        <KpiCard label="Pending Tickets"  value={stats?.pendingTickets ?? null}  icon="⏳" color="border-yellow-200"  sub="Awaiting response" />
+        <KpiCard label="Resolved Tickets" value={stats?.resolvedTickets ?? null} icon="✅" color="border-emerald-200" sub="Successfully closed" />
+      </div>
 
-  const loadDashboardData = async () => {
-    setLoading(true);
-    try {
-      const [statsRes, ticketsRes, notificationsRes] = await Promise.all([
-        getDashboardStats(),
-        getMyTickets({ page: 1, limit: 10 }),
-        getNotifications()
-      ]);
+      {/* Quick actions */}
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: 'Create Ticket',   key: 'create-ticket',   icon: '➕', color: 'bg-blue-600 hover:bg-blue-700 text-white' },
+          { label: 'View Tickets',    key: 'view-tickets',    icon: '🎫', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 text-gray-700 dark:text-slate-200' },
+          { label: 'Track Status',    key: 'track-status',    icon: '📊', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 text-gray-700 dark:text-slate-200' },
+          { label: 'Notifications',   key: 'notifications',   icon: '🔔', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 text-gray-700 dark:text-slate-200' },
+        ].map(a => (
+          <button key={a.key} onClick={() => onNavigate(a.key)}
+            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm ${a.color}`}>
+            <span>{a.icon}</span>{a.label}
+          </button>
+        ))}
+      </div>
 
-      setStats(statsRes.data.data);
-      setTickets(ticketsRes.data.data.tickets || []);
-      setNotifications(notificationsRes.data.data);
-    } catch (err) {
-      console.error('Failed to load dashboard data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleNewTicketSuccess = () => {
-    loadDashboardData();
-  };
-
-  const handleTicketUpdate = () => {
-    loadDashboardData();
-  };
-
-  const handleNavigate = (section) => {
-    setActiveSection(section);
-    setSelectedTicketId(null); // Close ticket drawer when navigating
-  };
-
-  // Render content based on active section
-  const renderContent = () => {
-    if (activeSection === 'tracking-status') {
-      return (
-        <div className="animate-fadeIn">
-          <TrackStatus />
+      {/* Recent Tickets */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
+          <h3 className="text-sm font-bold text-gray-800 dark:text-slate-100">Recent Tickets</h3>
+          <button onClick={() => onNavigate('view-tickets')}
+            className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">View All →</button>
         </div>
-      );
-    }
-
-    if (activeSection === 'tracking-staff') {
-      return (
-        <div className="animate-fadeIn">
-          <ViewAssignedStaff />
-        </div>
-      );
-    }
-
-    if (activeSection === 'tracking-timeline') {
-      return (
-        <div className="animate-fadeIn">
-          <ViewResolutionTimeline />
-        </div>
-      );
-    }
-
-    if (activeSection === 'comm-comments') {
-      return (
-        <div className="animate-fadeIn h-[calc(100vh-200px)]">
-          <TicketComments />
-        </div>
-      );
-    }
-
-    if (activeSection === 'comm-chat') {
-      return (
-        <div className="animate-fadeIn h-[calc(100vh-200px)]">
-          <ChatWithSupport />
-        </div>
-      );
-    }
-
-    if (activeSection === 'comm-notifications') {
-      return (
-        <div className="animate-fadeIn h-[calc(100vh-200px)]">
-          <Notifications />
-        </div>
-      );
-    }
-
-    // Default dashboard view
-    if (loading) {
-      return (
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600">Loading dashboard...</p>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="animate-fadeIn">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4 mb-6 rounded-xl shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Welcome Back, {user?.full_name?.split(' ')[0] || 'there'}!</h1>
-              <p className="text-sm text-gray-500 mt-1">Here's what's happening with your support tickets</p>
-            </div>
-            <button
-              onClick={() => setIsNewTicketModalOpen(true)}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2"
-            >
-              <span className="text-lg">+</span>
-              New Ticket
+        {tickets.length === 0 ? (
+          <div className="flex flex-col items-center py-12 text-gray-400 gap-2">
+            <span className="text-3xl">📭</span>
+            <p className="text-sm font-medium">No tickets yet</p>
+            <button onClick={onNewTicket}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+              Create your first ticket
             </button>
           </div>
-        </header>
-
-        {/* Stats Cards */}
-        {stats && <ClientStatsCards stats={stats} />}
-
-        {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Tickets (spans 2 columns on large screens) */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Recent Tickets */}
-            <RecentTicketsTable 
-              tickets={tickets} 
-              onViewDetails={(ticketId) => setSelectedTicketId(ticketId)}
-            />
-          </div>
-
-          {/* Right Column - Side Cards */}
-          <div className="space-y-6">
-            {/* Knowledge Base Card */}
-            <KnowledgeBaseCard />
-
-            {/* Live Support Card */}
-            <LiveSupportCard />
-          </div>
-        </div>
-
-        {/* Ticket Detail Drawer (Conditional) */}
-        {selectedTicketId && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 z-40 flex items-center justify-end p-6">
-            <div className="w-full max-w-2xl h-full animate-slide-in-right">
-              <TicketDetailDrawer
-                ticketId={selectedTicketId}
-                onClose={() => setSelectedTicketId(null)}
-                onUpdate={handleTicketUpdate}
-              />
-            </div>
+        ) : (
+          <div className="divide-y divide-gray-100 dark:divide-slate-700">
+            {tickets.slice(0, 6).map(t => (
+              <div key={t.id} onClick={() => onNavigate('view-tickets')}
+                className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                  <span className="text-[11px] font-bold text-blue-600">#{t.id.slice(0,8).toUpperCase()}</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-slate-200 truncate">{t.title}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full
+                    ${t.priority === 'Critical' ? 'bg-red-100 text-red-700' :
+                      t.priority === 'High' ? 'bg-orange-100 text-orange-700' :
+                      t.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
+                    {t.priority}
+                  </span>
+                  <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full
+                    ${t.status === 'Open' ? 'bg-blue-100 text-blue-700' :
+                      t.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
+                      t.status === 'Pending' ? 'bg-purple-100 text-purple-700' :
+                      t.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
+                    {t.status}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
-    );
+    </div>
+  );
+}
+
+export default function ClientDashboard() {
+  const { user } = useAuth();
+  const { settings } = useSystemSettings();
+  const [activeSection, setActiveSection] = useState('dashboard');
+  const [stats, setStats]                 = useState(null);
+  const [tickets, setTickets]             = useState([]);
+  const [unread, setUnread]               = useState(0);
+  const [showNewTicket, setShowNewTicket] = useState(false);
+  const [search, setSearch]               = useState('');
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const [sRes, tRes, nRes] = await Promise.all([
+        getDashboardStats(),
+        getMyTickets({ page: 1, limit: 10 }),
+        getNotifications(),
+      ]);
+      setStats(sRes.data.data);
+      setTickets(tRes.data.data?.tickets || []);
+      setUnread(nRes.data.data?.unreadCount || 0);
+    } catch (e) { console.error(e); }
+  };
+
+  const handleNavigate = (section) => {
+    if (section === 'create-ticket') { setShowNewTicket(true); return; }
+    setActiveSection(section);
+  };
+
+  const renderView = () => {
+    switch (activeSection) {
+      case 'dashboard':           return <DashboardOverview stats={stats} tickets={tickets} onNavigate={handleNavigate} onNewTicket={() => setShowNewTicket(true)} />;
+      case 'view-tickets':        return <TicketListView onRefresh={loadData} />;
+      case 'update-ticket':       return <UpdateTicketView onRefresh={loadData} />;
+      case 'reopen-ticket':       return <ReopenTicketView onRefresh={loadData} />;
+      case 'close-ticket':        return <CloseTicketView onRefresh={loadData} />;
+      case 'track-status':        return <TrackStatusView />;
+      case 'assigned-staff':      return <AssignedStaffView />;
+      case 'resolution-timeline': return <TimelineView />;
+      case 'ticket-comments':     return <CommentsView />;
+      case 'chat-support':        return <ChatView />;
+      case 'notifications':       return <NotificationsView onRefresh={loadData} />;
+      case 'faqs':                return <KnowledgeView type="faqs" />;
+      case 'user-manuals':        return <KnowledgeView type="manuals" />;
+      case 'troubleshooting':     return <KnowledgeView type="troubleshooting" />;
+      default:                    return <DashboardOverview stats={stats} tickets={tickets} onNavigate={handleNavigate} onNewTicket={() => setShowNewTicket(true)} />;
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f6fa]">
-      {/* Sidebar */}
-      <ClientSidebar 
-        activeSection={activeSection}
-        onNavigate={handleNavigate}
-      />
+    <div className="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden">
+      <ClientSidebar activeSection={activeSection} onNavigate={handleNavigate} />
 
-      {/* Main Content */}
-      <div className="ml-64 min-h-screen flex flex-col">
-        <main className="flex-1 p-6">
-          {renderContent()}
+      <div className="flex-1 ml-64 flex flex-col overflow-hidden">
+        {/* Topbar */}
+        <header className="h-14 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 gap-4 shrink-0 shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 dark:text-slate-500">Client Portal</span>
+            <span className="text-gray-300 dark:text-slate-600">/</span>
+            <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{VIEW_LABELS[activeSection]}</span>
+          </div>
+          <div className="relative flex-1 max-w-sm mx-auto">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">🔍</span>
+            <input
+              className="w-full pl-8 pr-3 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm placeholder-gray-400 dark:text-slate-200 outline-none focus:border-blue-500 transition-all"
+              placeholder="Search tickets, articles..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <button onClick={() => setShowNewTicket(true)}
+              className="px-4 py-2 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5"
+              style={{ background: settings.primaryColor || '#2563eb' }}>
+              <span>+</span> New Ticket
+            </button>
+            <DarkModeToggle />
+            <div className="h-5 w-px bg-gray-200 dark:bg-slate-600" />
+            <ProfileDropdown />
+          </div>
+        </header>
+
+        {/* Main */}
+        <main className="flex-1 overflow-y-auto px-6 py-5 bg-gray-50 dark:bg-slate-900">
+          {renderView()}
         </main>
 
         {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>© 2024 SupportDesk Client Portal. All rights reserved.</span>
-            <div className="flex gap-5">
-              <a href="#" className="hover:text-blue-600 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-blue-600 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-blue-600 transition-colors">Help Center</a>
-            </div>
+        <footer className="h-9 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0">
+          <span className="text-xs text-gray-400 dark:text-slate-500 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+            {user?.full_name} · Client Account
+          </span>
+          <div className="flex gap-4">
+            <a href={settings.termsUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Terms</a>
+            <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Privacy</a>
+            <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">SLA Policy</a>
           </div>
         </footer>
       </div>
 
-      {/* New Ticket Modal */}
       <NewTicketModal
-        isOpen={isNewTicketModalOpen}
-        onClose={() => setIsNewTicketModalOpen(false)}
-        onSuccess={handleNewTicketSuccess}
+        isOpen={showNewTicket}
+        onClose={() => setShowNewTicket(false)}
+        onSuccess={() => { setShowNewTicket(false); loadData(); setActiveSection('view-tickets'); }}
       />
     </div>
   );

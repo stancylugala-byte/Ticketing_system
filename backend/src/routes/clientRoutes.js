@@ -2,9 +2,10 @@ const express = require('express');
 const router  = express.Router();
 const { Op }  = require('sequelize');
 const db      = require('../models');
-const { protect, requireRole } = require('../middleware/authMiddleware');
+const { protect, requireRole }    = require('../middleware/authMiddleware');
+const { createNotification }      = require('../services/notificationService');
 
-const { Ticket, TicketComment, TicketCategory, SlaPolicy, User, Notification } = db;
+const { Ticket, TicketComment, TicketCategory, SlaPolicy, User, Notification, Feedback } = db;
 
 // All client routes require authentication and Client role
 router.use(protect);
@@ -89,6 +90,15 @@ router.post('/tickets', async (req, res, next) => {
       status: 'Open',
       user_id: req.user.id,
     });
+
+    // Confirm creation to the client
+    createNotification({
+      userId:  req.user.id,
+      title:   'Ticket Created',
+      message: `Your ticket "${ticket.title}" (${priority} priority) has been submitted and is now in our queue.`,
+      type:    'success',
+    });
+
     res.status(201).json({ success: true, data: ticket });
   } catch (err) { next(err); }
 });
@@ -107,6 +117,23 @@ router.post('/tickets/:id/comments', async (req, res, next) => {
       is_internal: false,
     });
     res.status(201).json({ success: true, data: comment });
+  } catch (err) { next(err); }
+});
+
+// ── Update Ticket (client can add info) ───────────────────────────────────────
+router.patch('/tickets/:id', async (req, res, next) => {
+  try {
+    const ticket = await Ticket.findOne({ where: { id: req.params.id, user_id: req.user.id } });
+    if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
+    if (['Closed', 'Resolved'].includes(ticket.status)) {
+      return res.status(400).json({ success: false, message: 'Cannot update a resolved or closed ticket' });
+    }
+    const { title, description } = req.body;
+    const updates = {};
+    if (title?.trim()) updates.title = title.trim();
+    if (description?.trim()) updates.description = description.trim();
+    await ticket.update(updates);
+    res.json({ success: true, data: ticket });
   } catch (err) { next(err); }
 });
 
@@ -155,19 +182,84 @@ router.get('/notifications', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.patch('/notifications/mark-all-read', async (req, res, next) => {
+  try {
+    await Notification.update({ is_read: true }, { where: { user_id: req.user.id } });
+    res.json({ success: true, message: 'All notifications marked as read' });
+  } catch (err) { next(err); }
+});
+
 router.patch('/notifications/:id/read', async (req, res, next) => {
   try {
-    const notif = await Notification.findOne({ where: { notification_id: req.params.id, user_id: req.user.id } });
+    const notif = await Notification.findOne({ where: { id: req.params.id, user_id: req.user.id } });
     if (!notif) return res.status(404).json({ success: false, message: 'Notification not found' });
     await notif.update({ is_read: true });
     res.json({ success: true, data: notif });
   } catch (err) { next(err); }
 });
 
-router.patch('/notifications/mark-all-read', async (req, res, next) => {
+// ── Knowledge Base (public articles) ─────────────────────────────────────────
+router.get('/knowledge-base', async (req, res, next) => {
   try {
-    await Notification.update({ is_read: true }, { where: { user_id: req.user.id } });
-    res.json({ success: true, message: 'All notifications marked as read' });
+    const { search } = req.query;
+    const { Op } = require('sequelize');
+    const KnowledgeBase = db.KnowledgeBase;
+    if (!KnowledgeBase) return res.json({ success: true, data: [] });
+    const where = {};
+    if (search) {
+      where[Op.or] = [
+        { title: { [Op.like]: `%${search}%` } },
+        { content: { [Op.like]: `%${search}%` } },
+      ];
+    }
+    const articles = await KnowledgeBase.findAll({
+      where, order: [['created_at', 'DESC']], limit: 20,
+    });
+    res.json({ success: true, data: articles });
+  } catch (err) { next(err); }
+});
+
+// ── CSAT Feedback ─────────────────────────────────────────────────────────────
+// POST: client submits a star rating after ticket is resolved
+router.post('/tickets/:id/feedback', async (req, res, next) => {
+  try {
+    const ticket = await Ticket.findOne({ where: { id: req.params.id, user_id: req.user.id } });
+    if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
+    if (!['Resolved', 'Closed'].includes(ticket.status)) {
+      return res.status(400).json({ success: false, message: 'Feedback can only be submitted for resolved or closed tickets' });
+    }
+
+    const { rating, comment } = req.body;
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(422).json({ success: false, message: 'Rating must be between 1 and 5' });
+    }
+
+    // Upsert — allow updating feedback
+    const [feedback, created] = await Feedback.findOrCreate({
+      where: { ticket_id: req.params.id },
+      defaults: { ticket_id: req.params.id, user_id: req.user.id, rating, comments: comment || null },
+    });
+    if (!created) {
+      await feedback.update({ rating, comments: comment || null });
+    }
+
+    // Auto-close ticket when feedback is submitted
+    if (ticket.status === 'Resolved') {
+      await ticket.update({ status: 'Closed' });
+    }
+
+    res.status(created ? 201 : 200).json({ success: true, data: feedback });
+  } catch (err) { next(err); }
+});
+
+// GET: check if feedback already exists for a ticket
+router.get('/tickets/:id/feedback', async (req, res, next) => {
+  try {
+    const ticket = await Ticket.findOne({ where: { id: req.params.id, user_id: req.user.id } });
+    if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
+
+    const feedback = await Feedback.findOne({ where: { ticket_id: req.params.id } });
+    res.json({ success: true, data: feedback || null });
   } catch (err) { next(err); }
 });
 

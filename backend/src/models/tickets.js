@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     status: {
       type: DataTypes.ENUM('Open', 'In Progress', 'Pending', 'Resolved', 'Closed'),
@@ -38,15 +38,28 @@ module.exports = (sequelize, DataTypes) => {
     user_id: {
       type: DataTypes.UUID,
       allowNull: false
+    },
+    tag: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    created_by: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    resolved_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     tableName: 'tickets',
     timestamps: true,
-    underscored: true
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 
   Ticket.associate = (models) => {
-    Ticket.belongsTo(models.User,           { foreignKey: 'user_id',    as: 'client' });
+    Ticket.belongsTo(models.User,           { foreignKey: 'user_id',     as: 'client' });
     Ticket.belongsTo(models.User,           { foreignKey: 'assigned_to', as: 'assignee' });
     Ticket.belongsTo(models.TicketCategory, { foreignKey: 'category_id', as: 'category' });
     Ticket.belongsTo(models.SlaPolicy,      { foreignKey: 'sla_id',      as: 'slaPolicy' });

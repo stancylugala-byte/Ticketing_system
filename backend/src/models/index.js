@@ -20,16 +20,12 @@ if (config.use_env_variable) {
     config.username,
     config.password,
     {
-      host: config.host,
-      port: config.port,
-      dialect: config.dialect,
-      logging: config.logging || false,
-      pool: config.pool || {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-      }
+      host:           config.host,
+      port:           config.port,
+      dialect:        config.dialect,
+      logging:        config.logging || false,
+      dialectOptions: config.dialectOptions || {},
+      pool:           config.pool || { max: 5, min: 0, acquire: 60000, idle: 10000 }
     }
   );
 }

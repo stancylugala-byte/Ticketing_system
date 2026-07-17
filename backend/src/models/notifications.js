@@ -1,42 +1,36 @@
-const { DataTypes } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
   const Notification = sequelize.define('Notification', {
-    id: {
+    notification_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
     user_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,   // char(36) — matches User.id
       allowNull: false
     },
     title: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(150),
       allowNull: false
     },
     message: {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    type: {
-      type: DataTypes.ENUM('info', 'warning', 'success', 'error'),
-      defaultValue: 'info'
-    },
     is_read: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
-    },
-    link: {
-      type: DataTypes.STRING(500),
-      allowNull: true
     }
   }, {
     tableName: 'notifications',
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: false
   });
+
+  Notification.associate = (models) => {
+    Notification.belongsTo(models.User, { foreignKey: 'user_id', as: 'recipient' });
+  };
 
   return Notification;
 };
