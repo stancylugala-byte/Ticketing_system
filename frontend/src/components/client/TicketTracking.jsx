@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import TrackStatus from './tracking/TrackStatus';
 import ViewAssignedStaff from './tracking/ViewAssignedStaff';
 import ViewResolutionTimeline from './tracking/ViewResolutionTimeline';
@@ -15,9 +15,9 @@ export default function TicketTracking() {
   const ActiveComponent = SUB_VIEWS.find(v => v.id === activeView)?.component || TrackStatus;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Sub-navigation tabs */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 sticky top-0 z-10">
         <div className="px-6 py-4">
           <div className="flex items-center gap-1 overflow-x-auto">
             {SUB_VIEWS.map(view => (
@@ -27,7 +27,7 @@ export default function TicketTracking() {
                 className={`px-5 py-2.5 text-sm font-medium rounded-lg whitespace-nowrap transition-all
                   ${activeView === view.id
                     ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:bg-slate-700 hover:text-gray-900 dark:text-white'
                   }`}
               >
                 {view.label}

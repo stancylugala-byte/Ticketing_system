@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { getKbArticles } from '../../../api/clientApi';
 
 const TYPE_CONFIG = {
@@ -65,7 +65,7 @@ export default function KnowledgeView({ type = 'faqs' }) {
 
         {/* Search */}
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-sm pointer-events-none">🔍</span>
           <input
             className="w-full pl-9 pr-4 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 outline-none focus:border-blue-500 transition-all placeholder-gray-400"
             placeholder={cfg.searchPlaceholder}
@@ -80,10 +80,10 @@ export default function KnowledgeView({ type = 'faqs' }) {
             {[1,2,3,4].map(i => <div key={i} className="h-16 bg-gray-100 dark:bg-slate-700 rounded-xl animate-pulse" />)}
           </div>
         ) : articles.length === 0 ? (
-          <div className="flex flex-col items-center py-16 text-gray-400 gap-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
+          <div className="flex flex-col items-center py-16 text-gray-400 dark:text-slate-500 gap-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
             <span className="text-3xl">{cfg.icon}</span>
             <p className="text-sm font-medium">{cfg.emptyMsg}</p>
-            {search && <p className="text-xs text-gray-400">Try a different search term.</p>}
+            {search && <p className="text-xs text-gray-400 dark:text-slate-500">Try a different search term.</p>}
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -103,7 +103,7 @@ export default function KnowledgeView({ type = 'faqs' }) {
                     <p className="text-sm font-semibold text-gray-800 dark:text-slate-200 truncate">{a.title}</p>
                     <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5 line-clamp-2">{a.content?.slice(0, 100)}...</p>
                   </div>
-                  <svg className={`w-4 h-4 text-gray-400 transition-transform shrink-0 mt-1 ${selected?.article_id === a.article_id ? 'rotate-90' : ''}`}
+                  <svg className={`w-4 h-4 text-gray-400 dark:text-slate-500 transition-transform shrink-0 mt-1 ${selected?.article_id === a.article_id ? 'rotate-90' : ''}`}
                     fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
@@ -120,7 +120,7 @@ export default function KnowledgeView({ type = 'faqs' }) {
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 shrink-0">
             <h3 className="text-sm font-bold text-gray-900 dark:text-slate-100 pr-4 truncate">{selected.title}</h3>
             <button onClick={() => setSelected(null)}
-              className="text-gray-400 hover:text-gray-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors shrink-0">
+              className="text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors shrink-0">
               ✕
             </button>
           </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { createTicket, getCategories } from '../../../api/clientApi';
 
 const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
@@ -45,7 +45,7 @@ export default function CreateTicketView({ onRefresh }) {
           <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1.5">Subject <span className="text-red-500">*</span></label>
           <input value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))} placeholder="Brief description of your issue"
             className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-800 dark:text-slate-100 placeholder-gray-400" maxLength={200} />
-          <p className="text-xs text-gray-400 mt-1">{form.title.length}/200</p>
+          <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{form.title.length}/200</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -75,7 +75,7 @@ export default function CreateTicketView({ onRefresh }) {
           <textarea value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} rows={6}
             placeholder="Provide detailed information about your issue — steps to reproduce, error messages, expected vs actual behaviour..."
             className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-800 dark:text-slate-100 resize-none placeholder-gray-400" maxLength={2000} />
-          <p className="text-xs text-gray-400 mt-1">{form.description.length}/2000</p>
+          <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{form.description.length}/2000</p>
         </div>
 
         <div className="flex gap-3 justify-end pt-2">

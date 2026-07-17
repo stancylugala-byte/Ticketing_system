@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSystemSettings } from '../context/SystemSettingsContext';
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Admin card */}
-        <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5">
+        <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800/5 border border-white/10 flex items-center gap-2.5">
           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
             {getInitials(user?.full_name)}
           </div>
@@ -158,12 +158,12 @@ export default function AdminDashboard() {
                   className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all
                     ${activeView === item.key
                       ? 'text-white'
-                      : 'text-white/55 hover:bg-white/8 hover:text-white'
+                      : 'text-white/55 hover:bg-white dark:bg-slate-800/8 hover:text-white'
                     }`}
                 >
                   <span className="shrink-0 text-sm">{item.icon}</span>
                   <span className="truncate">{item.label}</span>
-                  {activeView === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white/60 rounded-full shrink-0" />}
+                  {activeView === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white dark:bg-slate-800/60 rounded-full shrink-0" />}
                 </button>
               ))}
             </div>
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
             <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{VIEW_LABELS[activeView]}</span>
           </div>
           <div className="relative flex-1 max-w-sm mx-auto">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">🔍</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-xs pointer-events-none">🔍</span>
             <input
               className="w-full pl-8 pr-3 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm placeholder-gray-400 dark:text-slate-200 outline-none focus:border-red-400 transition-all"
               placeholder="Search platform..."
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
 
         {/* Footer */}
         <footer className="h-9 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center justify-between px-5 shrink-0">
-          <div className="flex items-center gap-3 text-xs text-gray-400">
+          <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-slate-500">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
               System Root Admin Session

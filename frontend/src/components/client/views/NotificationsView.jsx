@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { getNotifications, markNotifRead, markAllNotifsRead } from '../../../api/clientApi';
 
 function timeAgo(d) {
@@ -55,7 +55,7 @@ export default function NotificationsView({ onRefresh }) {
       {loading ? (
         <div className="flex flex-col gap-3">{[1,2,3].map(i => <div key={i} className="h-16 bg-gray-100 dark:bg-slate-700 rounded-xl animate-pulse" />)}</div>
       ) : notifications.length === 0 ? (
-        <div className="flex flex-col items-center py-16 text-gray-400 gap-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
+        <div className="flex flex-col items-center py-16 text-gray-400 dark:text-slate-500 gap-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
           <span className="text-3xl">🔔</span><p className="text-sm">No notifications yet</p>
         </div>
       ) : (
@@ -77,7 +77,7 @@ export default function NotificationsView({ onRefresh }) {
                   {!n.is_read && <span className="w-2.5 h-2.5 bg-blue-500 rounded-full shrink-0 mt-1" />}
                 </div>
                 <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5 leading-relaxed">{n.message}</p>
-                <p className="text-[10px] text-gray-400 mt-1.5">{timeAgo(n.created_at)}</p>
+                <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-1.5">{timeAgo(n.created_at)}</p>
               </div>
             </div>
           ))}

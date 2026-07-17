@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSystemSettings } from '../context/SystemSettingsContext';
 import ClientSidebar        from '../components/client/ClientSidebar';
@@ -75,9 +75,9 @@ function DashboardOverview({ stats, tickets, onNavigate, onNewTicket }) {
       <div className="grid grid-cols-4 gap-3">
         {[
           { label: 'Create Ticket',   key: 'create-ticket',   icon: '➕', color: 'bg-blue-600 hover:bg-blue-700 text-white' },
-          { label: 'View Tickets',    key: 'view-tickets',    icon: '🎫', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 text-gray-700 dark:text-slate-200' },
-          { label: 'Track Status',    key: 'track-status',    icon: '📊', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 text-gray-700 dark:text-slate-200' },
-          { label: 'Notifications',   key: 'notifications',   icon: '🔔', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 text-gray-700 dark:text-slate-200' },
+          { label: 'View Tickets',    key: 'view-tickets',    icon: '🎫', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-200' },
+          { label: 'Track Status',    key: 'track-status',    icon: '📊', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-200' },
+          { label: 'Notifications',   key: 'notifications',   icon: '🔔', color: 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-200' },
         ].map(a => (
           <button key={a.key} onClick={() => onNavigate(a.key)}
             className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm ${a.color}`}>
@@ -94,7 +94,7 @@ function DashboardOverview({ stats, tickets, onNavigate, onNewTicket }) {
             className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">View All →</button>
         </div>
         {tickets.length === 0 ? (
-          <div className="flex flex-col items-center py-12 text-gray-400 gap-2">
+          <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2">
             <span className="text-3xl">📭</span>
             <p className="text-sm font-medium">No tickets yet</p>
             <button onClick={onNewTicket}
@@ -122,7 +122,7 @@ function DashboardOverview({ stats, tickets, onNavigate, onNewTicket }) {
                     ${t.status === 'Open' ? 'bg-blue-100 text-blue-700' :
                       t.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
                       t.status === 'Pending' ? 'bg-purple-100 text-purple-700' :
-                      t.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
+                      t.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'}`}>
                     {t.status}
                   </span>
                 </div>
@@ -200,7 +200,7 @@ export default function ClientDashboard() {
             <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{VIEW_LABELS[activeSection]}</span>
           </div>
           <div className="relative flex-1 max-w-sm mx-auto">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">🔍</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-xs pointer-events-none">🔍</span>
             <input
               className="w-full pl-8 pr-3 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm placeholder-gray-400 dark:text-slate-200 outline-none focus:border-blue-500 transition-all"
               placeholder="Search tickets, articles..."
@@ -232,9 +232,9 @@ export default function ClientDashboard() {
             {user?.full_name} · Client Account
           </span>
           <div className="flex gap-4">
-            <a href={settings.termsUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Terms</a>
-            <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Privacy</a>
-            <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">SLA Policy</a>
+            <a href={settings.termsUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Terms</a>
+            <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Privacy</a>
+            <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">SLA Policy</a>
           </div>
         </footer>
       </div>

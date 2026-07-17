@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+﻿import { useState, useRef } from 'react';
 import { useSystemSettings } from '../../context/SystemSettingsContext';
 
 const COLOR_PRESETS = [
@@ -187,7 +187,7 @@ export default function SystemSettingsView() {
                   <div className="relative">
                     <input type="color" value={local[c.field]}
                       onChange={e => handleChange(c.field, e.target.value)}
-                      className="w-10 h-10 rounded-lg border-2 border-gray-200 dark:border-slate-600 cursor-pointer p-0.5 bg-white"
+                      className="w-10 h-10 rounded-lg border-2 border-gray-200 dark:border-slate-600 cursor-pointer p-0.5 bg-white dark:bg-slate-800"
                     />
                   </div>
                   <input type="text" value={local[c.field]}
@@ -224,10 +224,10 @@ export default function SystemSettingsView() {
                 {/* Mock header + content */}
                 <div className="flex-1 flex flex-col">
                   <div className="h-8 flex items-center px-3 justify-between" style={{ background: local.headerBg }}>
-                    <span className="text-[9px] font-semibold text-gray-600">Management Portal</span>
+                    <span className="text-[9px] font-semibold text-gray-600 dark:text-slate-300">Management Portal</span>
                     <div className="w-16 h-4 rounded-full" style={{ background: local.primaryColor, opacity: 0.9 }} />
                   </div>
-                  <div className="flex-1 bg-gray-50 p-2 flex gap-2">
+                  <div className="flex-1 bg-gray-50 dark:bg-slate-900 p-2 flex gap-2">
                     {[local.primaryColor, local.accentColor, '#e5e7eb'].map((bg, i) => (
                       <div key={i} className="flex-1 rounded h-full" style={{ background: bg, opacity: i === 2 ? 1 : 0.15 }} />
                     ))}

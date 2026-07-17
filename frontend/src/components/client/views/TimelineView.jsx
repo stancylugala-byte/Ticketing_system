@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { getMyTickets } from '../../../api/clientApi';
 
 function fmtDate(d) { return d ? new Date(d).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—'; }
@@ -59,7 +59,7 @@ export default function TimelineView() {
                   </div>
                   <div className="flex-1 pt-1.5 pb-4 border-b border-gray-100 dark:border-slate-700 last:border-0">
                     <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">{ev.label}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{fmtDate(ev.time)}</p>
+                    <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">{fmtDate(ev.time)}</p>
                   </div>
                 </div>
               ))}

@@ -150,6 +150,23 @@ const assignTicket = async (ticketId, assigneeId) => {
   if (!ticket) { const e = new Error('Ticket not found'); e.status = 404; throw e; }
 
   await ticket.update({ assigned_to: assigneeId, status: 'In Progress' });
+
+  // Notify the assigned developer
+  createNotification({
+    userId:  assigneeId,
+    title:   'Ticket Escalated to You',
+    message: `Ticket "${ticket.title}" has been escalated to you for a code-level fix. Please review it in your developer dashboard.`,
+    type:    'warning',
+  });
+
+  // Notify the client that their ticket is being worked on
+  createNotification({
+    userId:  ticket.user_id,
+    title:   'Ticket Escalated',
+    message: `Your ticket "${ticket.title}" has been escalated to our engineering team for a code-level fix.`,
+    type:    'info',
+  });
+
   return getTicketById(ticketId);
 };
 

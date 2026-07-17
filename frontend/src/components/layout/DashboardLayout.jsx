@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemSettings } from '../../context/SystemSettingsContext';
@@ -61,7 +61,7 @@ function DevSidebar({ activeView, onSelect, settings }) {
       </div>
 
       {/* Dev user card */}
-      <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2 shrink-0">
+      <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800/5 border border-white/10 flex items-center gap-2 shrink-0">
         <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
           style={{ background: settings.primaryColor }}>
           {getInitials(user?.full_name)}
@@ -96,7 +96,7 @@ function DevSidebar({ activeView, onSelect, settings }) {
                   return (
                     <button key={item} onClick={() => onSelect(viewId)}
                       className={`flex items-center gap-2 w-full px-3 py-1.5 rounded-lg text-xs transition-all ${
-                        isActive ? 'text-white font-semibold bg-white/15' : 'text-white/50 hover:text-white hover:bg-white/8'
+                        isActive ? 'text-white font-semibold bg-white dark:bg-slate-800/15' : 'text-white/50 hover:text-white hover:bg-white dark:bg-slate-800/8'
                       }`}
                       style={isActive ? { background: `${settings.primaryColor}30` } : {}}
                     >
@@ -115,7 +115,7 @@ function DevSidebar({ activeView, onSelect, settings }) {
       {/* Bottom */}
       <div className="px-2 pb-4 pt-2 border-t border-white/10 space-y-0.5 shrink-0">
         <button onClick={() => navigate('/profile')}
-          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-xs text-white/50 hover:text-white hover:bg-white/8 transition-all">
+          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-xs text-white/50 hover:text-white hover:bg-white dark:bg-slate-800/8 transition-all">
           <FiUser size={13} /> Profile
         </button>
         <button onClick={() => { logout(); navigate('/login'); }}

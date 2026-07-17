@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import DarkModeToggle from '../components/DarkModeToggle';
 
 const features = [
@@ -143,8 +143,8 @@ export default function LandingPage() {
                 <div className="grid grid-cols-2 gap-3 w-full">
                   {['bg-teal-400','bg-blue-400','bg-purple-400','bg-indigo-400'].map((c,i) => (
                     <div key={i} className={`${c} bg-opacity-20 border border-white/10 rounded-lg p-3 h-20 flex flex-col justify-between`}>
-                      <div className="h-1.5 bg-white/30 rounded w-3/4" />
-                      <div className="h-8 bg-white/20 rounded" />
+                      <div className="h-1.5 bg-white dark:bg-slate-800/30 rounded w-3/4" />
+                      <div className="h-8 bg-white dark:bg-slate-800/20 rounded" />
                     </div>
                   ))}
                 </div>
@@ -319,7 +319,7 @@ export default function LandingPage() {
               <p className="text-white/40 text-xs leading-relaxed mb-4">Enterprise-grade incident management and support ticketing for modern teams.</p>
               <div className="flex gap-3">
                 {['T','in','G'].map(s => (
-                  <div key={s} className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-white/60 text-xs font-bold hover:bg-white/20 cursor-pointer transition-colors">{s}</div>
+                  <div key={s} className="w-8 h-8 bg-white dark:bg-slate-800/10 rounded-lg flex items-center justify-center text-white/60 text-xs font-bold hover:bg-white dark:bg-slate-800/20 cursor-pointer transition-colors">{s}</div>
                 ))}
               </div>
             </div>

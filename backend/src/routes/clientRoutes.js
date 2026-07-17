@@ -1,11 +1,33 @@
 const express = require('express');
 const router  = express.Router();
 const { Op }  = require('sequelize');
+const path    = require('path');
+const multer  = require('multer');
 const db      = require('../models');
 const { protect, requireRole }    = require('../middleware/authMiddleware');
 const { createNotification }      = require('../services/notificationService');
 
-const { Ticket, TicketComment, TicketCategory, SlaPolicy, User, Notification, Feedback } = db;
+const { Ticket, TicketComment, TicketCategory, SlaPolicy, User, Notification, Feedback, Attachment } = db;
+
+// ── Multer config — images only, max 5MB each, max 5 files ───────────────────
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '../../uploads/attachments'),
+  filename: (req, file, cb) => {
+    const safe = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    cb(null, `${Date.now()}-${req.user?.id?.slice(0,8) || 'u'}-${safe}`);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowed = ['image/jpeg','image/png','image/gif','image/webp','image/svg+xml'];
+  allowed.includes(file.mimetype) ? cb(null, true) : cb(new Error('Only image files are allowed'));
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024, files: 5 },
+});
 
 // All client routes require authentication and Client role
 router.use(protect);
@@ -78,17 +100,18 @@ router.get('/tickets/:id', async (req, res, next) => {
 // ── Create Ticket ─────────────────────────────────────────────────────────────
 router.post('/tickets', async (req, res, next) => {
   try {
-    const { title, description, category_id, priority = 'Medium' } = req.body;
+    const { title, description, category_id, priority = 'Medium', tag } = req.body;
     if (!title?.trim()) return res.status(422).json({ success: false, message: 'Title is required' });
     if (!description?.trim()) return res.status(422).json({ success: false, message: 'Description is required' });
 
     const ticket = await Ticket.create({
-      title: title.trim(),
+      title:       title.trim(),
       description: description.trim(),
       category_id: category_id || null,
       priority,
-      status: 'Open',
-      user_id: req.user.id,
+      status:      'Open',
+      user_id:     req.user.id,
+      tag:         tag ? tag.trim().slice(0, 100) : null,
     });
 
     // Confirm creation to the client
@@ -260,6 +283,45 @@ router.get('/tickets/:id/feedback', async (req, res, next) => {
 
     const feedback = await Feedback.findOne({ where: { ticket_id: req.params.id } });
     res.json({ success: true, data: feedback || null });
+  } catch (err) { next(err); }
+});
+
+// ── Upload attachments to a ticket ───────────────────────────────────────────
+router.post('/tickets/:id/attachments', upload.array('files', 5), async (req, res, next) => {
+  try {
+    const ticket = await Ticket.findOne({ where: { id: req.params.id, user_id: req.user.id } });
+    if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
+    if (!req.files || req.files.length === 0) {
+      return res.status(422).json({ success: false, message: 'No files uploaded' });
+    }
+
+    const saved = await Promise.all(req.files.map(f =>
+      Attachment.create({
+        ticket_id:   req.params.id,
+        user_id:     req.user.id,
+        file_name:   f.originalname,
+        file_path:   `/uploads/attachments/${f.filename}`,
+        file_size:   f.size,
+        mime_type:   f.mimetype,
+        uploaded_at: new Date(),
+      })
+    ));
+
+    res.status(201).json({ success: true, data: saved });
+  } catch (err) {
+    if (err.code === 'LIMIT_FILE_SIZE')  return res.status(422).json({ success: false, message: 'File too large. Max 5MB per image.' });
+    if (err.code === 'LIMIT_FILE_COUNT') return res.status(422).json({ success: false, message: 'Too many files. Max 5 images.' });
+    next(err);
+  }
+});
+
+// ── Get attachments for a ticket ──────────────────────────────────────────────
+router.get('/tickets/:id/attachments', async (req, res, next) => {
+  try {
+    const ticket = await Ticket.findOne({ where: { id: req.params.id, user_id: req.user.id } });
+    if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
+    const attachments = await Attachment.findAll({ where: { ticket_id: req.params.id }, order: [['uploaded_at', 'ASC']] });
+    res.json({ success: true, data: attachments });
   } catch (err) { next(err); }
 });
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
 // Mock notifications
 const INITIAL_NOTIFICATIONS = [
@@ -113,10 +113,10 @@ export default function Notifications() {
       className={`group cursor-pointer transition-all duration-300
         ${!notification.isRead ? 'mb-5' : 'mb-4'}`}
     >
-      <div className={`relative bg-white border-2 rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden
+      <div className={`relative bg-white dark:bg-slate-800 border-2 rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden
         ${!notification.isRead 
           ? 'border-blue-300 hover:border-blue-400' 
-          : 'border-gray-200 hover:border-gray-300'}`}
+          : 'border-gray-200 dark:border-slate-700 hover:border-gray-300'}`}
       >
         {/* Unread indicator stripe */}
         {!notification.isRead && (
@@ -133,7 +133,7 @@ export default function Notifications() {
             {/* Content */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-3 mb-3">
-                <h4 className={`text-base font-bold leading-tight ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
+                <h4 className={`text-base font-bold leading-tight ${!notification.isRead ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-slate-200'}`}>
                   {notification.title}
                 </h4>
                 {!notification.isRead && (
@@ -146,12 +146,12 @@ export default function Notifications() {
                 )}
               </div>
               
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed mb-4">
                 {notification.message}
               </p>
               
               <div className="flex items-center justify-between gap-4">
-                <span className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
+                <span className="text-xs text-gray-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -184,11 +184,11 @@ export default function Notifications() {
       {/* Compact Header */}
       <div className="mb-6">
         <div className="relative overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-700 to-indigo-800 rounded-2xl shadow-xl p-6">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full -mr-24 -mt-24"></div>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white dark:bg-slate-800 opacity-5 rounded-full -mr-24 -mt-24"></div>
           <div className="relative">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-xl backdrop-blur-sm">
+                <div className="w-10 h-10 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center text-xl backdrop-blur-sm">
                   🔔
                 </div>
                 <div>
@@ -198,12 +198,12 @@ export default function Notifications() {
               </div>
               {unreadCount > 0 && (
                 <div className="flex flex-col items-end gap-2">
-                  <span className="px-4 py-2 bg-white text-blue-600 text-base font-bold rounded-xl shadow-lg">
+                  <span className="px-4 py-2 bg-white dark:bg-slate-800 text-blue-600 text-base font-bold rounded-xl shadow-lg">
                     {unreadCount} unread
                   </span>
                   <button
                     onClick={handleMarkAllAsRead}
-                    className="px-4 py-1.5 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white border-opacity-30"
+                    className="px-4 py-1.5 bg-white dark:bg-slate-800 bg-opacity-20 hover:bg-opacity-30 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white border-opacity-30"
                   >
                     Mark all as read
                   </button>
@@ -221,8 +221,8 @@ export default function Notifications() {
             <div className="w-24 h-24 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-3xl flex items-center justify-center text-5xl mb-4 shadow-lg">
               🔔
             </div>
-            <p className="text-xl font-bold text-gray-600 mb-2">No notifications</p>
-            <p className="text-sm text-gray-400">You're all caught up! Check back later for updates</p>
+            <p className="text-xl font-bold text-gray-600 dark:text-slate-300 mb-2">No notifications</p>
+            <p className="text-sm text-gray-400 dark:text-slate-500">You're all caught up! Check back later for updates</p>
           </div>
         ) : (
           <div className="h-full overflow-y-auto pr-2">

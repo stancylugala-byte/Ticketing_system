@@ -73,31 +73,31 @@ export default function SupportDashboard({ activeModule }) {
     <div className="ml-[240px] h-screen flex flex-col bg-gray-50 dark:bg-slate-900 overflow-hidden">
 
       {/* Top bar */}
-      <header className="h-14 bg-white border-b border-gray-200 flex items-center px-6 gap-4 shrink-0 shadow-sm">
+      <header className="h-14 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center px-6 gap-4 shrink-0 shadow-sm">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-gray-400">Support Officer</span>
+          <span className="text-xs text-gray-400 dark:text-slate-500">Support Officer</span>
           <span className="text-gray-300">/</span>
-          <span className="text-sm font-semibold text-gray-800">{VIEW_LABELS[activeModule] || 'Dashboard'}</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{VIEW_LABELS[activeModule] || 'Dashboard'}</span>
         </div>
 
         {/* Search */}
         <div className="relative flex-1 max-w-md mx-auto">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">üîç</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-xs pointer-events-none">??</span>
           <input
-            className="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm placeholder-gray-400 outline-none focus:border-blue-500 focus:bg-white transition-all"
+            className="w-full pl-8 pr-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-sm placeholder-gray-400 outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 transition-all"
             placeholder="Search tickets..."
             value={query}
             onChange={e => setQuery(e.target.value)}
             onBlur={() => setTimeout(() => setShowResults(false), 200)}
           />
           {showResults && results.length > 0 && (
-            <ul className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto">
+            <ul className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto">
               {results.map(t => (
                 <li
                   key={t.id}
                   onMouseDown={() => handleTicketSelect(t)}
-                  className="flex items-center gap-2 px-4 py-2.5 cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-none"
+                  className="flex items-center gap-2 px-4 py-2.5 cursor-pointer hover:bg-blue-50 border-b border-gray-100 dark:border-slate-700 last:border-none"
                 >
                   <span className="text-[10px] font-bold text-blue-600 w-20 shrink-0">#{t.id.slice(0,8).toUpperCase()}</span>
                   <span className="flex-1 text-sm text-gray-800 truncate">{t.title}</span>
@@ -136,19 +136,19 @@ export default function SupportDashboard({ activeModule }) {
       </main>
 
       {/* Footer */}
-      <footer className="h-10 bg-white border-t border-gray-200 flex items-center justify-between px-6 shrink-0">
-        <div className="flex items-center gap-3 text-xs text-gray-400">
+      <footer className="h-10 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0">
+        <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-slate-500">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-            {displayName} ¬∑ Online
+            {displayName} ∑ Online
           </span>
           <span className="text-gray-200">|</span>
-          <span>¬© 2026 JavaPA Software Limited.</span>
+          <span>© 2026 JavaPA Software Limited.</span>
         </div>
         <div className="flex gap-4">
-          <a href={settings.termsUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Terms</a>
-          <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">Privacy</a>
-          <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 hover:text-blue-600 transition-colors">SLA Policy</a>
+          <a href={settings.termsUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Terms</a>
+          <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Privacy</a>
+          <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">SLA Policy</a>
         </div>
       </footer>
     </div>

@@ -1,4 +1,4 @@
-import { useTheme } from '../context/ThemeContext';
+﻿import { useTheme } from '../context/ThemeContext';
 
 export default function DarkModeToggle({ className = '' }) {
   const { dark, toggle } = useTheme();
@@ -11,7 +11,7 @@ export default function DarkModeToggle({ className = '' }) {
       className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-200 shrink-0 cursor-pointer
         ${dark
           ? 'bg-slate-700 border-slate-600 text-yellow-400 hover:bg-slate-600'
-          : 'bg-gray-100 border-gray-200 text-gray-600 hover:bg-gray-200'
+          : 'bg-gray-100 dark:bg-slate-700 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200'
         } ${className}`}
     >
       {dark ? (

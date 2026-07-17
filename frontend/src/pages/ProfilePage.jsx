@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateProfile } from '../api/auth';
@@ -114,9 +114,9 @@ export default function ProfilePage() {
               {getInitials(user?.full_name)}
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">{user?.full_name}</h2>
-              <p className="text-sm text-gray-500">{user?.email}</p>
-              <span className={`inline-flex items-center gap-1.5 mt-1 text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_COLORS[user?.role] || 'bg-gray-100 text-gray-600'}`}>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">{user?.full_name}</h2>
+              <p className="text-sm text-gray-500 dark:text-slate-400">{user?.email}</p>
+              <span className={`inline-flex items-center gap-1.5 mt-1 text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_COLORS[user?.role] || 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'}`}>
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -126,7 +126,7 @@ export default function ProfilePage() {
           </div>
           <button
             onClick={handleDashboard}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-blue-300 hover:text-blue-600 transition-all"
+            className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:bg-slate-900 hover:border-blue-300 hover:text-blue-600 transition-all"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -154,7 +154,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-2 gap-4">
               {/* Full Name — editable */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">Full Name</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-slate-300 mb-1.5">Full Name</label>
                 <input
                   type="text" value={fullName} onChange={e => setFullName(e.target.value)}
                   placeholder="Your full name" className={inputCls}
@@ -163,20 +163,20 @@ export default function ProfilePage() {
 
               {/* Email — read-only */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">Email</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-slate-300 mb-1.5">Email</label>
                 <input type="email" value={user?.email || ''} readOnly className={readonlyCls} />
-                <p className="text-xs text-gray-400 mt-1">Cannot change email</p>
+                <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Cannot change email</p>
               </div>
 
               {/* Role — read-only */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">Role</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-slate-300 mb-1.5">Role</label>
                 <input type="text" value={user?.role || ''} readOnly className={readonlyCls} />
               </div>
 
               {/* Member since — read-only */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">Member Since</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-slate-300 mb-1.5">Member Since</label>
                 <input
                   type="text"
                   value={user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}
@@ -194,7 +194,7 @@ export default function ProfilePage() {
               <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 mb-4">Security</h3>
               <div className="flex flex-col gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1.5">Current Password</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-slate-300 mb-1.5">Current Password</label>
                   <div className="relative">
                     <input
                       type={showCurrent ? 'text' : 'password'}
@@ -202,7 +202,7 @@ export default function ProfilePage() {
                       placeholder="Enter current password" className={inputCls}
                     />
                     <button type="button" onClick={() => setShowCurrent(v => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:text-slate-300">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         {showCurrent
                           ? <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1.5">New Password</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-slate-300 mb-1.5">New Password</label>
                   <div className="relative">
                     <input
                       type={showNew ? 'text' : 'password'}
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                       placeholder="Enter new password" className={inputCls}
                     />
                     <button type="button" onClick={() => setShowNew(v => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:text-slate-300">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         {showNew
                           ? <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1.5">Confirm New Password</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-slate-300 mb-1.5">Confirm New Password</label>
                   <input
                     type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)}
                     placeholder="Confirm new password" className={inputCls}
@@ -255,10 +255,10 @@ export default function ProfilePage() {
                 >
                   Log out
                 </button>
-                <div className="mt-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                  <p className="text-xs font-semibold text-gray-600 mb-1">Session Info</p>
-                  <p className="text-xs text-gray-400">Role: <span className="font-medium text-gray-600">{user?.role}</span></p>
-                  <p className="text-xs text-gray-400 mt-0.5">Status: <span className="text-emerald-600 font-medium">● Active</span></p>
+                <div className="mt-2 p-3 bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700">
+                  <p className="text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Session Info</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500">Role: <span className="font-medium text-gray-600 dark:text-slate-300">{user?.role}</span></p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">Status: <span className="text-emerald-600 font-medium">● Active</span></p>
                 </div>
               </div>
             </div>

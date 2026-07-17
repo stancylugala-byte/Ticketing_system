@@ -10,35 +10,35 @@ const NAV = [
   {
     section: 'Ticket Management',
     items: [
-      { key: 'create-ticket',    label: 'Create Ticket',              icon: '➕' },
-      { key: 'view-tickets',     label: 'View Tickets',               icon: '🎫' },
-      { key: 'update-ticket',    label: 'Update Ticket',              icon: '✏️' },
-      { key: 'reopen-ticket',    label: 'Reopen Ticket',              icon: '↩️' },
-      { key: 'close-ticket',     label: 'Close Ticket Confirmation',  icon: '✅' },
+      { key: 'create-ticket',    label: 'Create Ticket',              icon: '?' },
+      { key: 'view-tickets',     label: 'View Tickets',               icon: '??' },
+      { key: 'update-ticket',    label: 'Update Ticket',              icon: '??' },
+      { key: 'reopen-ticket',    label: 'Reopen Ticket',              icon: '??' },
+      { key: 'close-ticket',     label: 'Close Ticket Confirmation',  icon: '?' },
     ],
   },
   {
     section: 'Ticket Tracking',
     items: [
-      { key: 'track-status',     label: 'Track Status',               icon: '📊' },
-      { key: 'assigned-staff',   label: 'View Assigned Staff',        icon: '👤' },
-      { key: 'resolution-timeline', label: 'View Resolution Timeline', icon: '📅' },
+      { key: 'track-status',     label: 'Track Status',               icon: '??' },
+      { key: 'assigned-staff',   label: 'View Assigned Staff',        icon: '??' },
+      { key: 'resolution-timeline', label: 'View Resolution Timeline', icon: '??' },
     ],
   },
   {
     section: 'Communication Center',
     items: [
-      { key: 'ticket-comments',  label: 'Ticket Comments',            icon: '💬' },
-      { key: 'chat-support',     label: 'Chat with Support',          icon: '🗨️' },
-      { key: 'notifications',    label: 'Notifications',              icon: '🔔' },
+      { key: 'ticket-comments',  label: 'Ticket Comments',            icon: '??' },
+      { key: 'chat-support',     label: 'Chat with Support',          icon: '???' },
+      { key: 'notifications',    label: 'Notifications',              icon: '??' },
     ],
   },
   {
     section: 'Knowledge',
     items: [
-      { key: 'faqs',             label: 'FAQs',                       icon: '❓' },
-      { key: 'user-manuals',     label: 'User Manuals',               icon: '📖' },
-      { key: 'troubleshooting',  label: 'Troubleshooting Guides',     icon: '🔧' },
+      { key: 'faqs',             label: 'FAQs',                       icon: '?' },
+      { key: 'user-manuals',     label: 'User Manuals',               icon: '??' },
+      { key: 'troubleshooting',  label: 'Troubleshooting Guides',     icon: '??' },
     ],
   },
 ];
@@ -73,7 +73,7 @@ export default function ClientSidebar({ activeSection, onNavigate }) {
       </div>
 
       {/* User card */}
-      <div className="mx-3 mt-3 mb-2 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 shrink-0">
+      <div className="mx-3 mt-3 mb-2 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800/5 border border-white/10 flex items-center gap-2.5 shrink-0">
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
           style={{ background: settings.primaryColor }}>
           {getInitials(user?.full_name)}
@@ -92,11 +92,11 @@ export default function ClientSidebar({ activeSection, onNavigate }) {
           onClick={() => onNavigate('dashboard')}
           style={activeSection === 'dashboard' ? { background: settings.primaryColor } : {}}
           className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all mb-1
-            ${activeSection === 'dashboard' ? 'text-white' : 'text-white/55 hover:bg-white/8 hover:text-white'}`}
+            ${activeSection === 'dashboard' ? 'text-white' : 'text-white/55 hover:bg-white dark:bg-slate-800/8 hover:text-white'}`}
         >
-          <span className="text-sm shrink-0">🏠</span>
+          <span className="text-sm shrink-0">??</span>
           <span>Dashboard Overview</span>
-          {activeSection === 'dashboard' && <span className="ml-auto w-1.5 h-1.5 bg-white/60 rounded-full shrink-0" />}
+          {activeSection === 'dashboard' && <span className="ml-auto w-1.5 h-1.5 bg-white dark:bg-slate-800/60 rounded-full shrink-0" />}
         </button>
 
         {NAV.map(group => (
@@ -110,11 +110,11 @@ export default function ClientSidebar({ activeSection, onNavigate }) {
                 onClick={() => onNavigate(item.key)}
                 style={activeSection === item.key ? { background: settings.primaryColor } : {}}
                 className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all
-                  ${activeSection === item.key ? 'text-white' : 'text-white/55 hover:bg-white/8 hover:text-white'}`}
+                  ${activeSection === item.key ? 'text-white' : 'text-white/55 hover:bg-white dark:bg-slate-800/8 hover:text-white'}`}
               >
                 <span className="shrink-0 text-sm">{item.icon}</span>
                 <span className="truncate">{item.label}</span>
-                {activeSection === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white/60 rounded-full shrink-0" />}
+                {activeSection === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white dark:bg-slate-800/60 rounded-full shrink-0" />}
               </button>
             ))}
           </div>
@@ -125,7 +125,7 @@ export default function ClientSidebar({ activeSection, onNavigate }) {
       <div className="px-2 pb-4 pt-2 border-t border-white/10 flex flex-col gap-0.5 shrink-0">
         <button
           onClick={() => navigate('/profile')}
-          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white/8 hover:text-white transition-all"
+          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white dark:bg-slate-800/8 hover:text-white transition-all"
         >
           <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />

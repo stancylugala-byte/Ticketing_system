@@ -1,4 +1,4 @@
-export default function ClientStatsCards({ stats }) {
+﻿export default function ClientStatsCards({ stats }) {
   const cards = [
     {
       value: stats?.totalTickets ?? '—',
@@ -41,7 +41,7 @@ export default function ClientStatsCards({ stats }) {
         {[...Array(4)].map((_, i) => (
           <div 
             key={i} 
-            className="bg-white rounded-xl border border-gray-100 p-5 h-24 animate-pulse"
+            className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-5 h-24 animate-pulse"
           >
             <div className="h-4 bg-gray-200 rounded w-3/4 mb-3" />
             <div className="h-8 bg-gray-200 rounded w-1/2" />
@@ -56,18 +56,18 @@ export default function ClientStatsCards({ stats }) {
       {cards.map((card, index) => (
         <div 
           key={index} 
-          className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow"
+          className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-5 hover:shadow-md transition-shadow"
         >
           <div className="flex justify-between items-start mb-3">
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-2">{card.label}</p>
-              <p className="text-3xl font-bold text-gray-900">{card.value}</p>
+              <p className="text-xs font-medium text-gray-500 dark:text-slate-400 mb-2">{card.label}</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white">{card.value}</p>
             </div>
             <div className={`w-11 h-11 ${card.iconBg} rounded-xl flex items-center justify-center text-xl ${card.iconText}`}>
               {card.icon}
             </div>
           </div>
-          <p className="text-xs text-gray-400">{card.sublabel}</p>
+          <p className="text-xs text-gray-400 dark:text-slate-500">{card.sublabel}</p>
         </div>
       ))}
     </div>

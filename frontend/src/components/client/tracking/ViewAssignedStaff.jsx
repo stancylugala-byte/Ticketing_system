@@ -1,4 +1,4 @@
-// Mock ticket data with assigned staff
+﻿// Mock ticket data with assigned staff
 const MOCK_TICKETS_WITH_STAFF = [
   {
     id: 'TK-1001',
@@ -68,13 +68,13 @@ const MOCK_TICKETS_WITH_STAFF = [
 const PRIORITY_STYLES = {
   Critical: { bg: 'bg-gradient-to-r from-red-500 to-red-600', text: 'text-white' },
   High: { bg: 'bg-gradient-to-r from-orange-500 to-orange-600', text: 'text-white' },
-  Medium: { bg: 'bg-gradient-to-r from-yellow-400 to-yellow-500', text: 'text-gray-900' },
+  Medium: { bg: 'bg-gradient-to-r from-yellow-400 to-yellow-500', text: 'text-gray-900 dark:text-white' },
   Low: { bg: 'bg-gradient-to-r from-gray-400 to-gray-500', text: 'text-white' }
 };
 
 const STATUS_STYLES = {
   'In Progress': { bg: 'bg-orange-500', text: 'text-white' },
-  'Pending': { bg: 'bg-gray-200', text: 'text-gray-700' },
+  'Pending': { bg: 'bg-gray-200', text: 'text-gray-700 dark:text-slate-200' },
   'Resolved': { bg: 'bg-green-100', text: 'text-green-700' },
   'Open': { border: 'border border-blue-400', text: 'text-blue-600' }
 };
@@ -85,11 +85,11 @@ export default function ViewAssignedStaff() {
       {/* Header with Gradient */}
       <div className="mb-8">
         <div className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 rounded-2xl shadow-xl p-8">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-slate-800 opacity-5 rounded-full -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white dark:bg-slate-800 opacity-5 rounded-full -ml-24 -mb-24"></div>
           <div className="relative">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
+              <div className="w-12 h-12 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
                 👥
               </div>
               <h2 className="text-3xl font-bold text-white">View Assigned Staff</h2>
@@ -108,10 +108,10 @@ export default function ViewAssignedStaff() {
           return (
             <div
               key={ticket.id}
-              className="bg-white border-2 border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl hover:border-purple-200 transition-all duration-300 overflow-hidden group"
+              className="bg-white dark:bg-slate-800 border-2 border-gray-100 dark:border-slate-700 rounded-2xl shadow-lg hover:shadow-2xl hover:border-purple-200 transition-all duration-300 overflow-hidden group"
             >
               {/* Ticket Header */}
-              <div className="p-5 bg-gradient-to-br from-gray-50 to-white border-b-2 border-gray-100">
+              <div className="p-5 bg-gradient-to-br from-gray-50 to-white border-b-2 border-gray-100 dark:border-slate-700">
                 <div className="flex items-start gap-2 mb-3">
                   <span className="px-2.5 py-1 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-700 text-xs font-mono font-bold rounded-lg">
                     {ticket.id}
@@ -120,7 +120,7 @@ export default function ViewAssignedStaff() {
                     {ticket.priority}
                   </span>
                 </div>
-                <h3 className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 group-hover:text-purple-600 transition-colors">
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-2 group-hover:text-purple-600 transition-colors">
                   {ticket.subject}
                 </h3>
                 <span className={`inline-block mt-3 px-2.5 py-1 rounded-lg text-xs font-semibold ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border || ''}`}>
@@ -147,20 +147,20 @@ export default function ViewAssignedStaff() {
 
                       {/* Agent Details */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-bold text-gray-900 mb-0.5">
+                        <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-0.5">
                           {ticket.agent.name}
                         </h4>
-                        <p className="text-xs text-gray-600 mb-2">
+                        <p className="text-xs text-gray-600 dark:text-slate-300 mb-2">
                           {ticket.agent.role}
                         </p>
                         <div className="flex items-center gap-2">
                           <span className={`flex items-center gap-1 text-xs font-semibold
-                            ${ticket.agent.availability === 'Online' ? 'text-green-600' : 'text-gray-500'}`}>
+                            ${ticket.agent.availability === 'Online' ? 'text-green-600' : 'text-gray-500 dark:text-slate-400'}`}>
                             <span className="w-2 h-2 rounded-full bg-current"></span>
                             {ticket.agent.availability}
                           </span>
-                          <span className="text-xs text-gray-400">•</span>
-                          <span className="text-xs text-gray-600">
+                          <span className="text-xs text-gray-400 dark:text-slate-500">•</span>
+                          <span className="text-xs text-gray-600 dark:text-slate-300">
                             Resp: {ticket.agent.responseTime}
                           </span>
                         </div>
@@ -176,7 +176,7 @@ export default function ViewAssignedStaff() {
                       </svg>
                       Message Agent
                     </button>
-                    <button className="w-full px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 font-semibold text-sm rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                    <button className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 font-semibold text-sm rounded-xl hover:border-gray-300 hover:bg-gray-50 dark:bg-slate-900 transition-all flex items-center justify-center gap-2">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -190,14 +190,14 @@ export default function ViewAssignedStaff() {
                   {/* Unassigned State */}
                   <div className="py-8">
                     <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
-                      <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-10 h-10 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                       </svg>
                     </div>
-                    <p className="text-base font-bold text-gray-700 mb-2">
+                    <p className="text-base font-bold text-gray-700 dark:text-slate-200 mb-2">
                       Unassigned
                     </p>
-                    <p className="text-sm text-gray-500 mb-4">
+                    <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
                       Awaiting agent assignment
                     </p>
                     <div className="mt-5 px-4 py-3 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl">

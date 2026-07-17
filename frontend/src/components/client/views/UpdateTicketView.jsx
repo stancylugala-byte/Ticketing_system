@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { getMyTickets, updateTicket } from '../../../api/clientApi';
 
 export default function UpdateTicketView({ onRefresh }) {
@@ -55,7 +55,7 @@ export default function UpdateTicketView({ onRefresh }) {
               <option key={t.id} value={t.id}>#{t.id.slice(0,8).toUpperCase()} — {t.title} ({t.status})</option>
             ))}
           </select>
-          {tickets.length === 0 && <p className="text-xs text-gray-400 mt-1">No open tickets available to update.</p>}
+          {tickets.length === 0 && <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">No open tickets available to update.</p>}
         </div>
 
         {selected && (

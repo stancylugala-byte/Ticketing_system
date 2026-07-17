@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
 // Mock tickets
 const MOCK_TICKETS = [
@@ -201,9 +201,9 @@ export default function TicketComments() {
       {/* Compact Header */}
       <div className="mb-6">
         <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-800 rounded-2xl shadow-xl p-6">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full -mr-24 -mt-24"></div>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white dark:bg-slate-800 opacity-5 rounded-full -mr-24 -mt-24"></div>
           <div className="relative flex items-center gap-3">
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-xl backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center text-xl backdrop-blur-sm">
               💬
             </div>
             <div>
@@ -215,8 +215,8 @@ export default function TicketComments() {
       </div>
 
       {/* Ticket Selector */}
-      <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg p-4 mb-6">
-        <label className="block text-xs font-bold text-gray-700 mb-2 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl shadow-lg p-4 mb-6">
+        <label className="block text-xs font-bold text-gray-700 dark:text-slate-200 mb-2 flex items-center gap-2">
           <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
           </svg>
@@ -225,7 +225,7 @@ export default function TicketComments() {
         <select
           value={selectedTicket}
           onChange={(e) => handleTicketChange(e.target.value)}
-          className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white hover:border-gray-400 transition-colors cursor-pointer"
+          className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-slate-800 hover:border-gray-400 transition-colors cursor-pointer"
         >
           {MOCK_TICKETS.map(ticket => (
             <option key={ticket.id} value={ticket.id}>
@@ -236,15 +236,15 @@ export default function TicketComments() {
       </div>
 
       {/* Comments Thread - Maximized Space */}
-      <div className="flex-1 bg-white border-2 border-gray-200 rounded-2xl shadow-xl flex flex-col overflow-hidden min-h-0">
+      <div className="flex-1 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl shadow-xl flex flex-col overflow-hidden min-h-0">
         {/* Compact Ticket Info Header */}
-        <div className="px-6 py-4 border-b-2 border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50 shrink-0">
+        <div className="px-6 py-4 border-b-2 border-gray-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-cyan-50 shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="px-2.5 py-1 bg-gradient-to-r from-blue-100 to-blue-200 border border-blue-300 text-blue-700 text-xs font-mono font-bold rounded-lg">
                 {currentTicket?.id}
               </span>
-              <h3 className="text-base font-bold text-gray-900">{currentTicket?.subject}</h3>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">{currentTicket?.subject}</h3>
             </div>
             <span className="px-3 py-1.5 bg-orange-500 text-white text-xs font-semibold rounded-lg shadow-md">
               {currentTicket?.status}
@@ -259,8 +259,8 @@ export default function TicketComments() {
               <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center text-4xl mb-4 mx-auto shadow-lg">
                 💬
               </div>
-              <p className="text-lg text-gray-600 font-semibold mb-1">No comments yet</p>
-              <p className="text-sm text-gray-400">Be the first to start the conversation</p>
+              <p className="text-lg text-gray-600 dark:text-slate-300 font-semibold mb-1">No comments yet</p>
+              <p className="text-sm text-gray-400 dark:text-slate-500">Be the first to start the conversation</p>
             </div>
           ) : (
             comments.map(comment => (
@@ -281,11 +281,11 @@ export default function TicketComments() {
                 {/* Comment Content */}
                 <div className={`flex-1 max-w-2xl ${comment.authorType === 'client' ? 'text-right' : 'text-left'}`}>
                   <div className={`flex items-center gap-2 mb-2 ${comment.authorType === 'client' ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-sm font-bold text-gray-900">{comment.author}</span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">{comment.author}</span>
                     {comment.role && (
                       <>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500 font-medium">{comment.role}</span>
+                        <span className="text-xs text-gray-400 dark:text-slate-500">•</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 font-medium">{comment.role}</span>
                       </>
                     )}
                   </div>
@@ -293,12 +293,12 @@ export default function TicketComments() {
                     className={`inline-block px-6 py-4 rounded-2xl text-sm leading-relaxed shadow-lg hover:shadow-xl transition-shadow
                       ${comment.authorType === 'client'
                         ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-sm'
-                        : 'bg-white border-2 border-gray-200 text-gray-900 rounded-bl-sm'
+                        : 'bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-bl-sm'
                       }`}
                   >
                     {comment.message}
                   </div>
-                  <div className={`text-xs text-gray-400 mt-2 font-medium ${comment.authorType === 'client' ? 'text-right' : 'text-left'}`}>
+                  <div className={`text-xs text-gray-400 dark:text-slate-500 mt-2 font-medium ${comment.authorType === 'client' ? 'text-right' : 'text-left'}`}>
                     {formatTimestamp(comment.timestamp)}
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export default function TicketComments() {
         </div>
 
         {/* Comment Input - Compact */}
-        <div className="border-t-2 border-gray-200 p-4 bg-gradient-to-r from-gray-50 to-white shrink-0">
+        <div className="border-t-2 border-gray-200 dark:border-slate-700 p-4 bg-gradient-to-r from-gray-50 to-white shrink-0">
           <div className="flex gap-3">
             <textarea
               value={newComment}
@@ -320,7 +320,7 @@ export default function TicketComments() {
             />
             <div className="flex gap-2">
               <button
-                className="px-4 py-2 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-700 text-sm font-semibold rounded-xl transition-all shadow-md hover:shadow-lg"
+                className="px-4 py-2 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-700 dark:text-slate-200 text-sm font-semibold rounded-xl transition-all shadow-md hover:shadow-lg"
                 title="Attach file"
               >
                 📎
@@ -346,11 +346,11 @@ export default function TicketComments() {
               </button>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2 flex items-center gap-2">
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-2 flex items-center gap-2">
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Press <kbd className="px-2 py-0.5 bg-gray-200 rounded text-gray-700 font-mono text-xs font-semibold">Ctrl+Enter</kbd> to post
+            Press <kbd className="px-2 py-0.5 bg-gray-200 rounded text-gray-700 dark:text-slate-200 font-mono text-xs font-semibold">Ctrl+Enter</kbd> to post
           </p>
         </div>
       </div>

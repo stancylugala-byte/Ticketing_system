@@ -1,12 +1,12 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPasswordReq } from '../api/auth';
 import AuthNavbar from '../components/AuthNavbar';
 
 function Check({ pass, label }) {
   return (
-    <li className={`flex items-center gap-2 text-xs ${pass ? 'text-emerald-600' : 'text-gray-400'}`}>
-      <span className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 ${pass ? 'bg-emerald-100' : 'bg-gray-100'}`}>
+    <li className={`flex items-center gap-2 text-xs ${pass ? 'text-emerald-600' : 'text-gray-400 dark:text-slate-500'}`}>
+      <span className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 ${pass ? 'bg-emerald-100' : 'bg-gray-100 dark:bg-slate-700'}`}>
         {pass
           ? <svg className="w-2 h-2" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
           : <svg className="w-2 h-2" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -18,7 +18,7 @@ function Check({ pass, label }) {
 }
 
 const EyeBtn = ({ show, toggle }) => (
-  <button type="button" onClick={toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+  <button type="button" onClick={toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:text-slate-300">
     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
       {show
         ? <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -70,7 +70,7 @@ export default function ResetPasswordPage() {
 
         {/* Back link */}
         <div className="w-full max-w-sm mb-3">
-          <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700">
+          <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:text-slate-200">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -88,8 +88,8 @@ export default function ResetPasswordPage() {
             </svg>
           </div>
 
-          <h1 className="text-xl font-extrabold text-gray-900 mb-1 text-center">Reset your password</h1>
-          <p className="text-gray-500 text-sm text-center mb-5">Create a strong password you haven't used before.</p>
+          <h1 className="text-xl font-extrabold text-gray-900 dark:text-white mb-1 text-center">Reset your password</h1>
+          <p className="text-gray-500 dark:text-slate-400 text-sm text-center mb-5">Create a strong password you haven't used before.</p>
 
           {!token && (
             <div className="mb-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
@@ -103,16 +103,16 @@ export default function ResetPasswordPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* New password */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1">New Password</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </span>
                 <input id="password" type={showPw ? 'text' : 'password'} required placeholder="••••••••"
                   value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder-gray-400 transition-all" />
+                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder-gray-400 transition-all" />
                 <EyeBtn show={showPw} toggle={() => setShowPw(v => !v)} />
               </div>
               {form.password.length > 0 && (
@@ -126,9 +126,9 @@ export default function ResetPasswordPage() {
 
             {/* Confirm password */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Confirm New Password</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1">Confirm New Password</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
@@ -136,7 +136,7 @@ export default function ResetPasswordPage() {
                 <input id="confirm" type={showCf ? 'text' : 'password'} required placeholder="••••••••"
                   value={form.confirm} onChange={e => setForm(f => ({ ...f, confirm: e.target.value }))}
                   className={`w-full pl-9 pr-10 py-2.5 border rounded-xl text-sm outline-none focus:ring-2 placeholder-gray-400 transition-all
-                    ${form.confirm && !matches ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-blue-500 focus:ring-blue-100'}`} />
+                    ${form.confirm && !matches ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 dark:border-slate-700 focus:border-blue-500 focus:ring-blue-100'}`} />
                 <EyeBtn show={showCf} toggle={() => setShowCf(v => !v)} />
               </div>
               {form.confirm && !matches && <p className="mt-1 text-xs text-red-500">Passwords do not match.</p>}
@@ -150,14 +150,14 @@ export default function ResetPasswordPage() {
             </button>
           </form>
 
-          <p className="text-center text-xs text-gray-400 mt-4">
+          <p className="text-center text-xs text-gray-400 dark:text-slate-500 mt-4">
             Need help? Contact our{' '}
             <a href="#" className="text-blue-600 font-semibold hover:text-blue-700">Security Center</a>
           </p>
         </div>
 
         {/* Security badges */}
-        <div className="flex items-center gap-5 mt-4 text-gray-400 text-xs">
+        <div className="flex items-center gap-5 mt-4 text-gray-400 dark:text-slate-500 text-xs">
           <span className="flex items-center gap-1.5">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />

@@ -1,15 +1,15 @@
-export default function LiveSupportCard() {
+﻿export default function LiveSupportCard() {
   return (
     <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-slate-800 opacity-10 rounded-full -mr-16 -mt-16"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white dark:bg-slate-800 opacity-10 rounded-full -ml-12 -mb-12"></div>
 
       {/* Content */}
       <div className="relative z-10">
         {/* Icon and Title */}
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-2xl shrink-0">
+          <div className="w-12 h-12 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center text-2xl shrink-0">
             💬
           </div>
           <div>
@@ -35,7 +35,7 @@ export default function LiveSupportCard() {
         </div>
 
         {/* CTA Button */}
-        <button className="w-full px-4 py-3 bg-white hover:bg-blue-50 text-blue-700 text-sm font-bold rounded-lg transition-colors shadow-lg">
+        <button className="w-full px-4 py-3 bg-white dark:bg-slate-800 hover:bg-blue-50 text-blue-700 text-sm font-bold rounded-lg transition-colors shadow-lg">
           Start Live Chat →
         </button>
 

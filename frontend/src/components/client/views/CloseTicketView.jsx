@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { getMyTickets, closeTicket } from '../../../api/clientApi';
 
 export default function CloseTicketView({ onRefresh }) {
@@ -47,7 +47,7 @@ export default function CloseTicketView({ onRefresh }) {
               <option key={t.id} value={t.id}>#{t.id.slice(0,8).toUpperCase()} — {t.title}</option>
             ))}
           </select>
-          {tickets.length === 0 && <p className="text-xs text-gray-400 mt-1">No resolved tickets available to close.</p>}
+          {tickets.length === 0 && <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">No resolved tickets available to close.</p>}
         </div>
 
         {selected && (

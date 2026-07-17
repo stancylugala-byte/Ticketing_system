@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FiList, FiSettings, FiBook, FiLogOut, FiMessageSquare, FiBarChart2, FiInbox } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
@@ -42,7 +42,7 @@ const Sidebar = ({ activePage, onNavigate }) => {
       </div>
 
       {/* User card */}
-      <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2 shrink-0">
+      <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800/5 border border-white/10 flex items-center gap-2 shrink-0">
         <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
           style={{ background: settings.primaryColor }}>
           {getInitials(user?.full_name)}
@@ -62,7 +62,7 @@ const Sidebar = ({ activePage, onNavigate }) => {
           return (
             <button key={item.id} onClick={() => onNavigate?.(item.id)}
               className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                isActive ? 'text-white' : 'text-white/50 hover:text-white hover:bg-white/8'
+                isActive ? 'text-white' : 'text-white/50 hover:text-white hover:bg-white dark:bg-slate-800/8'
               }`}
               style={isActive ? { background: `${settings.primaryColor}30` } : {}}
             >
@@ -78,7 +78,7 @@ const Sidebar = ({ activePage, onNavigate }) => {
       <div className="px-2 pb-4 pt-2 border-t border-white/10 space-y-0.5 shrink-0">
         <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest px-3 pb-1">Account</p>
         <button onClick={() => navigate('/profile')}
-          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-xs text-white/50 hover:text-white hover:bg-white/8 transition-all">
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-xs text-white/50 hover:text-white hover:bg-white dark:bg-slate-800/8 transition-all">
           <FiSettings size={14} /> Profile &amp; Settings
         </button>
         <button onClick={handleLogout}

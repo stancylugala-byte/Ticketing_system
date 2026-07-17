@@ -28,3 +28,14 @@ export const submitFeedback     = (ticketId, rating, comment) =>
   api.post(`/client/tickets/${ticketId}/feedback`, { rating, comment });
 export const getFeedback        = (ticketId) =>
   api.get(`/client/tickets/${ticketId}/feedback`);
+
+// Attachments
+export const uploadAttachments  = (ticketId, files) => {
+  const form = new FormData();
+  files.forEach(f => form.append('files', f));
+  return api.post(`/client/tickets/${ticketId}/attachments`, form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+export const getAttachments     = (ticketId) =>
+  api.get(`/client/tickets/${ticketId}/attachments`);

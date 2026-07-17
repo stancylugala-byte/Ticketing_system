@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+﻿import { useEffect, useState, useCallback } from 'react';
 import { getMyTickets, submitFeedback, getFeedback } from '../../../api/clientApi';
 
 const STAGES = ['Open','In Progress','Pending','Resolved','Closed'];
@@ -9,7 +9,7 @@ const statusBadge = {
   'In Progress':'bg-yellow-100 text-yellow-700',
   Pending:      'bg-purple-100 text-purple-700',
   Resolved:     'bg-emerald-100 text-emerald-700',
-  Closed:       'bg-gray-100 text-gray-600',
+  Closed:       'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300',
 };
 const priorityBadge = {
   Critical:'bg-red-100 text-red-700',
@@ -146,7 +146,7 @@ export default function TrackStatusView() {
           {[1,2,3].map(i => <div key={i} className="h-24 bg-gray-100 dark:bg-slate-700 rounded-xl animate-pulse" />)}
         </div>
       ) : tickets.length === 0 ? (
-        <div className="flex flex-col items-center py-16 text-gray-400 gap-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
+        <div className="flex flex-col items-center py-16 text-gray-400 dark:text-slate-500 gap-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
           <span className="text-3xl">📊</span>
           <p className="text-sm">No tickets found</p>
         </div>
@@ -169,9 +169,9 @@ export default function TrackStatusView() {
                         <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${statusBadge[t.status]}`}>{t.status}</span>
                       </div>
                       <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">{t.title}</p>
-                      {t.assignee && <p className="text-xs text-gray-400 mt-0.5">Assigned to: {t.assignee.full_name}</p>}
+                      {t.assignee && <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">Assigned to: {t.assignee.full_name}</p>}
                     </div>
-                    <svg className={`w-4 h-4 text-gray-400 transition-transform shrink-0 mt-1 ${isExp ? 'rotate-180' : ''}`}
+                    <svg className={`w-4 h-4 text-gray-400 dark:text-slate-500 transition-transform shrink-0 mt-1 ${isExp ? 'rotate-180' : ''}`}
                       fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
@@ -188,7 +188,7 @@ export default function TrackStatusView() {
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-all
                             ${i < idx  ? 'bg-emerald-500 text-white'
                               : i === idx ? 'bg-blue-600 text-white ring-4 ring-blue-100 dark:ring-blue-900'
-                              : 'bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 text-gray-400'}`}>
+                              : 'bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 text-gray-400 dark:text-slate-500'}`}>
                             {i < idx ? '✓' : i === idx ? '●' : '○'}
                           </div>
                           <span className={`text-[9px] font-semibold whitespace-nowrap
@@ -205,10 +205,16 @@ export default function TrackStatusView() {
                 {isExp && (
                   <div className="border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 px-5 py-4">
                     <div className="grid grid-cols-2 gap-3 text-xs mb-3">
-                      <div><span className="text-gray-400">Category:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{t.category?.category_name || '—'}</span></div>
-                      <div><span className="text-gray-400">SLA:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{t.slaPolicy ? `${t.slaPolicy.resolution_time}h target` : '—'}</span></div>
-                      <div><span className="text-gray-400">Created:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{new Date(t.created_at).toLocaleDateString()}</span></div>
-                      <div><span className="text-gray-400">Updated:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{new Date(t.updated_at).toLocaleDateString()}</span></div>
+                      <div><span className="text-gray-400 dark:text-slate-500">Category:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{t.category?.category_name || '—'}</span></div>
+                      <div><span className="text-gray-400 dark:text-slate-500">SLA:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{t.slaPolicy ? `${t.slaPolicy.resolution_time}h target` : '—'}</span></div>
+                      <div><span className="text-gray-400 dark:text-slate-500">Created:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{new Date(t.created_at).toLocaleDateString()}</span></div>
+                      <div><span className="text-gray-400 dark:text-slate-500">Updated:</span> <span className="font-medium text-gray-700 dark:text-slate-300">{new Date(t.updated_at).toLocaleDateString()}</span></div>
+                      {t.tag && (
+                        <div className="col-span-2">
+                          <span className="text-gray-400 dark:text-slate-500">Context:</span>{' '}
+                          <span className="font-medium text-gray-700 dark:text-slate-300">{t.tag}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* CSAT form shown for resolved/closed tickets */}

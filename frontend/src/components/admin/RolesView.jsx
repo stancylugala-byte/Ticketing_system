@@ -9,8 +9,8 @@ export default function RolesView({ showPermissions = false }) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-bold text-gray-900">{showPermissions ? 'Assign Permissions' : 'Role Directory'}</h2>
-        <p className="text-sm text-gray-500">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white">{showPermissions ? 'Assign Permissions' : 'Role Directory'}</h2>
+        <p className="text-sm text-gray-500 dark:text-slate-400">
           {showPermissions
             ? 'Permissions are mapped to each role. Role-based access is enforced at the API middleware level.'
             : 'Platform roles and their associated capabilities. Roles are enforced via JWT token validation.'}
@@ -19,7 +19,7 @@ export default function RolesView({ showPermissions = false }) {
 
       <div className="grid grid-cols-2 gap-4">
         {ROLES.map(r => (
-          <div key={r.role} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div key={r.role} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
             <div className={`${r.color} px-5 py-3 flex items-center justify-between`}>
               <span className="text-white font-bold text-sm">{r.role}</span>
               <span className="text-white/60 text-xs">{r.permissions.length} permissions</span>
@@ -27,7 +27,7 @@ export default function RolesView({ showPermissions = false }) {
             <div className="px-5 py-4">
               <ul className="space-y-1.5">
                 {r.permissions.map(p => (
-                  <li key={p} className="flex items-center gap-2 text-sm text-gray-700">
+                  <li key={p} className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200">
                     <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -41,7 +41,7 @@ export default function RolesView({ showPermissions = false }) {
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
-        <span className="text-lg shrink-0">⚠️</span>
+        <span className="text-lg shrink-0">??</span>
         <p className="text-sm text-amber-800 leading-relaxed">
           <strong>Note:</strong> Role changes take effect immediately at the next login. Permissions are enforced at the backend middleware level via <code className="bg-amber-100 px-1 rounded text-xs">requireRole()</code> and cannot be overridden from the frontend.
         </p>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
 // Mock tickets for dropdown
 const MOCK_TICKETS = [
@@ -198,11 +198,11 @@ export default function ViewResolutionTimeline() {
       {/* Header with Gradient */}
       <div className="mb-8">
         <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 rounded-2xl shadow-xl p-8">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-slate-800 opacity-5 rounded-full -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white dark:bg-slate-800 opacity-5 rounded-full -ml-24 -mb-24"></div>
           <div className="relative">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
+              <div className="w-12 h-12 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
                 📜
               </div>
               <h2 className="text-3xl font-bold text-white">Resolution Timeline</h2>
@@ -213,8 +213,8 @@ export default function ViewResolutionTimeline() {
       </div>
 
       {/* Ticket Selector */}
-      <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg p-6 mb-8">
-        <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl shadow-lg p-6 mb-8">
+        <label className="block text-sm font-bold text-gray-700 dark:text-slate-200 mb-3 flex items-center gap-2">
           <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
           </svg>
@@ -223,7 +223,7 @@ export default function ViewResolutionTimeline() {
         <select
           value={selectedTicket}
           onChange={(e) => setSelectedTicket(e.target.value)}
-          className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white hover:border-gray-400 transition-colors cursor-pointer"
+          className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white dark:bg-slate-800 hover:border-gray-400 transition-colors cursor-pointer"
         >
           {MOCK_TICKETS.map(ticket => (
             <option key={ticket.id} value={ticket.id}>
@@ -234,16 +234,16 @@ export default function ViewResolutionTimeline() {
       </div>
 
       {/* Timeline Container */}
-      <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl shadow-lg overflow-hidden">
         {/* Ticket Header */}
-        <div className="px-8 py-6 bg-gradient-to-r from-indigo-50 to-purple-50 border-b-2 border-gray-200">
+        <div className="px-8 py-6 bg-gradient-to-r from-indigo-50 to-purple-50 border-b-2 border-gray-200 dark:border-slate-700">
           <span className="inline-block px-3 py-1.5 bg-gradient-to-r from-indigo-100 to-indigo-200 border border-indigo-300 text-indigo-700 text-xs font-mono font-bold rounded-lg mb-3">
             {currentTicket?.id}
           </span>
-          <h3 className="text-xl font-bold text-gray-900 mb-1">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
             {currentTicket?.subject}
           </h3>
-          <p className="text-sm text-gray-600 flex items-center gap-2">
+          <p className="text-sm text-gray-600 dark:text-slate-300 flex items-center gap-2">
             <span className="w-2 h-2 bg-indigo-600 rounded-full"></span>
             {timeline.length} timeline events
           </p>
@@ -254,8 +254,8 @@ export default function ViewResolutionTimeline() {
           {timeline.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-7xl mb-4 opacity-50">📋</div>
-              <p className="text-xl text-gray-600 font-semibold mb-2">No timeline events found</p>
-              <p className="text-sm text-gray-400">This ticket doesn't have any recorded history yet</p>
+              <p className="text-xl text-gray-600 dark:text-slate-300 font-semibold mb-2">No timeline events found</p>
+              <p className="text-sm text-gray-400 dark:text-slate-500">This ticket doesn't have any recorded history yet</p>
             </div>
           ) : (
             <div className="relative">
@@ -285,16 +285,16 @@ export default function ViewResolutionTimeline() {
                               {event.event}
                             </h4>
                             {isFirst && (
-                              <span className="px-3 py-1 bg-white border-2 border-indigo-300 text-indigo-700 text-xs font-bold rounded-lg whitespace-nowrap shadow-sm">
+                              <span className="px-3 py-1 bg-white dark:bg-slate-800 border-2 border-indigo-300 text-indigo-700 text-xs font-bold rounded-lg whitespace-nowrap shadow-sm">
                                 Latest
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                          <p className="text-sm text-gray-700 dark:text-slate-200 leading-relaxed mb-4">
                             {event.description}
                           </p>
                           <div className="flex items-center gap-4 text-xs">
-                            <span className="flex items-center gap-1.5 text-gray-600 font-medium">
+                            <span className="flex items-center gap-1.5 text-gray-600 dark:text-slate-300 font-medium">
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
@@ -303,7 +303,7 @@ export default function ViewResolutionTimeline() {
                             {event.agent && (
                               <>
                                 <span className="text-gray-300">•</span>
-                                <span className="flex items-center gap-1.5 text-gray-600 font-medium">
+                                <span className="flex items-center gap-1.5 text-gray-600 dark:text-slate-300 font-medium">
                                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                   </svg>

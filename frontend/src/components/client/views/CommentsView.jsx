@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+﻿import { useEffect, useState, useRef } from 'react';
 import { getMyTickets, getTicketById, addComment } from '../../../api/clientApi';
 
 function initials(n = '') { return n.split(' ').map(x => x[0]).join('').slice(0,2).toUpperCase(); }
@@ -49,7 +49,7 @@ export default function CommentsView() {
               className={`w-full text-left px-4 py-3 transition-colors ${selected === t.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-2 border-blue-600' : 'hover:bg-gray-50 dark:hover:bg-slate-800 border-l-2 border-transparent'}`}>
               <p className="text-[11px] font-bold text-blue-600 mb-0.5">#{t.id.slice(0,8).toUpperCase()}</p>
               <p className="text-xs font-semibold text-gray-800 dark:text-slate-200 truncate">{t.title}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">{t.status}</p>
+              <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">{t.status}</p>
             </button>
           ))}
         </div>
@@ -58,7 +58,7 @@ export default function CommentsView() {
       {/* Chat panel */}
       <div className="flex-1 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden">
         {!ticket ? (
-          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">Select a ticket to view comments</div>
+          <div className="flex-1 flex items-center justify-center text-gray-400 dark:text-slate-500 text-sm">Select a ticket to view comments</div>
         ) : (
           <>
             <div className="px-5 py-3 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 shrink-0">
@@ -74,20 +74,20 @@ export default function CommentsView() {
 
             <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3 bg-gray-50 dark:bg-slate-900">
               {comments.length === 0
-                ? <p className="text-center text-xs text-gray-400 py-6">No messages yet. Start the conversation!</p>
+                ? <p className="text-center text-xs text-gray-400 dark:text-slate-500 py-6">No messages yet. Start the conversation!</p>
                 : comments.map(c => {
                     const isAgent = ['SupportOfficer','Developer','Admin','Manager'].includes(c.author?.role);
                     return (
                       <div key={c.comment_id} className={`flex items-end gap-2 ${isAgent ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${isAgent ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-700'}`}>
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${isAgent ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-700 dark:text-slate-200'}`}>
                           {initials(c.author?.full_name)}
                         </div>
                         <div className={`flex flex-col max-w-[75%] gap-0.5 ${isAgent ? 'items-end' : 'items-start'}`}>
-                          <p className="text-[10px] text-gray-400 px-1">{c.author?.full_name}</p>
+                          <p className="text-[10px] text-gray-400 dark:text-slate-500 px-1">{c.author?.full_name}</p>
                           <div className={`px-3 py-2.5 rounded-xl text-sm leading-relaxed ${isAgent ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-800 dark:text-slate-200 rounded-bl-sm'}`}>
                             {c.comment}
                           </div>
-                          <span className="text-[9px] text-gray-400 px-1">{fmtTime(c.created_at)}</span>
+                          <span className="text-[9px] text-gray-400 dark:text-slate-500 px-1">{fmtTime(c.created_at)}</span>
                         </div>
                       </div>
                     );
@@ -107,7 +107,7 @@ export default function CommentsView() {
                     {sending ? '…' : '➤'}
                   </button>
                 </div>
-                <p className="text-[10px] text-gray-400 mt-1.5">Ctrl+Enter to send</p>
+                <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-1.5">Ctrl+Enter to send</p>
               </div>
             )}
           </>

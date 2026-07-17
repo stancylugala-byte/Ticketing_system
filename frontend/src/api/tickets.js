@@ -12,3 +12,7 @@ export const searchTickets = (q) => api.get('/tickets/search', { params: { q } }
 export const getComments = (ticketId) => api.get(`/tickets/${ticketId}/comments`);
 export const addComment = (ticketId, comment, is_internal = false) =>
   api.post(`/tickets/${ticketId}/comments`, { comment, is_internal });
+
+// Attachments (officer can view client uploads via admin/tickets/:id)
+export const getTicketAttachments = (ticketId) =>
+  api.get(`/client/tickets/${ticketId}/attachments`);

@@ -28,57 +28,57 @@ export default function PersonalPerformanceView() {
   const kpis = [
     {
       label: 'Tickets Closed',
-      value: loading ? 'â€”' : (perf?.totalClosed ?? 0),
+      value: loading ? '—' : (perf?.totalClosed ?? 0),
       sub: 'All time',
-      icon: 'ðŸŽ«',
+      icon: '??',
       bg: 'bg-blue-50',
       border: 'border-blue-200',
       text: 'text-blue-700',
     },
     {
       label: 'Closed This Month',
-      value: loading ? 'â€”' : (perf?.ticketsLast30Days ?? 0),
+      value: loading ? '—' : (perf?.ticketsLast30Days ?? 0),
       sub: 'Last 30 days',
-      icon: 'ðŸ“…',
+      icon: '??',
       bg: 'bg-emerald-50',
       border: 'border-emerald-200',
       text: 'text-emerald-700',
     },
     {
       label: 'Avg Resolution Time',
-      value: loading ? 'â€”' : (avgHours ? `${avgHours}h` : 'â€”'),
+      value: loading ? '—' : (avgHours ? `${avgHours}h` : '—'),
       sub: avgMinutes ? `${avgMinutes} minutes average` : 'No resolved tickets yet',
-      icon: 'â±',
+      icon: '?',
       bg: 'bg-orange-50',
       border: 'border-orange-200',
       text: 'text-orange-700',
     },
     {
       label: 'Currently Assigned',
-      value: loading ? 'â€”' : (stats?.assigned ?? 0),
+      value: loading ? '—' : (stats?.assigned ?? 0),
       sub: 'Active in queue',
-      icon: 'ðŸ“‹',
+      icon: '??',
       bg: 'bg-purple-50',
       border: 'border-purple-200',
       text: 'text-purple-700',
     },
     {
       label: 'Pending',
-      value: loading ? 'â€”' : (stats?.pending ?? 0),
+      value: loading ? '—' : (stats?.pending ?? 0),
       sub: 'Awaiting response',
-      icon: 'â³',
+      icon: '?',
       bg: 'bg-yellow-50',
       border: 'border-yellow-200',
       text: 'text-yellow-700',
     },
     {
       label: 'SLA Breaches',
-      value: loading ? 'â€”' : (stats?.slaBreaches ?? 0),
+      value: loading ? '—' : (stats?.slaBreaches ?? 0),
       sub: 'Requires immediate action',
-      icon: 'âš ï¸',
-      bg: (stats?.slaBreaches ?? 0) > 0 ? 'bg-red-50' : 'bg-gray-50',
-      border: (stats?.slaBreaches ?? 0) > 0 ? 'border-red-300' : 'border-gray-200',
-      text: (stats?.slaBreaches ?? 0) > 0 ? 'text-red-700' : 'text-gray-700',
+      icon: '??',
+      bg: (stats?.slaBreaches ?? 0) > 0 ? 'bg-red-50' : 'bg-gray-50 dark:bg-slate-900',
+      border: (stats?.slaBreaches ?? 0) > 0 ? 'border-red-300' : 'border-gray-200 dark:border-slate-700',
+      text: (stats?.slaBreaches ?? 0) > 0 ? 'text-red-700' : 'text-gray-700 dark:text-slate-200',
     },
   ];
 
@@ -86,18 +86,18 @@ export default function PersonalPerformanceView() {
     <div className="flex flex-col gap-6">
       {/* Heading */}
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Personal Performance</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Track your productivity and resolution metrics</p>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">Personal Performance</h1>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Track your productivity and resolution metrics</p>
       </div>
 
       {/* Officer banner */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 flex items-center gap-5">
-        <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0">
+        <div className="w-14 h-14 bg-white dark:bg-slate-800/20 rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0">
           {getInitials(user?.full_name)}
         </div>
         <div>
           <p className="text-white font-bold text-lg">{user?.full_name || 'Support Officer'}</p>
-          <p className="text-blue-200 text-sm">{user?.role} Â· Active</p>
+          <p className="text-blue-200 text-sm">{user?.role} · Active</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full" />
@@ -105,34 +105,34 @@ export default function PersonalPerformanceView() {
         </div>
       </div>
 
-      {/* KPI grid â€” 3 Ã— 2 */}
+      {/* KPI grid — 3 × 2 */}
       <div className="grid grid-cols-3 gap-4">
         {kpis.map(k => (
           <div key={k.label} className={`rounded-xl border ${k.border} ${k.bg} p-5 flex items-center gap-4`}>
             <div className="text-3xl shrink-0">{k.icon}</div>
             <div>
-              <p className="text-xs font-semibold text-gray-500 mb-1">{k.label}</p>
+              <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 mb-1">{k.label}</p>
               {loading ? (
                 <div className="h-8 w-16 bg-gray-200 rounded animate-pulse mb-1" />
               ) : (
                 <p className={`text-3xl font-bold leading-none mb-1 ${k.text}`}>{k.value}</p>
               )}
-              <p className="text-xs text-gray-400">{k.sub}</p>
+              <p className="text-xs text-gray-400 dark:text-slate-500">{k.sub}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Tickets closed vs target */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm p-6">
         <h3 className="text-sm font-bold text-gray-800 mb-4">Daily Target Progress</h3>
         <div className="flex items-center gap-4 mb-3">
           <div className="flex-1">
-            <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+            <div className="flex justify-between text-xs text-gray-500 dark:text-slate-400 mb-1.5">
               <span>Tickets Closed Today</span>
-              <span className="font-semibold text-gray-700">{perf?.ticketsLast30Days ?? 0} / 20 target</span>
+              <span className="font-semibold text-gray-700 dark:text-slate-200">{perf?.ticketsLast30Days ?? 0} / 20 target</span>
             </div>
-            <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-600 rounded-full transition-all duration-700"
                 style={{ width: `${Math.min(100, ((perf?.ticketsLast30Days ?? 0) / 20) * 100)}%` }}
@@ -142,11 +142,11 @@ export default function PersonalPerformanceView() {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+            <div className="flex justify-between text-xs text-gray-500 dark:text-slate-400 mb-1.5">
               <span>Avg Resolution Time</span>
-              <span className="font-semibold text-gray-700">{avgHours ? `${avgHours}h` : 'â€”'} / 2h target</span>
+              <span className="font-semibold text-gray-700 dark:text-slate-200">{avgHours ? `${avgHours}h` : '—'} / 2h target</span>
             </div>
-            <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-700 ${(avgMinutes ?? 0) <= 120 ? 'bg-emerald-500' : 'bg-red-500'}`}
                 style={{ width: `${Math.min(100, ((avgMinutes ?? 0) / 120) * 100)}%` }}
@@ -158,7 +158,7 @@ export default function PersonalPerformanceView() {
 
       {/* Info box */}
       <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
-        <span className="text-xl shrink-0">ðŸ’¡</span>
+        <span className="text-xl shrink-0">??</span>
         <div>
           <p className="text-sm font-semibold text-blue-800 mb-1">Performance Tips</p>
           <p className="text-xs text-blue-700 leading-relaxed">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { getMyTickets, reopenTicket } from '../../../api/clientApi';
 
 export default function ReopenTicketView({ onRefresh }) {
@@ -48,7 +48,7 @@ export default function ReopenTicketView({ onRefresh }) {
               <option key={t.id} value={t.id}>#{t.id.slice(0,8).toUpperCase()} — {t.title}</option>
             ))}
           </select>
-          {tickets.length === 0 && <p className="text-xs text-gray-400 mt-1">No closed tickets found.</p>}
+          {tickets.length === 0 && <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">No closed tickets found.</p>}
         </div>
         <div>
           <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1.5">Reason for Reopening</label>

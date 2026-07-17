@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 
 // Mock chat history
 const CHAT_HISTORY = [
@@ -137,9 +137,9 @@ export default function ChatWithSupport() {
       {/* Compact Header */}
       <div className="mb-6">
         <div className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-pink-800 rounded-2xl shadow-xl p-6">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full -mr-24 -mt-24"></div>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white dark:bg-slate-800 opacity-5 rounded-full -mr-24 -mt-24"></div>
           <div className="relative flex items-center gap-3">
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-xl backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center text-xl backdrop-blur-sm">
               💭
             </div>
             <div>
@@ -153,9 +153,9 @@ export default function ChatWithSupport() {
       {/* Main Content with Sidebar */}
       <div className="flex-1 flex gap-6 min-h-0">
         {/* Chat History Sidebar */}
-        <div className="w-80 bg-white border-2 border-gray-200 rounded-2xl shadow-xl overflow-hidden flex flex-col">
-          <div className="px-6 py-4 border-b-2 border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
-            <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+        <div className="w-80 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl shadow-xl overflow-hidden flex flex-col">
+          <div className="px-6 py-4 border-b-2 border-gray-200 dark:border-slate-700 bg-gradient-to-r from-purple-50 to-pink-50">
+            <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
@@ -171,10 +171,10 @@ export default function ChatWithSupport() {
                 className={`w-full text-left p-4 rounded-xl transition-all border-2
                   ${selectedChat === chat.id 
                     ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-300 shadow-md' 
-                    : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm'}`}
+                    : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 hover:border-gray-300 hover:shadow-sm'}`}
               >
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className={`text-sm font-bold line-clamp-1 ${selectedChat === chat.id ? 'text-purple-900' : 'text-gray-900'}`}>
+                  <h4 className={`text-sm font-bold line-clamp-1 ${selectedChat === chat.id ? 'text-purple-900' : 'text-gray-900 dark:text-white'}`}>
                     {chat.title}
                   </h4>
                   {chat.unread > 0 && (
@@ -183,13 +183,13 @@ export default function ChatWithSupport() {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-gray-600 line-clamp-1 mb-2">{chat.lastMessage}</p>
+                <p className="text-xs text-gray-600 dark:text-slate-300 line-clamp-1 mb-2">{chat.lastMessage}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">{chat.timestamp}</span>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">{chat.timestamp}</span>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold
                     ${chat.status === 'active' ? 'bg-green-100 text-green-700' : 
                       chat.status === 'resolved' ? 'bg-blue-100 text-blue-700' : 
-                      'bg-gray-100 text-gray-600'}`}>
+                      'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'}`}>
                     {chat.status}
                   </span>
                 </div>
@@ -197,7 +197,7 @@ export default function ChatWithSupport() {
             ))}
           </div>
           
-          <div className="p-4 border-t-2 border-gray-200">
+          <div className="p-4 border-t-2 border-gray-200 dark:border-slate-700">
             <button className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -208,9 +208,9 @@ export default function ChatWithSupport() {
         </div>
 
         {/* Chat Container - Maximum Space */}
-        <div className="flex-1 bg-white border-2 border-gray-200 rounded-2xl shadow-xl flex flex-col overflow-hidden">
+        <div className="flex-1 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl shadow-xl flex flex-col overflow-hidden">
           {/* Agent Status Header - Compact */}
-          <div className="px-6 py-4 border-b-2 border-gray-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 shrink-0">
+          <div className="px-6 py-4 border-b-2 border-gray-200 dark:border-slate-700 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-base shadow-lg">
@@ -219,9 +219,9 @@ export default function ChatWithSupport() {
                 <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse"></div>
               </div>
               <div className="flex-1">
-                <h3 className="text-base font-bold text-gray-900">Connected with Maya Rodriguez</h3>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white">Connected with Maya Rodriguez</h3>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="text-gray-600 font-medium">Senior Support Engineer</span>
+                  <span className="text-gray-600 dark:text-slate-300 font-medium">Senior Support Engineer</span>
                   <span className="text-gray-300">•</span>
                   <span className="flex items-center gap-1 text-green-600 font-semibold">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
@@ -255,12 +255,12 @@ export default function ChatWithSupport() {
                   className={`px-6 py-4 rounded-2xl text-sm leading-relaxed shadow-lg hover:shadow-xl transition-shadow
                     ${message.authorType === 'client'
                       ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-sm'
-                      : 'bg-white border-2 border-gray-200 text-gray-900 rounded-bl-sm'
+                      : 'bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-bl-sm'
                     }`}
                 >
                   {message.message}
                 </div>
-                <span className="text-xs text-gray-500 mt-2 px-2 font-medium">{message.timestamp}</span>
+                <span className="text-xs text-gray-500 dark:text-slate-400 mt-2 px-2 font-medium">{message.timestamp}</span>
               </div>
             </div>
           ))}
@@ -271,7 +271,7 @@ export default function ChatWithSupport() {
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-lg">
                 MR
               </div>
-              <div className="bg-white border-2 border-gray-200 rounded-2xl rounded-bl-sm px-6 py-4 shadow-lg">
+              <div className="bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl rounded-bl-sm px-6 py-4 shadow-lg">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                   <div className="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -285,7 +285,7 @@ export default function ChatWithSupport() {
         </div>
 
         {/* Input Area - Compact */}
-        <div className="border-t-2 border-gray-200 p-4 bg-gradient-to-r from-white to-purple-50 shrink-0">
+        <div className="border-t-2 border-gray-200 dark:border-slate-700 p-4 bg-gradient-to-r from-white to-purple-50 shrink-0">
           <div className="flex gap-3">
             <input
               type="text"
@@ -296,7 +296,7 @@ export default function ChatWithSupport() {
               className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none hover:border-gray-400 transition-colors"
             />
             <button
-              className="px-4 py-3 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-700 rounded-xl transition-all shadow-md hover:shadow-lg text-lg"
+              className="px-4 py-3 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-700 dark:text-slate-200 rounded-xl transition-all shadow-md hover:shadow-lg text-lg"
               title="Attach file"
             >
               📎
@@ -321,11 +321,11 @@ export default function ChatWithSupport() {
               )}
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2 flex items-center gap-2">
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-2 flex items-center gap-2">
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Press <kbd className="px-2 py-0.5 bg-gray-200 rounded text-gray-700 font-mono text-xs font-semibold">Enter</kbd> to send • Avg response: <span className="font-semibold text-purple-600">2 min</span>
+            Press <kbd className="px-2 py-0.5 bg-gray-200 rounded text-gray-700 dark:text-slate-200 font-mono text-xs font-semibold">Enter</kbd> to send • Avg response: <span className="font-semibold text-purple-600">2 min</span>
           </p>
         </div>
       </div>

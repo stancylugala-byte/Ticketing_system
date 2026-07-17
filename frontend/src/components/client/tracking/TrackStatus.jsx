@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
 // Mock ticket data
 const MOCK_TICKETS = [
@@ -70,7 +70,7 @@ const STAGES = [
 const PRIORITY_STYLES = {
   Critical: { bg: 'bg-gradient-to-r from-red-500 to-red-600', text: 'text-white', border: 'border-red-600', glow: 'shadow-red-200' },
   High: { bg: 'bg-gradient-to-r from-orange-500 to-orange-600', text: 'text-white', border: 'border-orange-600', glow: 'shadow-orange-200' },
-  Medium: { bg: 'bg-gradient-to-r from-yellow-400 to-yellow-500', text: 'text-gray-900', border: 'border-yellow-500', glow: 'shadow-yellow-200' },
+  Medium: { bg: 'bg-gradient-to-r from-yellow-400 to-yellow-500', text: 'text-gray-900 dark:text-white', border: 'border-yellow-500', glow: 'shadow-yellow-200' },
   Low: { bg: 'bg-gradient-to-r from-gray-400 to-gray-500', text: 'text-white', border: 'border-gray-500', glow: 'shadow-gray-200' }
 };
 
@@ -96,11 +96,11 @@ export default function TrackStatus() {
       {/* Header with Gradient */}
       <div className="mb-8">
         <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl shadow-xl p-8">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-slate-800 opacity-5 rounded-full -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white dark:bg-slate-800 opacity-5 rounded-full -ml-24 -mb-24"></div>
           <div className="relative">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
+              <div className="w-12 h-12 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
                 📊
               </div>
               <h2 className="text-3xl font-bold text-white">Track Status</h2>
@@ -111,7 +111,7 @@ export default function TrackStatus() {
       </div>
 
       {/* Enhanced Filter Tabs */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-3 mb-8">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-lg p-3 mb-8">
         <div className="flex gap-2 overflow-x-auto">
           {['All', 'Open', 'In Progress', 'Pending', 'Resolved', 'Closed'].map(tab => {
             const count = getTicketCount(tab);
@@ -124,13 +124,13 @@ export default function TrackStatus() {
                 className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap
                   ${isActive
                     ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-200 scale-105'
-                    : 'text-gray-600 hover:bg-gray-50 hover:scale-102'
+                    : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 hover:scale-102'
                   }`}
               >
                 <span className="relative z-10">{tab}</span>
                 {count > 0 && (
                   <span className={`ml-2 px-2.5 py-0.5 text-xs font-bold rounded-full
-                    ${isActive ? 'bg-white text-blue-600' : 'bg-gray-200 text-gray-700'}`}>
+                    ${isActive ? 'bg-white dark:bg-slate-800 text-blue-600' : 'bg-gray-200 text-gray-700 dark:text-slate-200'}`}>
                     {count}
                   </span>
                 )}
@@ -145,8 +145,8 @@ export default function TrackStatus() {
         {filteredTickets.length === 0 ? (
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-300 rounded-2xl shadow-sm p-16 text-center">
             <div className="text-7xl mb-4 opacity-50">🎫</div>
-            <p className="text-xl text-gray-600 font-semibold mb-2">No tickets found</p>
-            <p className="text-sm text-gray-400">Try adjusting your filter to see more results</p>
+            <p className="text-xl text-gray-600 dark:text-slate-300 font-semibold mb-2">No tickets found</p>
+            <p className="text-sm text-gray-400 dark:text-slate-500">Try adjusting your filter to see more results</p>
           </div>
         ) : (
           filteredTickets.map(ticket => {
@@ -156,7 +156,7 @@ export default function TrackStatus() {
             return (
               <div
                 key={ticket.id}
-                className="bg-white border-2 border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl hover:border-blue-200 transition-all duration-300 overflow-hidden group"
+                className="bg-white dark:bg-slate-800 border-2 border-gray-100 dark:border-slate-700 rounded-2xl shadow-lg hover:shadow-2xl hover:border-blue-200 transition-all duration-300 overflow-hidden group"
               >
                 {/* Ticket Header */}
                 <div
@@ -173,10 +173,10 @@ export default function TrackStatus() {
                           {ticket.priority}
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 transition-colors">
                         {ticket.subject}
                       </h3>
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
                         <span className="flex items-center gap-1">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -191,9 +191,9 @@ export default function TrackStatus() {
                         </span>
                       </div>
                     </div>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <button className="p-2 hover:bg-gray-100 dark:bg-slate-700 rounded-lg transition-colors">
                       <svg
-                        className={`w-6 h-6 text-gray-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                        className={`w-6 h-6 text-gray-400 dark:text-slate-500 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -231,7 +231,7 @@ export default function TrackStatus() {
                                   ? 'bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg shadow-green-200 scale-110'
                                   : isCurrent
                                   ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white ring-4 ring-blue-200 shadow-xl scale-110 animate-pulse'
-                                  : 'bg-white border-2 border-gray-300 text-gray-400 group-hover/step:border-gray-400'
+                                  : 'bg-white dark:bg-slate-800 border-2 border-gray-300 text-gray-400 dark:text-slate-500 group-hover/step:border-gray-400'
                                 }`}
                             >
                               {isCompleted ? '✓' : stage.icon}
@@ -244,7 +244,7 @@ export default function TrackStatus() {
                                   ? 'text-blue-600' 
                                   : isCompleted 
                                   ? 'text-green-600' 
-                                  : 'text-gray-400'}`}
+                                  : 'text-gray-400 dark:text-slate-500'}`}
                             >
                               {stage.label}
                             </span>
@@ -257,28 +257,28 @@ export default function TrackStatus() {
 
                 {/* Expanded Details with Animation */}
                 {isExpanded && (
-                  <div className="border-t-2 border-gray-100 bg-gradient-to-br from-blue-50 to-indigo-50 animate-fadeIn">
+                  <div className="border-t-2 border-gray-100 dark:border-slate-700 bg-gradient-to-br from-blue-50 to-indigo-50 animate-fadeIn">
                     <div className="p-6 space-y-4">
                       {/* Status Message */}
-                      <div className="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-blue-100">
+                      <div className="flex items-start gap-4 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-blue-100">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white text-xl shrink-0">
                           ℹ️
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-bold text-gray-900 mb-1">Current Status Update</p>
-                          <p className="text-sm text-gray-600 leading-relaxed">{ticket.statusMessage}</p>
+                          <p className="text-sm font-bold text-gray-900 dark:text-white mb-1">Current Status Update</p>
+                          <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed">{ticket.statusMessage}</p>
                         </div>
                       </div>
 
                       {/* Additional Info Grid */}
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-                          <p className="text-xs text-gray-500 font-semibold mb-1">Assigned Agent</p>
-                          <p className="text-sm font-bold text-gray-900">{ticket.assignedTo}</p>
+                        <div className="p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+                          <p className="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1">Assigned Agent</p>
+                          <p className="text-sm font-bold text-gray-900 dark:text-white">{ticket.assignedTo}</p>
                         </div>
-                        <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-                          <p className="text-xs text-gray-500 font-semibold mb-1">Est. Resolution</p>
-                          <p className="text-sm font-bold text-gray-900">{ticket.estimatedResolution}</p>
+                        <div className="p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+                          <p className="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1">Est. Resolution</p>
+                          <p className="text-sm font-bold text-gray-900 dark:text-white">{ticket.estimatedResolution}</p>
                         </div>
                       </div>
 
@@ -287,7 +287,7 @@ export default function TrackStatus() {
                         <button className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold text-sm rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg shadow-blue-200 hover:shadow-xl">
                           View Details
                         </button>
-                        <button className="flex-1 px-4 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold text-sm rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all">
+                        <button className="flex-1 px-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 font-semibold text-sm rounded-xl hover:border-gray-300 hover:bg-gray-50 dark:bg-slate-900 transition-all">
                           Add Comment
                         </button>
                       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import {
   FiAlertTriangle, FiCheckSquare, FiRefreshCw, FiSearch,
   FiActivity, FiZap, FiTool, FiCheck, FiUser
@@ -225,11 +225,11 @@ const DetailView = ({ bug, view, onStatusChange, onAction, primaryColor }) => {
       <div className="bg-gray-900 dark:bg-slate-950 border border-gray-700 dark:border-slate-700 rounded-xl p-4 font-mono text-xs space-y-1">
         <p className="text-gray-500 dark:text-slate-500 font-bold mb-2">TELEMETRY &amp; STACK TRACE</p>
         <p className="text-emerald-400">Bug ID: BUG-{bug.id?.slice(0,8).toUpperCase()}</p>
-        <p className="text-gray-400">Module: /{bug.category?.category_name || 'system'}/handler.js</p>
+        <p className="text-gray-400 dark:text-slate-500">Module: /{bug.category?.category_name || 'system'}/handler.js</p>
         <p className={['Resolved','Closed'].includes(bug.status) ? 'text-green-400' : 'text-red-400'}>
           Status: {['Resolved','Closed'].includes(bug.status) ? 'RESOLVED' : 'ACTIVE ERROR'}
         </p>
-        <p className="text-gray-500">Priority: {bug.priority} · SLA response: {bug.slaPolicy?.response_time ?? 'N/A'}h</p>
+        <p className="text-gray-500 dark:text-slate-400">Priority: {bug.priority} · SLA response: {bug.slaPolicy?.response_time ?? 'N/A'}h</p>
       </div>
 
       {/* Status update */}
