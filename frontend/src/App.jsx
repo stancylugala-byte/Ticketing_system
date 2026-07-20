@@ -28,10 +28,16 @@ export const ROLE_DASHBOARDS = {
 // Support Officer layout — sidebar + dashboard
 function SupportLayout() {
   const [activeModule, setActiveModule] = useState('ticket-queue');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   return (
     <>
-      <Sidebar activePage={activeModule} onNavigate={setActiveModule} />
-      <SupportDashboard activeModule={activeModule} />
+      <Sidebar
+        activePage={activeModule}
+        onNavigate={setActiveModule}
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(v => !v)}
+      />
+      <SupportDashboard activeModule={activeModule} sidebarCollapsed={sidebarCollapsed} />
     </>
   );
 }

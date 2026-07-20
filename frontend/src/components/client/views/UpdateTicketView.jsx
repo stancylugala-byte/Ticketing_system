@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import { getMyTickets, updateTicket } from '../../../api/clientApi';
 
-export default function UpdateTicketView({ onRefresh }) {
+export default function UpdateTicketView({ onRefresh, onNavigate }) {
   const [tickets, setTickets]   = useState([]);
   const [selected, setSelected] = useState('');
   const [form, setForm]         = useState({ title: '', description: '' });
@@ -29,8 +29,15 @@ export default function UpdateTicketView({ onRefresh }) {
     setSubmitting(true); setError('');
     try {
       await updateTicket(selected, { title: form.title.trim(), description: form.description.trim() });
-      setSuccess(true); onRefresh?.();
-      setTimeout(() => setSuccess(false), 3000);
+      setSuccess(true);
+      onRefresh?.();
+      // Reset form and navigate to view-tickets after 1.5s
+      setTimeout(() => {
+        setSuccess(false);
+        setSelected('');
+        setForm({ title: '', description: '' });
+        onNavigate?.('view-tickets');
+      }, 1500);
     } catch (err) { setError(err.response?.data?.message || 'Failed to update'); }
     finally { setSubmitting(false); }
   };

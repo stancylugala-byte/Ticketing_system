@@ -71,7 +71,7 @@ const VIEW_LABELS = {
 };
 
 const ROLE_MAP = {
-  clients: 'Client', officers: 'SupportOfficer', developers: 'Developer', managers: 'Admin',
+  clients: 'Client', officers: 'SupportOfficer', developers: 'Developer', managers: 'Manager',
 };
 
 export default function AdminDashboard() {
@@ -79,11 +79,12 @@ export default function AdminDashboard() {
   const { settings }       = useSystemSettings();
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('clients');
-  const [collapsed, setCollapsed] = useState({});
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sectionOpen, setSectionOpen] = useState({});
   const [search, setSearch] = useState('');
 
   const handleLogout = () => { logout(); navigate('/login'); };
-  const toggleSection = (s) => setCollapsed(c => ({ ...c, [s]: !c[s] }));
+  const toggleSection = (s) => setSectionOpen(c => ({ ...c, [s]: !c[s] }));
 
   const renderView = () => {
     // User management views share UsersView with a role filter
@@ -109,9 +110,9 @@ export default function AdminDashboard() {
     <div className="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden">
 
       {/* ── Sidebar ── */}
-      <aside className="w-60 flex flex-col shrink-0 overflow-y-auto" style={{ background: settings.sidebarBg }}>
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10 shrink-0">
+      <aside className={`${sidebarCollapsed ? 'w-16' : 'w-60'} flex flex-col shrink-0 overflow-y-auto transition-all duration-300 relative`} style={{ background: settings.sidebarBg }}>
+        {/* Logo + collapse toggle */}
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10 shrink-0 relative">
           {settings.logoUrl ? (
             <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
           ) : (
@@ -121,49 +122,70 @@ export default function AdminDashboard() {
               </svg>
             </div>
           )}
-          <div>
-            <p className="text-white font-bold text-sm leading-tight">{settings.companyName}</p>
-            <p className="text-white/40 text-[10px]">Admin Control Panel</p>
-          </div>
+          {!sidebarCollapsed && (
+            <div>
+              <p className="text-white font-bold text-sm leading-tight">{settings.companyName}</p>
+              <p className="text-white/40 text-[10px]">Admin Control Panel</p>
+            </div>
+          )}
+          {/* Collapse toggle */}
+          <button
+            onClick={() => setSidebarCollapsed(v => !v)}
+            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10"
+            title={sidebarCollapsed ? 'Expand' : 'Collapse'}
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d={sidebarCollapsed ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+            </svg>
+          </button>
         </div>
 
         {/* Admin card */}
-        <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800/5 border border-white/10 flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
-            {getInitials(user?.full_name)}
+        {!sidebarCollapsed ? (
+          <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
+              {getInitials(user?.full_name)}
+            </div>
+            <div className="min-w-0">
+              <p className="text-white text-xs font-semibold truncate">{user?.full_name || 'Admin'}</p>
+              <p className="text-white/40 text-[10px]">System Administrator</p>
+            </div>
+            <span className="ml-auto w-2 h-2 bg-emerald-400 rounded-full shrink-0" />
           </div>
-          <div className="min-w-0">
-            <p className="text-white text-xs font-semibold truncate">{user?.full_name || 'Admin'}</p>
-            <p className="text-white/40 text-[10px]">System Administrator</p>
+        ) : (
+          <div className="flex justify-center mt-3 mb-1">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+              {getInitials(user?.full_name)}
+            </div>
           </div>
-          <span className="ml-auto w-2 h-2 bg-emerald-400 rounded-full shrink-0" />
-        </div>
+        )}
 
         {/* Nav */}
-        <nav className="flex-1 px-2 py-2 flex flex-col gap-0.5">
+        <nav className="flex-1 px-2 py-2 flex flex-col gap-0.5 overflow-y-auto">
           {NAV.map(group => (
             <div key={group.section}>
-              <button
-                onClick={() => toggleSection(group.section)}
-                className="w-full flex items-center justify-between px-2 py-2 text-[10px] font-bold text-white/30 uppercase tracking-widest hover:text-white/50 transition-colors"
-              >
-                <span>{group.section}</span>
-                <span className="text-[8px]">{collapsed[group.section] ? '▶' : '▼'}</span>
-              </button>
-              {!collapsed[group.section] && group.items.map(item => (
+              {!sidebarCollapsed ? (
+                <button
+                  onClick={() => toggleSection(group.section)}
+                  className="w-full flex items-center justify-between px-2 py-2 text-[10px] font-bold text-white/30 uppercase tracking-widest hover:text-white/50 transition-colors"
+                >
+                  <span>{group.section}</span>
+                  <span className="text-[8px]">{sectionOpen[group.section] ? '▶' : '▼'}</span>
+                </button>
+              ) : <div className="my-1.5 mx-2 h-px bg-white/10" />}
+              {!sectionOpen[group.section] && group.items.map(item => (
                 <button
                   key={item.key}
                   onClick={() => setActiveView(item.key)}
+                  title={item.label}
                   style={activeView === item.key ? { background: settings.primaryColor } : {}}
                   className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all
-                    ${activeView === item.key
-                      ? 'text-white'
-                      : 'text-white/55 hover:bg-white dark:bg-slate-800/8 hover:text-white'
-                    }`}
+                    ${activeView === item.key ? 'text-white' : 'text-white/55 hover:bg-white/8 hover:text-white'}
+                    ${sidebarCollapsed ? 'justify-center' : ''}`}
                 >
                   <span className="shrink-0 text-sm">{item.icon}</span>
-                  <span className="truncate">{item.label}</span>
-                  {activeView === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white dark:bg-slate-800/60 rounded-full shrink-0" />}
+                  {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+                  {!sidebarCollapsed && activeView === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white/60 rounded-full shrink-0" />}
                 </button>
               ))}
             </div>
@@ -172,11 +194,12 @@ export default function AdminDashboard() {
 
         {/* Bottom */}
         <div className="px-2 pb-4 pt-2 border-t border-white/10 flex flex-col gap-0.5 shrink-0">
-          <button onClick={handleLogout} className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all">
+          <button onClick={handleLogout} title="Logout"
+            className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all ${sidebarCollapsed ? 'justify-center' : ''}`}>
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Logout
+            {!sidebarCollapsed && <span>Logout</span>}
           </button>
         </div>
       </aside>

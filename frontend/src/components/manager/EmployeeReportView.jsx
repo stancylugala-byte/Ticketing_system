@@ -27,13 +27,13 @@ export default function EmployeeReportView() {
         {loading ? (
           <div className="p-4 flex flex-col gap-2">{[...Array(5)].map((_,i) => <div key={i} className="h-14 bg-gray-100 dark:bg-slate-700 rounded animate-pulse" />)}</div>
         ) : data.length === 0 ? (
-          <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">??</span><p className="text-sm">No employee data</p></div>
+          <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">👥</span><p className="text-sm">No employee data</p></div>
         ) : (
           data.map(e => {
             const rate = e.assigned > 0 ? ((e.resolved / e.assigned) * 100).toFixed(1) : '0.0';
-            const rateColor = parseFloat(rate) >= 80 ? 'text-emerald-600' : parseFloat(rate) >= 50 ? 'text-yellow-600' : 'text-red-600';
+            const rateColor = parseFloat(rate) >= 80 ? 'text-emerald-600 dark:text-emerald-400' : parseFloat(rate) >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400';
             return (
-              <div key={e.id} className="grid grid-cols-[1fr_80px_80px_80px_80px_120px] items-center px-5 py-3.5 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900 transition-colors">
+              <div key={e.id} className="grid grid-cols-[1fr_80px_80px_80px_80px_120px] items-center px-5 py-3.5 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
                   <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">{getInitials(e.full_name)}</div>
                   <div className="min-w-0">
@@ -43,8 +43,8 @@ export default function EmployeeReportView() {
                 </div>
                 <span className="text-xs font-medium text-gray-600 dark:text-slate-300">{e.role === 'SupportOfficer' ? 'Officer' : 'Dev'}</span>
                 <span className="text-sm font-bold text-gray-800 dark:text-slate-100">{e.assigned}</span>
-                <span className="text-sm font-bold text-emerald-600">{e.resolved}</span>
-                <span className="text-sm font-bold text-orange-600">{e.open}</span>
+                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{e.resolved}</span>
+                <span className="text-sm font-bold text-orange-600 dark:text-orange-400">{e.open}</span>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div className="h-full bg-blue-500 rounded-full" style={{ width: `${rate}%` }} />

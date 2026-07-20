@@ -5,6 +5,7 @@ import { useSystemSettings } from '../context/SystemSettingsContext';
 import ProfileDropdown   from '../components/ProfileDropdown';
 import DarkModeToggle    from '../components/DarkModeToggle';
 import SystemSettingsView from '../components/manager/SystemSettingsView';
+import UsersView          from '../components/admin/UsersView';
 
 import ManagerKPIs             from '../components/manager/ManagerKPIs';
 import AllTicketsView          from '../components/manager/AllTicketsView';
@@ -67,6 +68,15 @@ const NAV = [
     ],
   },
   {
+    section: 'User Management',
+    items: [
+      { key: 'mgr-clients',    label: 'Clients',          icon: '👥' },
+      { key: 'mgr-officers',   label: 'Support Officers', icon: '🎧' },
+      { key: 'mgr-developers', label: 'Developers',       icon: '💻' },
+      { key: 'mgr-managers',   label: 'Managers',         icon: '📊' },
+    ],
+  },
+  {
     section: 'System',
     items: [
       { key: 'system-settings',     label: 'System Settings',      icon: '⚙️' },
@@ -89,6 +99,10 @@ const VIEW_LABELS = {
   'ticket-trends':       'Ticket Trends',
   'common-issues':       'Common Issues',
   'resolution-stats':    'Resolution Statistics',
+  'mgr-clients':         'Clients',
+  'mgr-officers':        'Support Officers',
+  'mgr-developers':      'Developers',
+  'mgr-managers':        'Managers',
   'system-settings':     'System Settings',
 };
 
@@ -97,13 +111,14 @@ export default function ManagerDashboard() {
   const { settings }     = useSystemSettings();
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('all-tickets');
-  const [collapsed, setCollapsed] = useState({});
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sectionOpen, setSectionOpen] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = () => { logout(); navigate('/login'); };
 
   const toggleSection = (section) =>
-    setCollapsed(c => ({ ...c, [section]: !c[section] }));
+    setSectionOpen(c => ({ ...c, [section]: !c[section] }));
 
   const renderView = () => {
     switch (activeView) {
@@ -121,6 +136,10 @@ export default function ManagerDashboard() {
       case 'ticket-trends':       return <TicketTrendsView />;
       case 'common-issues':       return <CommonIssuesView />;
       case 'resolution-stats':    return <ResolutionStatsView />;
+      case 'mgr-clients':         return <UsersView roleFilter="Client"        label="Clients" />;
+      case 'mgr-officers':        return <UsersView roleFilter="SupportOfficer" label="Support Officers" />;
+      case 'mgr-developers':      return <UsersView roleFilter="Developer"      label="Developers" />;
+      case 'mgr-managers':        return <UsersView roleFilter="Manager"        label="Managers" />;
       case 'system-settings':     return <SystemSettingsView />;
       default:                    return <AllTicketsView />;
     }
@@ -130,9 +149,9 @@ export default function ManagerDashboard() {
     <div className="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden">
 
       {/* ── Sidebar ── */}
-      <aside className="w-60 flex flex-col shrink-0 overflow-y-auto" style={{ background: settings.sidebarBg }}>
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10 shrink-0">
+      <aside className={`${sidebarCollapsed ? 'w-16' : 'w-60'} flex flex-col shrink-0 overflow-y-auto transition-all duration-300 relative`} style={{ background: settings.sidebarBg }}>
+        {/* Logo + collapse toggle */}
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10 shrink-0 relative">
           {settings.logoUrl ? (
             <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
           ) : (
@@ -142,49 +161,70 @@ export default function ManagerDashboard() {
               </svg>
             </div>
           )}
-          <div>
-            <p className="text-white font-bold text-sm leading-tight">{settings.companyName}</p>
-            <p className="text-white/40 text-[10px]">Management Portal</p>
-          </div>
+          {!sidebarCollapsed && (
+            <div>
+              <p className="text-white font-bold text-sm leading-tight">{settings.companyName}</p>
+              <p className="text-white/40 text-[10px]">Management Portal</p>
+            </div>
+          )}
+          <button
+            onClick={() => setSidebarCollapsed(v => !v)}
+            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10"
+            title={sidebarCollapsed ? 'Expand' : 'Collapse'}
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d={sidebarCollapsed ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+            </svg>
+          </button>
         </div>
 
         {/* User card */}
-        <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800/5 border border-white/10 flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
-            {getInitials(user?.full_name)}
+        {!sidebarCollapsed ? (
+          <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
+              {getInitials(user?.full_name)}
+            </div>
+            <div className="min-w-0">
+              <p className="text-white text-xs font-semibold truncate">{user?.full_name || 'Manager'}</p>
+              <p className="text-white/40 text-[10px]">Global Manager</p>
+            </div>
+            <span className="ml-auto w-2 h-2 bg-emerald-400 rounded-full shrink-0" />
           </div>
-          <div className="min-w-0">
-            <p className="text-white text-xs font-semibold truncate">{user?.full_name || 'Manager'}</p>
-            <p className="text-white/40 text-[10px]">Global Manager</p>
+        ) : (
+          <div className="flex justify-center mt-3 mb-1">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+              {getInitials(user?.full_name)}
+            </div>
           </div>
-          <span className="ml-auto w-2 h-2 bg-emerald-400 rounded-full shrink-0" />
-        </div>
+        )}
 
         {/* Nav */}
-        <nav className="flex-1 px-2 py-2 flex flex-col gap-0.5">
+        <nav className="flex-1 px-2 py-2 flex flex-col gap-0.5 overflow-y-auto">
           {NAV.map(group => (
             <div key={group.section}>
-              <button
-                onClick={() => toggleSection(group.section)}
-                className="w-full flex items-center justify-between px-2 py-2 text-[10px] font-bold text-white/30 uppercase tracking-widest hover:text-white/50 transition-colors"
-              >
-                <span>{group.section}</span>
-                <span className="text-[8px]">{collapsed[group.section] ? '▶' : '▼'}</span>
-              </button>
-              {!collapsed[group.section] && group.items.map(item => (
+              {!sidebarCollapsed && (
+                <button
+                  onClick={() => toggleSection(group.section)}
+                  className="w-full flex items-center justify-between px-2 py-2 text-[10px] font-bold text-white/30 uppercase tracking-widest hover:text-white/50 transition-colors"
+                >
+                  <span>{group.section}</span>
+                  <span className="text-[8px]">{sectionOpen[group.section] ? '▶' : '▼'}</span>
+                </button>
+              )}
+              {sidebarCollapsed && <div className="my-1.5 mx-2 h-px bg-white/10" />}
+              {(!sectionOpen[group.section]) && group.items.map(item => (
                 <button
                   key={item.key}
                   onClick={() => setActiveView(item.key)}
+                  title={item.label}
                   style={activeView === item.key ? { background: settings.primaryColor } : {}}
                   className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all
-                    ${activeView === item.key
-                      ? 'text-white'
-                      : 'text-white/55 hover:bg-white dark:bg-slate-800/8 hover:text-white'
-                    }`}
+                    ${activeView === item.key ? 'text-white' : 'text-white/55 hover:bg-white/8 hover:text-white'}
+                    ${sidebarCollapsed ? 'justify-center' : ''}`}
                 >
                   <span className="shrink-0 text-sm">{item.icon}</span>
-                  <span className="truncate">{item.label}</span>
-                  {activeView === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white dark:bg-slate-800/60 rounded-full shrink-0" />}
+                  {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+                  {!sidebarCollapsed && activeView === item.key && <span className="ml-auto w-1.5 h-1.5 bg-white/60 rounded-full shrink-0" />}
                 </button>
               ))}
             </div>
@@ -193,18 +233,21 @@ export default function ManagerDashboard() {
 
         {/* Bottom */}
         <div className="px-2 pb-4 pt-2 border-t border-white/10 flex flex-col gap-0.5 shrink-0">
-          <button className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white dark:bg-slate-800/8 hover:text-white transition-all">
-            <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Settings
-          </button>
-          <button onClick={handleLogout} className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all">
+          {!sidebarCollapsed && (
+            <button className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white/8 hover:text-white transition-all`}>
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Settings
+            </button>
+          )}
+          <button onClick={handleLogout} title="Logout"
+            className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all ${sidebarCollapsed ? 'justify-center' : ''}`}>
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Logout
+            {!sidebarCollapsed && <span>Logout</span>}
           </button>
         </div>
       </aside>

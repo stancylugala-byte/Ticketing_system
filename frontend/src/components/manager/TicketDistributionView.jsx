@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { getTicketDistribution } from '../../api/managerApi';
 
 const STATUS_COLORS = {
-  'Open':        { bar: 'bg-blue-500',    text: 'text-blue-700',    bg: 'bg-blue-50' },
-  'In Progress': { bar: 'bg-yellow-500',  text: 'text-yellow-700',  bg: 'bg-yellow-50' },
-  'Pending':     { bar: 'bg-purple-500',  text: 'text-purple-700',  bg: 'bg-purple-50' },
-  'Resolved':    { bar: 'bg-emerald-500', text: 'text-emerald-700', bg: 'bg-emerald-50' },
+  'Open':        { bar: 'bg-blue-500',    text: 'text-blue-700 dark:text-blue-400',    bg: 'bg-blue-50 dark:bg-blue-500/10' },
+  'In Progress': { bar: 'bg-yellow-500',  text: 'text-yellow-700 dark:text-yellow-400',  bg: 'bg-yellow-50 dark:bg-yellow-500/10' },
+  'Pending':     { bar: 'bg-purple-500',  text: 'text-purple-700 dark:text-purple-400',  bg: 'bg-purple-50 dark:bg-purple-500/10' },
+  'Resolved':    { bar: 'bg-emerald-500', text: 'text-emerald-700 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-500/10' },
   'Closed':      { bar: 'bg-gray-400',    text: 'text-gray-600 dark:text-slate-300',    bg: 'bg-gray-100 dark:bg-slate-700' },
 };
 

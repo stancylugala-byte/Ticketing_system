@@ -4,7 +4,7 @@ import { getAllTickets } from '../../api/managerApi';
 const STATUSES   = ['', 'Open', 'In Progress', 'Pending', 'Resolved', 'Closed'];
 const PRIORITIES = ['', 'Low', 'Medium', 'High', 'Critical'];
 
-const priorityBadge = { Critical:'bg-red-100 text-red-700', High:'bg-orange-100 text-orange-700', Medium:'bg-yellow-100 text-yellow-700', Low:'bg-green-100 text-green-700' };
+const priorityBadge = { Critical:'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400', High:'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400', Medium:'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400', Low:'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400' };
 const statusDot     = { Open:'bg-blue-500','In Progress':'bg-yellow-500', Pending:'bg-purple-500', Resolved:'bg-emerald-500', Closed:'bg-gray-400' };
 
 function timeAgo(d) {
@@ -38,23 +38,23 @@ export default function AllTicketsView() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">All Tickets</h2>
-          <p className="text-sm text-gray-500 dark:text-slate-400">Complete ticket directory � {total} total</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">Complete ticket directory — {total} total</p>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         <input
-          className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 w-56 placeholder-gray-400"
+          className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 dark:text-slate-100 w-56 placeholder-gray-400 dark:placeholder-slate-500"
           placeholder="Search tickets..."
           value={filters.search}
           onChange={e => { setFilters(f => ({ ...f, search: e.target.value })); setPage(1); }}
         />
-        <select className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800"
+        <select className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 dark:text-slate-100"
           value={filters.status} onChange={e => { setFilters(f => ({ ...f, status: e.target.value })); setPage(1); }}>
           {STATUSES.map(s => <option key={s} value={s}>{s || 'All Statuses'}</option>)}
         </select>
-        <select className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800"
+        <select className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 dark:text-slate-100"
           value={filters.priority} onChange={e => { setFilters(f => ({ ...f, priority: e.target.value })); setPage(1); }}>
           {PRIORITIES.map(p => <option key={p} value={p}>{p || 'All Priorities'}</option>)}
         </select>
@@ -69,22 +69,22 @@ export default function AllTicketsView() {
         {loading ? (
           <div className="flex flex-col gap-2 p-4">{[...Array(5)].map((_,i) => <div key={i} className="h-14 bg-gray-100 dark:bg-slate-700 rounded-lg animate-pulse" />)}</div>
         ) : tickets.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">??</span><p className="text-sm">No tickets found</p></div>
+          <div className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">📭</span><p className="text-sm">No tickets found</p></div>
         ) : (
           tickets.map(t => (
             <div key={t.id} className="grid grid-cols-[1fr_140px_90px_110px_100px_100px] items-center px-4 py-3.5 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
               <div className="flex flex-col gap-0.5 min-w-0 pr-3">
-                <span className="text-[11px] font-bold text-blue-600">#{t.id.slice(0,8).toUpperCase()}</span>
+                <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400">#{t.id.slice(0,8).toUpperCase()}</span>
                 <span className="text-sm font-semibold text-gray-800 dark:text-slate-100 truncate">{t.title}</span>
-                <span className="text-[10px] text-gray-400 dark:text-slate-500">{t.category?.category_name || '�'}</span>
+                <span className="text-[10px] text-gray-400 dark:text-slate-500">{t.category?.category_name || '—'}</span>
               </div>
-              <span className="text-xs text-gray-600 dark:text-slate-300 truncate">{t.client?.full_name || '�'}</span>
+              <span className="text-xs text-gray-600 dark:text-slate-300 truncate">{t.client?.full_name || '—'}</span>
               <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full w-fit ${priorityBadge[t.priority] || 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'}`}>{t.priority}</span>
               <div className="flex items-center gap-1.5">
                 <span className={`w-2 h-2 rounded-full ${statusDot[t.status] || 'bg-gray-400'}`} />
                 <span className="text-xs text-gray-600 dark:text-slate-300">{t.status}</span>
               </div>
-              <span className="text-xs text-gray-500 dark:text-slate-400 truncate">{t.assignee?.full_name || <em className="text-gray-300">Unassigned</em>}</span>
+              <span className="text-xs text-gray-500 dark:text-slate-400 truncate">{t.assignee?.full_name || <em className="text-gray-400 dark:text-slate-500 not-italic">Unassigned</em>}</span>
               <span className="text-xs text-gray-400 dark:text-slate-500">{timeAgo(t.created_at)}</span>
             </div>
           ))
@@ -92,9 +92,9 @@ export default function AllTicketsView() {
         <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900">
           <span className="text-xs text-gray-400 dark:text-slate-500">Showing {tickets.length} of {total}</span>
           <div className="flex items-center gap-2 text-xs">
-            <button disabled={page <= 1} onClick={() => setPage(p => p-1)} className="px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 hover:bg-blue-50 disabled:opacity-40 disabled:cursor-not-allowed">? Prev</button>
+            <button disabled={page <= 1} onClick={() => setPage(p => p-1)} className="px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">← Prev</button>
             <span className="text-gray-500 dark:text-slate-400 px-1">{page}/{totalPages}</span>
-            <button disabled={page >= totalPages} onClick={() => setPage(p => p+1)} className="px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 hover:bg-blue-50 disabled:opacity-40 disabled:cursor-not-allowed">Next ?</button>
+            <button disabled={page >= totalPages} onClick={() => setPage(p => p+1)} className="px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
           </div>
         </div>
       </div>

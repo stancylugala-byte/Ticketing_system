@@ -18,6 +18,12 @@ export default function TicketTrendsView() {
   const total    = data.reduce((s, d) => s + parseInt(d.count), 0);
   const avgDaily = data.length > 0 ? (total / data.length).toFixed(1) : 0;
 
+  const summaryCards = [
+    { label: 'Total in Period', value: total,    icon: '🎫', color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-500/10' },
+    { label: 'Daily Average',   value: avgDaily, icon: '📊', color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-500/10' },
+    { label: 'Peak Day',        value: maxCount, icon: '📈', color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-500/10' },
+  ];
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -28,26 +34,25 @@ export default function TicketTrendsView() {
         <div className="flex gap-2">
           {[7, 14, 30, 60].map(d => (
             <button key={d} onClick={() => setDays(d)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all
-                ${days === d ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-blue-50 hover:border-blue-300'}`}>
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                days === d
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:border-blue-300'
+              }`}>
               {d}d
             </button>
           ))}
         </div>
       </div>
 
-      {/* Summary */}
+      {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4">
-        {[
-          { label: 'Total in Period', value: total, icon: '🎫', color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Daily Average',   value: avgDaily, icon: '📊', color: 'text-purple-600', bg: 'bg-purple-50' },
-          { label: 'Peak Day',        value: maxCount, icon: '📈', color: 'text-orange-600', bg: 'bg-orange-50' },
-        ].map(c => (
+        {summaryCards.map(c => (
           <div key={c.label} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm px-5 py-4 flex items-center gap-3">
             <div className={`w-10 h-10 ${c.bg} rounded-xl flex items-center justify-center text-lg shrink-0`}>{c.icon}</div>
             <div>
               <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">{c.label}</p>
-              <p className={`text-xl font-bold ${c.color}`}>{loading ? '—' : value(c.value)}</p>
+              <p className={`text-xl font-bold ${c.color}`}>{loading ? '—' : c.value}</p>
             </div>
           </div>
         ))}
@@ -86,6 +91,3 @@ export default function TicketTrendsView() {
     </div>
   );
 }
-
-// helper to avoid inline expression issue
-function value(v) { return v; }

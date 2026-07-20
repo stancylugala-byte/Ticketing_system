@@ -9,10 +9,10 @@ export default function AdminKPIs() {
   }, []);
 
   const cards = [
-    { label: 'Total Clients',  value: data?.totalClients  ?? '�', icon: '??', color: 'text-blue-600',    border: 'border-blue-200',    bg: 'bg-blue-50'    },
-    { label: 'Total Users',    value: data?.totalUsers    ?? '�', icon: '??', color: 'text-purple-600',  border: 'border-purple-200',  bg: 'bg-purple-50'  },
-    { label: 'Active Tickets', value: data?.activeTickets ?? '�', icon: '??', color: 'text-orange-600',  border: 'border-orange-200',  bg: 'bg-orange-50'  },
-    { label: 'System Health',  value: data?.systemHealth  ?? '�', icon: '?', color: 'text-emerald-600', border: 'border-emerald-200', bg: 'bg-emerald-50' },
+    { label: 'Total Clients',  value: data?.totalClients  ?? '—', icon: '👥', color: 'text-blue-600',    border: 'border-blue-200 dark:border-blue-500/30',    bg: 'bg-blue-50 dark:bg-blue-500/10'    },
+    { label: 'Total Users',    value: data?.totalUsers    ?? '—', icon: '👤', color: 'text-purple-600',  border: 'border-purple-200 dark:border-purple-500/30',  bg: 'bg-purple-50 dark:bg-purple-500/10'  },
+    { label: 'Active Tickets', value: data?.activeTickets ?? '—', icon: '🎫', color: 'text-orange-600',  border: 'border-orange-200 dark:border-orange-500/30',  bg: 'bg-orange-50 dark:bg-orange-500/10'  },
+    { label: 'System Health',  value: data?.systemHealth  ?? '—', icon: '✅', color: 'text-emerald-600', border: 'border-emerald-200 dark:border-emerald-500/30', bg: 'bg-emerald-50 dark:bg-emerald-500/10' },
   ];
 
   return (
@@ -23,7 +23,7 @@ export default function AdminKPIs() {
           <div className="min-w-0">
             <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1">{c.label}</p>
             {!data
-              ? <div className="h-7 w-16 bg-gray-200 rounded animate-pulse" />
+              ? <div className="h-7 w-16 bg-gray-200 dark:bg-slate-700 rounded animate-pulse" />
               : <p className={`text-2xl font-bold leading-none ${c.color}`}>{c.value}</p>
             }
           </div>

@@ -1,6 +1,9 @@
 ﻿import { useEffect, useState } from 'react';
 import { getTicketReport } from '../../api/managerApi';
 
+const STATUS_COLORS   = { Open:'text-blue-600 dark:text-blue-400', 'In Progress':'text-yellow-600 dark:text-yellow-400', Pending:'text-purple-600 dark:text-purple-400', Resolved:'text-emerald-600 dark:text-emerald-400', Closed:'text-gray-500 dark:text-slate-400' };
+const PRIORITY_COLORS = { Critical:'text-red-600 dark:text-red-400', High:'text-orange-600 dark:text-orange-400', Medium:'text-yellow-600 dark:text-yellow-400', Low:'text-green-600 dark:text-green-400' };
+
 export default function TicketReportView() {
   const [data,    setData]    = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,9 +19,6 @@ export default function TicketReportView() {
 
   useEffect(() => { load(); }, []);
 
-  const STATUS_COLORS  = { Open:'text-blue-600', 'In Progress':'text-yellow-600', Pending:'text-purple-600', Resolved:'text-emerald-600', Closed:'text-gray-500 dark:text-slate-400' };
-  const PRIORITY_COLORS = { Critical:'text-red-600', High:'text-orange-600', Medium:'text-yellow-600', Low:'text-green-600' };
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -28,10 +28,10 @@ export default function TicketReportView() {
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <input type="date" value={range.from} onChange={e => setRange(r => ({ ...r, from: e.target.value }))}
-            className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800" />
+            className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 dark:text-slate-100" />
           <span className="text-gray-400 dark:text-slate-500 text-sm">to</span>
           <input type="date" value={range.to} onChange={e => setRange(r => ({ ...r, to: e.target.value }))}
-            className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800" />
+            className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 dark:text-slate-100" />
           <button onClick={load} className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">Apply</button>
         </div>
       </div>
@@ -44,7 +44,7 @@ export default function TicketReportView() {
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-gray-700 dark:text-slate-200">By Status</h3>
-              <span className="text-2xl font-extrabold text-blue-600">{data?.total ?? '—'}</span>
+              <span className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">{data?.total ?? '—'}</span>
             </div>
             <div className="flex flex-col gap-3">
               {(data?.byStatus || []).map(row => (
@@ -54,7 +54,7 @@ export default function TicketReportView() {
                     <div className="w-32 h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-500 rounded-full" style={{ width: `${data?.total > 0 ? (row.count / data.total) * 100 : 0}%` }} />
                     </div>
-                    <span className="text-sm font-bold text-gray-800 w-8 text-right">{row.count}</span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-slate-100 w-8 text-right">{row.count}</span>
                   </div>
                 </div>
               ))}
@@ -72,7 +72,7 @@ export default function TicketReportView() {
                     <div className="w-32 h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-500 rounded-full" style={{ width: `${data?.total > 0 ? (row.count / data.total) * 100 : 0}%` }} />
                     </div>
-                    <span className="text-sm font-bold text-gray-800 w-8 text-right">{row.count}</span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-slate-100 w-8 text-right">{row.count}</span>
                   </div>
                 </div>
               ))}

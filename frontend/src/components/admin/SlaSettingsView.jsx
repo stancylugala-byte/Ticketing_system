@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { getSlaRules, updateSlaRule } from '../../api/adminApi';
 
 const PRIORITY_STYLE = {
-  Low:      { badge: 'bg-green-100 text-green-700',  accent: 'border-l-green-500' },
-  Medium:   { badge: 'bg-yellow-100 text-yellow-700', accent: 'border-l-yellow-500' },
-  High:     { badge: 'bg-orange-100 text-orange-700', accent: 'border-l-orange-500' },
-  Critical: { badge: 'bg-red-100 text-red-700',       accent: 'border-l-red-500' },
+  Low:      { badge: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400',  accent: 'border-l-green-500' },
+  Medium:   { badge: 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400', accent: 'border-l-yellow-500' },
+  High:     { badge: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400', accent: 'border-l-orange-500' },
+  Critical: { badge: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400',       accent: 'border-l-red-500' },
 };
 
 export default function SlaSettingsView() {
@@ -40,9 +40,9 @@ export default function SlaSettingsView() {
       </div>
 
       {rules.length === 0 && !loading && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-sm text-amber-700 flex gap-2">
-          <span>??</span>
-          <span>No SLA policies found. Seed the <code className="bg-amber-100 px-1 rounded">sla_policies</code> table with priority entries (Low, Medium, High, Critical) to enable SLA management.</span>
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl p-5 text-sm text-amber-700 dark:text-amber-400 flex gap-2">
+          <span>⚠</span>
+          <span>No SLA policies found. Seed the <code className="bg-amber-100 dark:bg-amber-500/20 px-1 rounded">sla_policies</code> table with priority entries (Low, Medium, High, Critical) to enable SLA management.</span>
         </div>
       )}
 
@@ -57,10 +57,13 @@ export default function SlaSettingsView() {
                   <div className="flex items-center justify-between mb-4">
                     <span className={`text-sm font-bold px-3 py-1.5 rounded-lg ${s.badge}`}>{rule.priority} Priority</span>
                     {!isEditing ? (
-                      <button onClick={() => setEditing({ ...rule })} className="px-3 py-1.5 text-xs font-semibold border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 transition-all">Edit</button>
+                      <button onClick={() => setEditing({ ...rule })}
+                        className="px-3 py-1.5 text-xs font-semibold border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:border-blue-300 hover:text-blue-600 transition-all">
+                        Edit
+                      </button>
                     ) : (
                       <div className="flex gap-2">
-                        <button onClick={() => setEditing(null)} className="px-3 py-1.5 text-xs border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-100 dark:bg-slate-700">Cancel</button>
+                        <button onClick={() => setEditing(null)} className="px-3 py-1.5 text-xs border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700">Cancel</button>
                         <button onClick={handleSave} disabled={saving} className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50">
                           {saving ? 'Saving...' : 'Save'}
                         </button>
@@ -71,11 +74,9 @@ export default function SlaSettingsView() {
                     <div>
                       <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Response Time (h)</p>
                       {isEditing ? (
-                        <input type="number" min="1"
-                          value={editing.response_time}
+                        <input type="number" min="1" value={editing.response_time}
                           onChange={e => setEditing(v => ({ ...v, response_time: parseInt(e.target.value) }))}
-                          className="w-full border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-600"
-                        />
+                          className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-900 dark:text-slate-100" />
                       ) : (
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">{rule.response_time}h</p>
                       )}
@@ -83,11 +84,9 @@ export default function SlaSettingsView() {
                     <div>
                       <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Resolution Time (h)</p>
                       {isEditing ? (
-                        <input type="number" min="1"
-                          value={editing.resolution_time}
+                        <input type="number" min="1" value={editing.resolution_time}
                           onChange={e => setEditing(v => ({ ...v, resolution_time: parseInt(e.target.value) }))}
-                          className="w-full border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-600"
-                        />
+                          className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-900 dark:text-slate-100" />
                       ) : (
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">{rule.resolution_time}h</p>
                       )}
@@ -99,9 +98,9 @@ export default function SlaSettingsView() {
         }
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
-        <span className="text-lg shrink-0">??</span>
-        <p className="text-xs text-blue-700 leading-relaxed">
+      <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-4 flex gap-3">
+        <span className="text-lg shrink-0">💡</span>
+        <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
           SLA policies are linked to tickets by priority level. Updating these values immediately affects all currently active ticket SLA calculations.
         </p>
       </div>

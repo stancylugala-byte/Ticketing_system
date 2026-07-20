@@ -76,7 +76,7 @@ export default function CommonIssuesView() {
             );
           })}
           {data.length === 0 && !loading && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700 flex gap-2">
+            <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl p-4 text-sm text-amber-700 dark:text-amber-400 flex gap-2">
               <span>💡</span>
               <span>Ticket categories not configured. Assign categories when creating tickets to see distribution.</span>
             </div>

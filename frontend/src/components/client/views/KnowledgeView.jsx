@@ -50,8 +50,7 @@ export default function KnowledgeView({ type = 'faqs' }) {
   const handleSearch = (e) => {
     const q = e.target.value;
     setSearch(q);
-    clearTimeout(window._kbTimer);
-    window._kbTimer = setTimeout(() => load(q), 350);
+    load(q); // instant — no debounce
   };
 
   return (

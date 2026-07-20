@@ -379,4 +379,114 @@ router.get('/reports/clients', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// ─── List Users (Manager can view all users by role) ─────────────────────────
+router.get('/users', async (req, res, next) => {
+  try {
+    const { role, search, page = 1, limit = 20 } = req.query;
+    const where = {};
+    if (role)   where.role = role;
+    if (search) where[Op.or] = [
+      { full_name: { [Op.like]: `%${search}%` } },
+      { email:     { [Op.like]: `%${search}%` } },
+    ];
+    const { count, rows } = await User.findAndCountAll({
+      where,
+      attributes: ['id', 'full_name', 'email', 'role', 'created_at'],
+      order: [['created_at', 'DESC']],
+      limit:  parseInt(limit),
+      offset: (parseInt(page) - 1) * parseInt(limit),
+    });
+    res.json({ success: true, data: { total: count, page: parseInt(page), users: rows } });
+  } catch (err) { next(err); }
+});
+
+// ─── Update User Role (Manager can change roles) ──────────────────────────────
+router.patch('/users/:id/role', async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    const ALLOWED_ROLES = ['Client', 'SupportOfficer', 'Developer', 'Manager'];
+    if (!ALLOWED_ROLES.includes(role)) {
+      return res.status(422).json({ success: false, message: 'Invalid role' });
+    }
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    await user.update({ role });
+    res.json({ success: true, data: { id: user.id, full_name: user.full_name, email: user.email, role: user.role } });
+  } catch (err) { next(err); }
+});
+
+// ─── Update User (full edit: name, email, role, optional password) ────────────
+router.put('/users/:id', async (req, res, next) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const { full_name, email, role, password } = req.body;
+    const ALLOWED_ROLES = ['Client', 'SupportOfficer', 'Developer', 'Manager'];
+
+    if (!full_name?.trim()) return res.status(422).json({ success: false, message: 'Full name is required' });
+    if (!email?.trim())     return res.status(422).json({ success: false, message: 'Email is required' });
+    if (!ALLOWED_ROLES.includes(role)) return res.status(422).json({ success: false, message: 'Invalid role' });
+    if (password && password.length < 6) return res.status(422).json({ success: false, message: 'Password must be at least 6 characters' });
+
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    if (user.role === 'Admin') return res.status(403).json({ success: false, message: 'Managers cannot edit Admin accounts' });
+
+    // Check email uniqueness (exclude self)
+    const conflict = await User.findOne({ where: { email: email.trim().toLowerCase(), id: { [Op.ne]: req.params.id } } });
+    if (conflict) return res.status(409).json({ success: false, message: 'Email is already taken by another user' });
+
+    const updates = { full_name: full_name.trim(), email: email.trim().toLowerCase(), role };
+    if (password) updates.password = await bcrypt.hash(password, 12);
+
+    await user.update(updates);
+    res.json({ success: true, data: { id: user.id, full_name: user.full_name, email: user.email, role: user.role } });
+  } catch (err) { next(err); }
+});
+
+// ─── Delete User (Manager can delete non-admin users) ────────────────────────
+router.delete('/users/:id', async (req, res, next) => {
+  try {
+    if (parseInt(req.params.id) === req.user.id) {
+      return res.status(400).json({ success: false, message: 'You cannot delete your own account' });
+    }
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    if (user.role === 'Admin') {
+      return res.status(403).json({ success: false, message: 'Managers cannot delete Admin accounts' });
+    }
+    await user.destroy();
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (err) { next(err); }
+});
+
+// ─── Create User (Manager can create Client/Officer/Developer/Manager accounts) ─
+router.post('/users', async (req, res, next) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const { full_name, email, password, role } = req.body;
+
+    const ALLOWED_ROLES = ['Client', 'SupportOfficer', 'Developer', 'Manager'];
+    if (!full_name?.trim()) return res.status(422).json({ success: false, message: 'Full name is required' });
+    if (!email?.trim())     return res.status(422).json({ success: false, message: 'Email is required' });
+    if (!password || password.length < 6) return res.status(422).json({ success: false, message: 'Password must be at least 6 characters' });
+    if (!ALLOWED_ROLES.includes(role))    return res.status(422).json({ success: false, message: `Role must be one of: ${ALLOWED_ROLES.join(', ')}` });
+
+    const existing = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+    if (existing) return res.status(409).json({ success: false, message: 'A user with this email already exists' });
+
+    const hashed = await bcrypt.hash(password, 12);
+    const user = await User.create({
+      full_name: full_name.trim(),
+      email:     email.trim().toLowerCase(),
+      password:  hashed,
+      role,
+    });
+
+    res.status(201).json({
+      success: true,
+      data: { id: user.id, full_name: user.full_name, email: user.email, role: user.role, created_at: user.created_at },
+    });
+  } catch (err) { next(err); }
+});
+
 module.exports = router;

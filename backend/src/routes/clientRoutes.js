@@ -55,9 +55,16 @@ router.get('/dashboard/stats', async (req, res, next) => {
 // ── My Tickets ───────────────────────────────────────────────────────────────
 router.get('/tickets', async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, status } = req.query;
+    const { page = 1, limit = 10, status, search } = req.query;
+    const { Op } = require('sequelize');
     const where = { user_id: req.user.id };
     if (status) where.status = status;
+    if (search?.trim()) {
+      where[Op.or] = [
+        { title:       { [Op.like]: `%${search.trim()}%` } },
+        { description: { [Op.like]: `%${search.trim()}%` } },
+      ];
+    }
 
     const { count, rows } = await Ticket.findAndCountAll({
       where,

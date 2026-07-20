@@ -1,9 +1,12 @@
 export default function OrganizationView({ type }) {
   const isCompanies = type === 'companies';
+
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white">{isCompanies ? 'Companies' : 'Departments'}</h2>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+          {isCompanies ? 'Companies' : 'Departments'}
+        </h2>
         <p className="text-sm text-gray-500 dark:text-slate-400">
           {isCompanies
             ? 'Corporate client registry for enterprise billing and SLA reviews.'
@@ -11,19 +14,20 @@ export default function OrganizationView({ type }) {
         </p>
       </div>
 
-      {/* Placeholder � full org management requires a companies/departments table */}
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm p-8 flex flex-col items-center text-gray-400 dark:text-slate-500 gap-4">
-        <span className="text-5xl">{isCompanies ? '??' : '??'}</span>
+        <span className="text-5xl">{isCompanies ? '🏢' : '🗂'}</span>
         <p className="text-base font-semibold text-gray-600 dark:text-slate-300">
           {isCompanies ? 'Company Registry' : 'Department Management'}
         </p>
-        <p className="text-sm text-center max-w-md">
+        <p className="text-sm text-center max-w-md text-gray-500 dark:text-slate-400">
           {isCompanies
-            ? 'Companies are linked to client accounts via user records. Each client\'s organisation is derived from their email domain and profile.'
+            ? "Companies are linked to client accounts via user records. Each client's organisation is derived from their email domain and profile."
             : 'Departments are mapped through support officer role assignments. Use Team Management in the Support Manager dashboard for workload distribution.'}
         </p>
-        <div className="bg-blue-50 border border-blue-100 rounded-xl px-5 py-4 text-sm text-blue-700 max-w-md text-center">
-          ?? To extend this module, add a <code className="bg-blue-100 px-1 rounded text-xs">companies</code> table to the database schema and link it to the User model.
+        <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl px-5 py-4 text-sm text-blue-700 dark:text-blue-400 max-w-md text-center">
+          💡 To extend this module, add a{' '}
+          <code className="bg-blue-100 dark:bg-blue-500/20 px-1 rounded text-xs">companies</code>{' '}
+          table to the database schema and link it to the User model.
         </div>
       </div>
     </div>

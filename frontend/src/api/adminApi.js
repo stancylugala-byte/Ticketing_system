@@ -5,6 +5,8 @@ export const getAdminKPIs      = ()         => api.get('/admin/kpis');
 // User Management
 export const getUsers          = (params)   => api.get('/admin/users', { params });
 export const getUserById       = (id)       => api.get(`/admin/users/${id}`);
+export const createUser        = (data)     => api.post('/admin/users', data);
+export const updateUser        = (id, data) => api.put(`/admin/users/${id}`, data);
 export const updateUserRole    = (id, role) => api.patch(`/admin/users/${id}/role`, { role });
 export const deleteUser        = (id)       => api.delete(`/admin/users/${id}`);
 

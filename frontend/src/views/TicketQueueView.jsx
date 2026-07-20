@@ -70,10 +70,10 @@ export default function TicketQueueView({ onOpenTicket }) {
   const totalPages = Math.max(1, Math.ceil(total / 10));
 
   const kpiCards = [
-    { label: 'Assigned Tickets', value: stats?.assigned ?? '—',      bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-700' },
-    { label: 'Pending Tickets',  value: stats?.pending ?? '—',       bg: 'bg-orange-50',  border: 'border-orange-200',  text: 'text-orange-700' },
-    { label: 'Resolved Today',   value: stats?.resolvedToday ?? '—', bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700' },
-    { label: 'SLA Due Today',    value: stats?.slaBreaches ?? '—',   bg: (stats?.slaBreaches ?? 0) > 0 ? 'bg-red-50' : 'bg-gray-50 dark:bg-slate-900', border: (stats?.slaBreaches ?? 0) > 0 ? 'border-red-300' : 'border-gray-200 dark:border-slate-700', text: (stats?.slaBreaches ?? 0) > 0 ? 'text-red-700' : 'text-gray-700 dark:text-slate-200' },
+    { label: 'Assigned Tickets', value: stats?.assigned ?? 'â€”',      bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200 dark:border-blue-500/30', text: 'text-blue-700 dark:text-blue-400' },
+    { label: 'Pending Tickets',  value: stats?.pending ?? 'â€”',       bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'border-orange-200 dark:border-orange-500/30', text: 'text-orange-700 dark:text-orange-400' },
+    { label: 'Resolved Today',   value: stats?.resolvedToday ?? 'â€”', bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'border-emerald-200 dark:border-emerald-500/30', text: 'text-emerald-700 dark:text-emerald-400' },
+    { label: 'SLA Due Today',    value: stats?.slaBreaches ?? 'â€”',   bg: (stats?.slaBreaches ?? 0) > 0 ? 'bg-red-50 dark:bg-red-500/10' : 'bg-gray-50 dark:bg-slate-900', border: (stats?.slaBreaches ?? 0) > 0 ? 'border-red-300 dark:border-red-500/30' : 'border-gray-200 dark:border-slate-700', text: (stats?.slaBreaches ?? 0) > 0 ? 'text-red-700 dark:text-red-400' : 'text-gray-700 dark:text-slate-200' },
   ];
 
   return (
@@ -85,7 +85,7 @@ export default function TicketQueueView({ onOpenTicket }) {
         <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Monitor and manage all incoming support tickets</p>
       </div>
 
-      {/* KPI cards — 2×2 */}
+      {/* KPI cards ï¿½ 2ï¿½2 */}
       <div className="grid grid-cols-4 gap-4">
         {kpiCards.map(c => (
           <div key={c.label} className={`rounded-xl border ${c.border} ${c.bg} px-5 py-4`}>
@@ -173,7 +173,7 @@ export default function TicketQueueView({ onOpenTicket }) {
                     <div className="w-7 h-7 bg-slate-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shrink-0">
                       {initials(ticket.client?.full_name)}
                     </div>
-                    <span className="text-xs text-gray-600 dark:text-slate-300 truncate">{ticket.client?.full_name || '—'}</span>
+                    <span className="text-xs text-gray-600 dark:text-slate-300 truncate">{ticket.client?.full_name || 'ï¿½'}</span>
                   </div>
 
                   {/* Priority */}

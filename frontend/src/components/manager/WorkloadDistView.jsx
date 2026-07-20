@@ -23,10 +23,7 @@ export default function WorkloadDistView() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getWorkloadDist()
-      .then(r => setData(r.data.data || []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    getWorkloadDist().then(r => setData(r.data.data || [])).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   const maxOpen = Math.max(1, ...data.map(d => d.open));
@@ -46,12 +43,16 @@ export default function WorkloadDistView() {
           </div>
           {loading ? (
             <div className="p-4 flex flex-col gap-2">{[...Array(4)].map((_,i) => <div key={i} className="h-14 bg-gray-100 dark:bg-slate-700 rounded animate-pulse" />)}</div>
+          ) : data.length === 0 ? (
+            <div className="flex flex-col items-center py-10 text-gray-400 dark:text-slate-500 gap-2">
+              <span className="text-2xl">👥</span><p className="text-sm">No officers found</p>
+            </div>
           ) : (
             data.map(d => (
-              <div key={d.id} className="grid grid-cols-[1fr_60px_100px_80px] items-center px-5 py-3.5 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900 transition-colors">
+              <div key={d.id} className="grid grid-cols-[1fr_60px_100px_80px] items-center px-5 py-3.5 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
                 <div className="flex items-center gap-2 min-w-0 pr-2">
                   <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shrink-0">{getInitials(d.full_name)}</div>
-                  <span className="text-sm font-medium text-gray-800 truncate">{d.full_name}</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-slate-100 truncate">{d.full_name}</span>
                 </div>
                 <span className="text-[10px] font-semibold text-gray-500 dark:text-slate-400">{d.role === 'SupportOfficer' ? 'Officer' : 'Dev'}</span>
                 <LoadIndicator value={d.open} max={maxOpen} />
@@ -67,9 +68,10 @@ export default function WorkloadDistView() {
             <h3 className="text-sm font-bold text-gray-700 dark:text-slate-200 mb-4">Load Summary</h3>
             <div className="flex flex-col gap-3">
               {data.map(d => {
-                const color = d.open > maxOpen * 0.8 ? 'text-red-600' : d.open > maxOpen * 0.5 ? 'text-yellow-600' : 'text-emerald-600';
-                const label = d.open > maxOpen * 0.8 ? 'Overloaded' : d.open > maxOpen * 0.5 ? 'Busy' : 'Available';
-                const dotColor = d.open > maxOpen * 0.8 ? 'bg-red-500' : d.open > maxOpen * 0.5 ? 'bg-yellow-500' : 'bg-emerald-500';
+                const pct      = maxOpen > 0 ? d.open / maxOpen : 0;
+                const color    = pct > 0.8 ? 'text-red-600 dark:text-red-400' : pct > 0.5 ? 'text-yellow-600 dark:text-yellow-400' : 'text-emerald-600 dark:text-emerald-400';
+                const label    = pct > 0.8 ? 'Overloaded' : pct > 0.5 ? 'Busy' : 'Available';
+                const dotColor = pct > 0.8 ? 'bg-red-500' : pct > 0.5 ? 'bg-yellow-500' : 'bg-emerald-500';
                 return (
                   <div key={d.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -82,9 +84,9 @@ export default function WorkloadDistView() {
               })}
             </div>
           </div>
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
+          <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-4 flex gap-3">
             <span className="text-lg shrink-0">💡</span>
-            <p className="text-xs text-blue-700 leading-relaxed">
+            <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
               <strong>Recommendation:</strong> Officers with more than 80% of the max load should have new tickets redistributed to prevent burnout and SLA breaches.
             </p>
           </div>

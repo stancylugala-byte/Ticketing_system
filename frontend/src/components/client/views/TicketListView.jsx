@@ -152,39 +152,53 @@ function TicketDrawer({ ticketId, onClose, onRefresh }) {
   );
 }
 
-export default function TicketListView({ onRefresh }) {
+export default function TicketListView({ onRefresh, globalSearch = '' }) {
   const [tickets, setTickets]   = useState([]);
   const [total, setTotal]       = useState(0);
   const [page, setPage]         = useState(1);
   const [filter, setFilter]     = useState('');
+  const [search, setSearch]     = useState('');
   const [loading, setLoading]   = useState(false);
   const [selected, setSelected] = useState(null);
+
+  // Sync global search from header
+  useEffect(() => { setSearch(globalSearch); setPage(1); }, [globalSearch]);
 
   const load = () => {
     setLoading(true);
     const params = { page, limit: 10 };
     if (filter) params.status = filter;
+    if (search.trim()) params.search = search.trim();
     getMyTickets(params)
       .then(r => { setTickets(r.data.data.tickets || []); setTotal(r.data.data.total || 0); })
       .catch(() => {})
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, [page, filter]);
+  useEffect(() => { load(); }, [page, filter, search]);
 
   const FILTERS = ['', 'Open', 'In Progress', 'Pending', 'Resolved', 'Closed'];
   const totalPages = Math.max(1, Math.ceil(total / 10));
 
   return (
-    <div className="flex gap-4 h-full">
+    <div className="flex gap-4 h-full min-h-0">
       {/* Ticket table */}
-      <div className={`flex flex-col gap-4 ${selected ? 'flex-1' : 'w-full'}`}>
-        <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className={`flex flex-col gap-4 ${selected ? 'flex-1 min-w-0' : 'w-full'} min-h-0`}>
+        <div className="flex items-center justify-between flex-wrap gap-3 shrink-0">
           <div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-slate-100">My Tickets</h2>
             <p className="text-sm text-gray-500 dark:text-slate-400">{total} total tickets</p>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-xs pointer-events-none">🔍</span>
+              <input
+                value={search}
+                onChange={e => { setSearch(e.target.value); setPage(1); }}
+                placeholder="Search tickets..."
+                className="pl-8 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 dark:text-slate-100 outline-none focus:border-blue-500 w-48 placeholder-gray-400 dark:placeholder-slate-500"
+              />
+            </div>
             {FILTERS.map(f => (
               <button key={f} onClick={() => { setFilter(f); setPage(1); }}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors
@@ -195,16 +209,17 @@ export default function TicketListView({ onRefresh }) {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
           <div className="grid grid-cols-[1fr_90px_100px_90px_80px] px-4 py-2.5 text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 shrink-0">
             <span>Ticket</span><span>Priority</span><span>Status</span><span>Updated</span><span>Action</span>
           </div>
           {loading ? (
-            <div className="p-4 flex flex-col gap-2">{[1,2,3].map(i => <div key={i} className="h-14 bg-gray-100 dark:bg-slate-700 rounded animate-pulse" />)}</div>
+            <div className="overflow-y-auto p-4 flex flex-col gap-2">{[1,2,3].map(i => <div key={i} className="h-14 bg-gray-100 dark:bg-slate-700 rounded animate-pulse" />)}</div>
           ) : tickets.length === 0 ? (
             <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">📭</span><p className="text-sm">No tickets found</p></div>
           ) : (
-            tickets.map(t => (
+            <div className="flex-1 overflow-y-auto min-h-0">
+            {tickets.map(t => (
               <div key={t.id} className={`grid grid-cols-[1fr_90px_100px_90px_80px] items-center px-4 py-3.5 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors ${selected === t.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-2 border-l-blue-600' : ''}`}>
                 <div className="flex flex-col gap-0.5 min-w-0 pr-3">
                   <span className="text-[11px] font-bold text-blue-600">#{t.id.slice(0,8).toUpperCase()}</span>
@@ -219,7 +234,8 @@ export default function TicketListView({ onRefresh }) {
                   {selected === t.id ? 'Close' : 'View ›'}
                 </button>
               </div>
-            ))
+            ))}
+            </div>
           )}
           <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 shrink-0">
             <span className="text-xs text-gray-400 dark:text-slate-500">{tickets.length} of {total}</span>

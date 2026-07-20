@@ -44,7 +44,7 @@ export default function StaffPerformanceView() {
         {loading ? (
           <div className="p-4 flex flex-col gap-2">{[...Array(4)].map((_,i) => <div key={i} className="h-16 bg-gray-100 dark:bg-slate-700 rounded animate-pulse" />)}</div>
         ) : staff.length === 0 ? (
-          <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">??</span><p className="text-sm">No staff data found</p></div>
+          <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">👥</span><p className="text-sm">No staff data found</p></div>
         ) : (
           staff.map(s => (
             <div key={s.id} className="grid grid-cols-[200px_80px_100px_180px_100px_120px] items-center px-5 py-4 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
@@ -57,13 +57,15 @@ export default function StaffPerformanceView() {
                   <p className="text-[10px] text-gray-400 dark:text-slate-500">{s.email}</p>
                 </div>
               </div>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 w-fit">{s.role === 'SupportOfficer' ? 'Officer' : 'Dev'}</span>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 w-fit">
+                {s.role === 'SupportOfficer' ? 'Officer' : 'Dev'}
+              </span>
               <span className="text-sm font-bold text-gray-800 dark:text-slate-100">{s.assigned}</span>
               <ScoreBar value={s.resolved} max={maxResolved} color="bg-blue-500" />
-              <span className="text-sm text-gray-600 dark:text-slate-300">{s.avgResolutionHours > 0 ? `${s.avgResolutionHours}h` : '�'}</span>
+              <span className="text-sm text-gray-600 dark:text-slate-300">{s.avgResolutionHours > 0 ? `${s.avgResolutionHours}h` : '—'}</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-yellow-400 text-sm">?</span>
-                <span className="text-sm font-bold text-gray-800 dark:text-slate-100">{s.csat != null ? `${s.csat}/5` : '�'}</span>
+                <span className="text-yellow-400 text-sm">★</span>
+                <span className="text-sm font-bold text-gray-800 dark:text-slate-100">{s.csat != null ? `${s.csat}/5` : '—'}</span>
               </div>
             </div>
           ))

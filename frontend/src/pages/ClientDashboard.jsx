@@ -42,9 +42,12 @@ const VIEW_LABELS = {
   'troubleshooting':     'Troubleshooting Guides',
 };
 
-function KpiCard({ label, value, icon, color, sub }) {
+function KpiCard({ label, value, icon, color, sub, onClick }) {
   return (
-    <div className={`bg-white dark:bg-slate-800 rounded-xl border ${color} px-5 py-4 shadow-sm flex items-center gap-4`}>
+    <div
+      onClick={onClick}
+      className={`bg-white dark:bg-slate-800 rounded-xl border ${color} px-5 py-4 shadow-sm flex items-center gap-4 ${onClick ? 'cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all' : ''}`}
+    >
       <div className="text-2xl shrink-0">{icon}</div>
       <div className="min-w-0">
         <p className="text-xs font-semibold text-gray-400 dark:text-slate-400 uppercase tracking-wider mb-1">{label}</p>
@@ -54,6 +57,7 @@ function KpiCard({ label, value, icon, color, sub }) {
         }
         {sub && <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">{sub}</p>}
       </div>
+      {onClick && <span className="ml-auto text-gray-300 dark:text-slate-600 text-lg">→</span>}
     </div>
   );
 }
@@ -65,10 +69,10 @@ function DashboardOverview({ stats, tickets, onNavigate, onNewTicket }) {
     <div className="flex flex-col gap-5">
       {/* KPIs */}
       <div className="grid grid-cols-4 gap-4">
-        <KpiCard label="Total Tickets"    value={stats?.totalTickets ?? null}    icon="🎫" color="border-blue-200"    sub="Lifetime requests" />
-        <KpiCard label="Open Tickets"     value={stats?.openTickets ?? null}     icon="🔧" color="border-orange-200"  sub="Currently active" />
-        <KpiCard label="Pending Tickets"  value={stats?.pendingTickets ?? null}  icon="⏳" color="border-yellow-200"  sub="Awaiting response" />
-        <KpiCard label="Resolved Tickets" value={stats?.resolvedTickets ?? null} icon="✅" color="border-emerald-200" sub="Successfully closed" />
+        <KpiCard label="Total Tickets"    value={stats?.totalTickets ?? null}    icon="🎫" color="border-blue-200"    sub="Lifetime requests"    onClick={() => onNavigate('view-tickets')} />
+        <KpiCard label="Open Tickets"     value={stats?.openTickets ?? null}     icon="🔧" color="border-orange-200"  sub="Currently active"     onClick={() => onNavigate('view-tickets')} />
+        <KpiCard label="Pending Tickets"  value={stats?.pendingTickets ?? null}  icon="⏳" color="border-yellow-200"  sub="Awaiting response"    onClick={() => onNavigate('track-status')} />
+        <KpiCard label="Resolved Tickets" value={stats?.resolvedTickets ?? null} icon="✅" color="border-emerald-200" sub="Successfully closed"   onClick={() => onNavigate('track-status')} />
       </div>
 
       {/* Quick actions */}
@@ -139,6 +143,7 @@ export default function ClientDashboard() {
   const { user } = useAuth();
   const { settings } = useSystemSettings();
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [stats, setStats]                 = useState(null);
   const [tickets, setTickets]             = useState([]);
   const [unread, setUnread]               = useState(0);
@@ -170,8 +175,8 @@ export default function ClientDashboard() {
   const renderView = () => {
     switch (activeSection) {
       case 'dashboard':           return <DashboardOverview stats={stats} tickets={tickets} onNavigate={handleNavigate} onNewTicket={() => setShowNewTicket(true)} />;
-      case 'view-tickets':        return <TicketListView onRefresh={loadData} />;
-      case 'update-ticket':       return <UpdateTicketView onRefresh={loadData} />;
+      case 'view-tickets':        return <TicketListView onRefresh={loadData} globalSearch={search} />;
+      case 'update-ticket':       return <UpdateTicketView onRefresh={loadData} onNavigate={handleNavigate} />;
       case 'reopen-ticket':       return <ReopenTicketView onRefresh={loadData} />;
       case 'close-ticket':        return <CloseTicketView onRefresh={loadData} />;
       case 'track-status':        return <TrackStatusView />;
@@ -189,9 +194,15 @@ export default function ClientDashboard() {
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden">
-      <ClientSidebar activeSection={activeSection} onNavigate={handleNavigate} />
+      <ClientSidebar
+        activeSection={activeSection}
+        onNavigate={handleNavigate}
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(v => !v)}
+        unreadNotifs={unread}
+      />
 
-      <div className="flex-1 ml-64 flex flex-col overflow-hidden">
+      <div className={`flex-1 ${sidebarCollapsed ? 'ml-16' : 'ml-64'} flex flex-col overflow-hidden transition-all duration-300`}>
         {/* Topbar */}
         <header className="h-14 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 gap-4 shrink-0 shadow-sm">
           <div className="flex items-center gap-2">

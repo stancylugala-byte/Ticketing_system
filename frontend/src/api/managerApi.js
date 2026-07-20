@@ -1,6 +1,11 @@
 import api from './axios';
 
 export const getKPIs              = ()       => api.get('/manager/kpis');
+export const getUsers             = (params) => api.get('/manager/users', { params });
+export const createUser           = (data)   => api.post('/manager/users', data);
+export const updateUser           = (id, data) => api.put(`/manager/users/${id}`, data);
+export const updateUserRole       = (id, role) => api.patch(`/manager/users/${id}/role`, { role });
+export const deleteUser           = (id)     => api.delete(`/manager/users/${id}`);
 export const getAllTickets         = (params) => api.get('/manager/tickets', { params });
 export const getTicketDistribution = ()      => api.get('/manager/tickets/distribution');
 export const getEscalatedTickets   = ()      => api.get('/manager/tickets/escalated');

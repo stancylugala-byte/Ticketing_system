@@ -6,7 +6,7 @@ export default function CategoriesView() {
   const [loading, setLoading] = useState(true);
   const [newName, setNewName] = useState('');
   const [adding,  setAdding]  = useState(false);
-  const [editing, setEditing] = useState(null); // { id, name }
+  const [editing, setEditing] = useState(null);
   const [saving,  setSaving]  = useState(false);
   const [confirm, setConfirm] = useState(null);
 
@@ -35,7 +35,7 @@ export default function CategoriesView() {
 
   const handleDelete = async (id) => {
     try { await deleteCategory(id); setConfirm(null); load(); }
-    catch (e) { alert(e.response?.data?.message || 'Failed to delete ó category may be in use'); }
+    catch (e) { alert(e.response?.data?.message || 'Failed to delete ‚Äî category may be in use'); }
   };
 
   return (
@@ -50,7 +50,7 @@ export default function CategoriesView() {
         <h3 className="text-sm font-bold text-gray-700 dark:text-slate-200 mb-3">Add New Category</h3>
         <div className="flex gap-3">
           <input
-            className="flex-1 px-3 py-2.5 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-500 placeholder-gray-400"
+            className="flex-1 px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-lg text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
             placeholder="e.g. Authentication, Billing, Network..."
             value={newName}
             onChange={e => setNewName(e.target.value)}
@@ -73,42 +73,45 @@ export default function CategoriesView() {
         {loading ? (
           <div className="p-4 flex flex-col gap-2">{[...Array(4)].map((_,i) => <div key={i} className="h-12 bg-gray-100 dark:bg-slate-700 rounded animate-pulse" />)}</div>
         ) : cats.length === 0 ? (
-          <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2"><span className="text-3xl">??</span><p className="text-sm">No categories yet ó add your first one above</p></div>
+          <div className="flex flex-col items-center py-12 text-gray-400 dark:text-slate-500 gap-2">
+            <span className="text-3xl">üè∑</span>
+            <p className="text-sm">No categories yet ‚Äî add your first one above</p>
+          </div>
         ) : (
           cats.map(c => (
             <div key={c.category_id} className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
               {editing?.id === c.category_id ? (
                 <div className="flex gap-2 flex-1 mr-3">
                   <input
-                    className="flex-1 px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-500 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-600"
+                    className="flex-1 px-3 py-1.5 border border-gray-200 dark:border-slate-600 rounded-lg text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-900 dark:text-slate-100"
                     value={editing.name}
                     onChange={e => setEditing(v => ({ ...v, name: e.target.value }))}
                     onKeyDown={e => { if (e.key === 'Enter') handleEdit(); }}
                     autoFocus
                   />
                   <button onClick={handleEdit} disabled={saving} className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50">Save</button>
-                  <button onClick={() => setEditing(null)} className="px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg text-xs text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:bg-slate-700">Cancel</button>
+                  <button onClick={() => setEditing(null)} className="px-3 py-1.5 border border-gray-200 dark:border-slate-600 rounded-lg text-xs text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700">Cancel</button>
                 </div>
               ) : (
                 <div className="flex items-center gap-3 flex-1">
-                  <span className="w-7 h-7 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center text-xs font-bold shrink-0">
+                  <span className="w-7 h-7 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-lg flex items-center justify-center text-xs font-bold shrink-0">
                     {c.category_id}
                   </span>
                   <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{c.category_name}</span>
                 </div>
               )}
-              {!editing || editing.id !== c.category_id ? (
+              {(!editing || editing.id !== c.category_id) && (
                 <div className="flex gap-2 shrink-0">
                   <button onClick={() => setEditing({ id: c.category_id, name: c.category_name })}
-                    className="px-3 py-1.5 text-xs font-semibold border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 transition-all">
+                    className="px-3 py-1.5 text-xs font-semibold border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:border-blue-300 hover:text-blue-600 transition-all">
                     Edit
                   </button>
                   <button onClick={() => setConfirm(c.category_id)}
-                    className="px-3 py-1.5 text-xs font-semibold border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all">
+                    className="px-3 py-1.5 text-xs font-semibold border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-300 hover:text-red-600 transition-all">
                     Delete
                   </button>
                 </div>
-              ) : null}
+              )}
             </div>
           ))
         )}
@@ -120,8 +123,8 @@ export default function CategoriesView() {
             <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">Delete Category</h3>
             <p className="text-sm text-gray-500 dark:text-slate-400 mb-5">This will permanently remove the category. Tickets using it will lose their category assignment.</p>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setConfirm(null)} className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900">Cancel</button>
-              <button onClick={() => handleDelete(confirm)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700">Delete</button>
+              <button onClick={() => setConfirm(null)} className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">Cancel</button>
+              <button onClick={() => handleDelete(confirm)} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">Delete</button>
             </div>
           </div>
         </div>
