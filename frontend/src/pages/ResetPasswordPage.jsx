@@ -1,6 +1,7 @@
 ﻿import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPasswordReq } from '../api/auth';
+import { useSystemSettings } from '../context/SystemSettingsContext';
 import AuthNavbar from '../components/AuthNavbar';
 
 function Check({ pass, label }) {
@@ -32,6 +33,7 @@ export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') || '';
+  const { settings } = useSystemSettings();
 
   const [form, setForm]     = useState({ password: '', confirm: '' });
   const [showPw, setShowPw] = useState(false);
@@ -82,8 +84,10 @@ export default function ResetPasswordPage() {
         <div className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 px-8 py-7">
 
           {/* Shield */}
-          <div className="w-11 h-11 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <div className="w-11 h-11 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: `${settings.primaryColor || '#2563eb'}20` }}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"
+              style={{ color: settings.primaryColor || '#2563eb' }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
           </div>
@@ -92,12 +96,12 @@ export default function ResetPasswordPage() {
           <p className="text-gray-500 dark:text-slate-400 text-sm text-center mb-5">Create a strong password you haven't used before.</p>
 
           {!token && (
-            <div className="mb-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+            <div className="mb-4 px-3 py-2.5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-xl text-red-600 dark:text-red-400 text-sm">
               Invalid reset token. Please request a new link.
             </div>
           )}
           {error && (
-            <div className="mb-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">{error}</div>
+            <div className="mb-4 px-3 py-2.5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-xl text-red-600 dark:text-red-400 text-sm">{error}</div>
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -112,7 +116,7 @@ export default function ResetPasswordPage() {
                 </span>
                 <input id="password" type={showPw ? 'text' : 'password'} required placeholder="••••••••"
                   value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder-gray-400 transition-all" />
+                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 transition-all" />
                 <EyeBtn show={showPw} toggle={() => setShowPw(v => !v)} />
               </div>
               {form.password.length > 0 && (
@@ -135,8 +139,10 @@ export default function ResetPasswordPage() {
                 </span>
                 <input id="confirm" type={showCf ? 'text' : 'password'} required placeholder="••••••••"
                   value={form.confirm} onChange={e => setForm(f => ({ ...f, confirm: e.target.value }))}
-                  className={`w-full pl-9 pr-10 py-2.5 border rounded-xl text-sm outline-none focus:ring-2 placeholder-gray-400 transition-all
-                    ${form.confirm && !matches ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 dark:border-slate-700 focus:border-blue-500 focus:ring-blue-100'}`} />
+                  className={`w-full pl-9 pr-10 py-2.5 border rounded-xl text-sm outline-none focus:ring-2 placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 transition-all
+                    ${form.confirm && !matches
+                      ? 'border-red-300 dark:border-red-500/50 focus:border-red-400 focus:ring-red-100 dark:focus:ring-red-500/20'
+                      : 'border-gray-200 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-100 dark:focus:ring-blue-500/20'}`} />
                 <EyeBtn show={showCf} toggle={() => setShowCf(v => !v)} />
               </div>
               {form.confirm && !matches && <p className="mt-1 text-xs text-red-500">Passwords do not match.</p>}
@@ -144,7 +150,8 @@ export default function ResetPasswordPage() {
             </div>
 
             <button type="submit" disabled={!canSubmit}
-              className="w-full py-2.5 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              className="w-full py-2.5 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ background: settings.primaryColor || '#2563eb' }}>
               {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
               {loading ? 'Resetting...' : 'Set new password'}
             </button>

@@ -1,16 +1,29 @@
 import { Link } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
+import { useSystemSettings } from '../context/SystemSettingsContext';
 
 export default function AuthNavbar({ showLogin = true, showSignUp = true, showOnlySignUp = false }) {
+  const { settings } = useSystemSettings();
+
   return (
-    <nav className="h-14 bg-gray-900 dark:bg-slate-900 border-b border-white/10 flex items-center justify-between px-8 shrink-0">
+    <nav className="h-14 border-b border-white/10 flex items-center justify-between px-4 sm:px-8 shrink-0"
+      style={{ background: settings.sidebarBg || '#0f1623' }}>
+
+      {/* Logo — clicking takes you to home */}
       <Link to="/" className="flex items-center gap-2.5 group">
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <span className="text-white font-bold text-[15px] group-hover:text-blue-300 transition-colors">JavaPA</span>
+        {settings.logoUrl ? (
+          <img src={settings.logoUrl} alt={settings.companyName} className="w-8 h-8 object-contain rounded-lg shrink-0" />
+        ) : (
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: settings.primaryColor || '#2563eb' }}>
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+        )}
+        <span className="text-white font-bold text-[15px] group-hover:text-blue-300 transition-colors">
+          {settings.companyName || 'JavaPA'}
+        </span>
       </Link>
 
       <div className="flex items-center gap-3">
@@ -21,7 +34,9 @@ export default function AuthNavbar({ showLogin = true, showSignUp = true, showOn
           </Link>
         )}
         {showSignUp && (
-          <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+          <Link to="/signup"
+            className="px-4 py-2 text-white text-sm font-semibold rounded-lg transition-all border border-white/30 hover:brightness-110 active:scale-95"
+            style={{ background: settings.primaryColor || '#2563eb' }}>
             Sign Up
           </Link>
         )}

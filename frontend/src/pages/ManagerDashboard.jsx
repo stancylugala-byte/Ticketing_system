@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSystemSettings } from '../context/SystemSettingsContext';
 import ProfileDropdown   from '../components/ProfileDropdown';
@@ -112,6 +112,7 @@ export default function ManagerDashboard() {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('all-tickets');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [sectionOpen, setSectionOpen] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -148,25 +149,37 @@ export default function ManagerDashboard() {
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden">
 
+      {/* Mobile backdrop */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileSidebarOpen(false)} />
+      )}
+
       {/* ── Sidebar ── */}
-      <aside className={`${sidebarCollapsed ? 'w-16' : 'w-60'} flex flex-col shrink-0 overflow-y-auto transition-all duration-300 relative`} style={{ background: settings.sidebarBg }}>
+      <aside className={`
+        fixed md:relative inset-y-0 left-0 z-50 md:z-auto
+        ${sidebarCollapsed ? 'w-16' : 'w-60'}
+        flex flex-col shrink-0 overflow-y-auto transition-all duration-300
+        ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `} style={{ background: settings.sidebarBg }}>
         {/* Logo + collapse toggle */}
         <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10 shrink-0 relative">
-          {settings.logoUrl ? (
-            <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
-          ) : (
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: settings.primaryColor }}>
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-          )}
-          {!sidebarCollapsed && (
-            <div>
-              <p className="text-white font-bold text-sm leading-tight">{settings.companyName}</p>
-              <p className="text-white/40 text-[10px]">Management Portal</p>
-            </div>
-          )}
+          <Link to="/" className="flex items-center gap-3 min-w-0 flex-1">
+            {settings.logoUrl ? (
+              <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
+            ) : (
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: settings.primaryColor }}>
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            )}
+            {!sidebarCollapsed && (
+              <div>
+                <p className="text-white font-bold text-sm leading-tight">{settings.companyName}</p>
+                <p className="text-white/40 text-[10px]">Management Portal</p>
+              </div>
+            )}
+          </Link>
           <button
             onClick={() => setSidebarCollapsed(v => !v)}
             className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10"
@@ -181,7 +194,8 @@ export default function ManagerDashboard() {
         {/* User card */}
         {!sidebarCollapsed ? (
           <div className="mx-3 mt-3 mb-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+              style={{ background: settings.primaryColor || '#2563eb' }}>
               {getInitials(user?.full_name)}
             </div>
             <div className="min-w-0">
@@ -192,7 +206,8 @@ export default function ManagerDashboard() {
           </div>
         ) : (
           <div className="flex justify-center mt-3 mb-1">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+              style={{ background: settings.primaryColor || '#2563eb' }}>
               {getInitials(user?.full_name)}
             </div>
           </div>
@@ -256,13 +271,20 @@ export default function ManagerDashboard() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Topbar */}
-        <header className="h-14 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center px-5 gap-4 shrink-0 shadow-sm relative z-40">
+        <header className="h-14 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center px-4 sm:px-5 gap-3 sm:gap-4 shrink-0 shadow-sm relative z-40">
+          {/* Hamburger — mobile only */}
+          <button onClick={() => setMobileSidebarOpen(v => !v)}
+            className="md:hidden p-1.5 rounded-lg text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors shrink-0">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs text-gray-400 dark:text-slate-400">Management Portal</span>
-            <span className="text-gray-300 dark:text-slate-600">/</span>
-            <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{VIEW_LABELS[activeView]}</span>
+            <span className="hidden sm:block text-xs text-gray-400 dark:text-slate-400">Management Portal</span>
+            <span className="hidden sm:block text-gray-300 dark:text-slate-600">/</span>
+            <span className="text-sm font-semibold text-gray-800 dark:text-slate-100 truncate max-w-[140px] sm:max-w-none">{VIEW_LABELS[activeView]}</span>
           </div>
-          <div className="relative flex-1 max-w-sm mx-auto">
+          <div className="relative flex-1 max-w-sm mx-auto hidden sm:block">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-xs pointer-events-none">🔍</span>
             <input
               className="w-full pl-8 pr-3 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm placeholder-gray-400 outline-none focus:border-blue-500 dark:text-slate-200 transition-all"
@@ -271,39 +293,37 @@ export default function ManagerDashboard() {
               onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-3 ml-auto shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
             <DarkModeToggle />
-            <div className="h-6 w-px bg-gray-200 dark:bg-slate-600" />
+            <div className="h-6 w-px bg-gray-200 dark:bg-slate-600 hidden sm:block" />
             <ProfileDropdown />
           </div>
         </header>
 
         {/* KPI strip — always visible */}
-        <div className="px-5 pt-4 pb-0 shrink-0">
+        <div className="px-4 sm:px-5 pt-4 pb-0 shrink-0">
           <ManagerKPIs />
         </div>
 
         {/* Active view */}
-        <main className="flex-1 overflow-y-auto px-5 py-4 bg-gray-50 dark:bg-slate-900">
+        <main className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 bg-gray-50 dark:bg-slate-900">
           {renderView()}
         </main>
 
         {/* Footer */}
-        <footer className="h-9 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center justify-between px-5 shrink-0">
-          <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-slate-500">
-            <span className="flex items-center gap-1.5">
+        <footer className="h-9 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center justify-between px-4 sm:px-5 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-400 dark:text-slate-500 truncate">
+            <span className="flex items-center gap-1.5 shrink-0">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-              {user?.full_name}
+              <span className="truncate max-w-[100px] sm:max-w-none">{user?.full_name}</span>
             </span>
-            <span className="text-gray-200">|</span>
-            <span>Database: Connected (sts)</span>
-            <span className="text-gray-200">|</span>
-            <span>Uptime: 99.98%</span>
+            <span className="hidden sm:inline text-gray-200">|</span>
+            <span className="hidden md:inline">Database: Connected (sts)</span>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-3 sm:gap-4 shrink-0">
             <a href={settings.termsUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Terms</a>
             <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Privacy</a>
-            <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">SLA Policy</a>
+            <a href={settings.slaPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors hidden sm:block">SLA Policy</a>
           </div>
         </footer>
       </div>

@@ -27,41 +27,31 @@ function timeAgo(d) {
 
 const INP = 'w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-blue-500 bg-white dark:bg-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 transition-colors';
 
-// ── Shared User Form (used for both Add and Edit) ─────────────────────────────
+// ── Shared User Form ──────────────────────────────────────────────────────────
 function UserForm({ initial, isEdit, isManager, onSuccess, onCancel }) {
   const roleOptions = isManager ? CREATABLE_ROLES : ADMIN_ROLES;
-  const [form,    setForm]    = useState(initial || { full_name: '', email: '', password: '', role: 'Client' });
-  const [saving,  setSaving]  = useState(false);
-  const [error,   setError]   = useState('');
-  const [showPw,  setShowPw]  = useState(false);
-
+  const [form,   setForm]   = useState(initial || { full_name: '', email: '', password: '', role: 'Client' });
+  const [saving, setSaving] = useState(false);
+  const [error,  setError]  = useState('');
+  const [showPw, setShowPw] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+    e.preventDefault(); setError('');
     if (!form.full_name.trim()) return setError('Full name is required');
     if (!form.email.trim())     return setError('Email is required');
     if (!isEdit && form.password.length < 6) return setError('Password must be at least 6 characters');
     if (isEdit && form.password && form.password.length < 6) return setError('New password must be at least 6 characters');
     setSaving(true);
-    try {
-      await onSuccess(form);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Operation failed');
-    } finally {
-      setSaving(false);
-    }
+    try { await onSuccess(form); }
+    catch (err) { setError(err.response?.data?.message || 'Operation failed'); }
+    finally { setSaving(false); }
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {error && (
-        <div className="px-3 py-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg text-xs text-red-700 dark:text-red-400">
-          {error}
-        </div>
-      )}
-      <div className="grid grid-cols-2 gap-3">
+      {error && <div className="px-3 py-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg text-xs text-red-700 dark:text-red-400">{error}</div>}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Full Name <span className="text-red-500">*</span></label>
           <input className={INP} placeholder="Jane Doe" value={form.full_name} onChange={e => set('full_name', e.target.value)} />
@@ -72,24 +62,19 @@ function UserForm({ initial, isEdit, isManager, onSuccess, onCancel }) {
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">
-            {isEdit ? 'New Password' : 'Password'} {!isEdit && <span className="text-red-500">*</span>}
+            {isEdit ? 'New Password' : 'Password'}{!isEdit && <span className="text-red-500"> *</span>}
             {isEdit && <span className="text-gray-400 dark:text-slate-500 font-normal"> (leave blank to keep current)</span>}
           </label>
           <div className="relative">
-            <input
-              type={showPw ? 'text' : 'password'}
-              className={INP + ' pr-9'}
+            <input type={showPw ? 'text' : 'password'} className={INP + ' pr-9'}
               placeholder={isEdit ? 'Leave blank to keep current' : 'Min. 6 characters'}
-              value={form.password}
-              onChange={e => set('password', e.target.value)}
-            />
+              value={form.password} onChange={e => set('password', e.target.value)} />
             <button type="button" onClick={() => setShowPw(v => !v)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 {showPw
                   ? <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                  : <><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>
-                }
+                  : <><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>}
               </svg>
             </button>
           </div>
@@ -120,10 +105,8 @@ function UserForm({ initial, isEdit, isManager, onSuccess, onCancel }) {
 function Modal({ title, onClose, children }) {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div
-        className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg border border-gray-200 dark:border-slate-700"
-        onClick={e => e.stopPropagation()}
-      >
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg border border-gray-200 dark:border-slate-700"
+        onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700">
           <h3 className="text-base font-bold text-gray-900 dark:text-white">{title}</h3>
           <button onClick={onClose}
@@ -135,6 +118,22 @@ function Modal({ title, onClose, children }) {
         </div>
         <div className="px-6 py-5">{children}</div>
       </div>
+    </div>
+  );
+}
+
+// ── Row actions ───────────────────────────────────────────────────────────────
+function RowActions({ u, onEdit, onDelete }) {
+  return (
+    <div className="flex gap-2">
+      <button onClick={() => onEdit({ ...u, password: '' })}
+        className="px-2.5 py-1.5 text-[11px] font-semibold border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:border-blue-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all">
+        Edit
+      </button>
+      <button onClick={() => onDelete(u.id)}
+        className="px-2.5 py-1.5 text-[11px] font-semibold border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-200 hover:text-red-600 dark:hover:text-red-400 transition-all">
+        Del
+      </button>
     </div>
   );
 }
@@ -157,8 +156,8 @@ export default function UsersView({ roleFilter, label }) {
   const [search,   setSearch]   = useState('');
   const [loading,  setLoading]  = useState(false);
   const [showAdd,  setShowAdd]  = useState(false);
-  const [editUser, setEditUser] = useState(null);   // user object being edited
-  const [confirm,  setConfirm]  = useState(null);   // user id pending delete
+  const [editUser, setEditUser] = useState(null);
+  const [confirm,  setConfirm]  = useState(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -171,28 +170,16 @@ export default function UsersView({ roleFilter, label }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const handleCreate = async (form) => {
-    await apiCalls.createUser(form);
-    setShowAdd(false);
-    load();
-  };
-
+  const handleCreate = async (form) => { await apiCalls.createUser(form); setShowAdd(false); load(); };
   const handleUpdate = async (form) => {
     const payload = { full_name: form.full_name, email: form.email, role: form.role };
     if (form.password) payload.password = form.password;
     await apiCalls.updateUser(editUser.id, payload);
-    setEditUser(null);
-    load();
+    setEditUser(null); load();
   };
-
   const handleDelete = async (id) => {
-    try {
-      await apiCalls.deleteUser(id);
-      setConfirm(null);
-      load();
-    } catch (e) {
-      alert(e.response?.data?.message || 'Delete failed');
-    }
+    try { await apiCalls.deleteUser(id); setConfirm(null); load(); }
+    catch (e) { alert(e.response?.data?.message || 'Delete failed'); }
   };
 
   const totalPages = Math.max(1, Math.ceil(total / 15));
@@ -206,17 +193,15 @@ export default function UsersView({ roleFilter, label }) {
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">{label}</h2>
           <p className="text-sm text-gray-500 dark:text-slate-400">{total} {label.toLowerCase()} registered</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <input
-            className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 dark:text-slate-100 w-52 placeholder-gray-400 dark:placeholder-slate-500"
+            className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:border-blue-400 bg-white dark:bg-slate-800 dark:text-slate-100 w-44 sm:w-52 placeholder-gray-400 dark:placeholder-slate-500"
             placeholder={`Search ${label.toLowerCase()}...`}
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
           />
-          <button
-            onClick={() => setShowAdd(true)}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-          >
+          <button onClick={() => setShowAdd(true)}
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors">
             + Add User
           </button>
         </div>
@@ -224,7 +209,8 @@ export default function UsersView({ roleFilter, label }) {
 
       {/* Table */}
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
-        <div className="grid grid-cols-[1fr_1fr_130px_90px_110px] px-5 py-2.5 text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900">
+        {/* Desktop header — hidden on mobile */}
+        <div className="hidden sm:grid sm:grid-cols-[1fr_1fr_130px_90px_110px] px-5 py-2.5 text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900">
           <span>User</span><span>Email</span><span>Role</span><span>Joined</span><span>Actions</span>
         </div>
 
@@ -238,36 +224,46 @@ export default function UsersView({ roleFilter, label }) {
             <p className="text-sm">No {label.toLowerCase()} found</p>
           </div>
         ) : users.map(u => (
-          <div key={u.id} className="grid grid-cols-[1fr_1fr_130px_90px_110px] items-center px-5 py-3.5 border-b border-gray-100 dark:border-slate-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
-            <div className="flex items-center gap-2.5 min-w-0 pr-2">
-              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
+          <div key={u.id} className="border-b border-gray-100 dark:border-slate-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+
+            {/* Desktop row */}
+            <div className="hidden sm:grid sm:grid-cols-[1fr_1fr_130px_90px_110px] items-center px-5 py-3.5">
+              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
+                  {getInitials(u.full_name)}
+                </div>
+                <span className="text-sm font-semibold text-gray-800 dark:text-slate-100 truncate">{u.full_name}</span>
+              </div>
+              <span className="text-xs text-gray-500 dark:text-slate-400 truncate pr-3">{u.email}</span>
+              <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full w-fit ${ROLE_BADGE[u.role] || 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'}`}>
+                {u.role}
+              </span>
+              <span className="text-xs text-gray-400 dark:text-slate-500">{timeAgo(u.created_at)}</span>
+              <RowActions u={u} onEdit={setEditUser} onDelete={setConfirm} />
+            </div>
+
+            {/* Mobile card */}
+            <div className="sm:hidden flex items-center gap-3 px-4 py-3">
+              <div className="w-9 h-9 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                 {getInitials(u.full_name)}
               </div>
-              <span className="text-sm font-semibold text-gray-800 dark:text-slate-100 truncate">{u.full_name}</span>
-            </div>
-            <span className="text-xs text-gray-500 dark:text-slate-400 truncate pr-3">{u.email}</span>
-            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full w-fit ${ROLE_BADGE[u.role] || 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'}`}>
-              {u.role}
-            </span>
-            <span className="text-xs text-gray-400 dark:text-slate-500">{timeAgo(u.created_at)}</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setEditUser({ ...u, password: '' })}
-                className="px-2.5 py-1.5 text-[11px] font-semibold border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:border-blue-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => setConfirm(u.id)}
-                className="px-2.5 py-1.5 text-[11px] font-semibold border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-200 hover:text-red-600 dark:hover:text-red-400 transition-all"
-              >
-                Del
-              </button>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-800 dark:text-slate-100 truncate">{u.full_name}</p>
+                <p className="text-xs text-gray-400 dark:text-slate-500 truncate">{u.email}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${ROLE_BADGE[u.role] || 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'}`}>
+                    {u.role}
+                  </span>
+                  <span className="text-[10px] text-gray-400 dark:text-slate-500">{timeAgo(u.created_at)}</span>
+                </div>
+              </div>
+              <RowActions u={u} onEdit={setEditUser} onDelete={setConfirm} />
             </div>
           </div>
         ))}
 
-        <div className="flex items-center justify-between px-5 py-3 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900">
+        {/* Pagination */}
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900">
           <span className="text-xs text-gray-400 dark:text-slate-500">Showing {users.length} of {total}</span>
           <div className="flex items-center gap-2">
             <button disabled={page <= 1} onClick={() => setPage(p => p - 1)}
@@ -283,32 +279,21 @@ export default function UsersView({ roleFilter, label }) {
         </div>
       </div>
 
-      {/* ── Add User Modal ── */}
+      {/* Add User Modal */}
       {showAdd && (
         <Modal title="Add New User" onClose={() => setShowAdd(false)}>
-          <UserForm
-            isEdit={false}
-            isManager={isManager}
-            onSuccess={handleCreate}
-            onCancel={() => setShowAdd(false)}
-          />
+          <UserForm isEdit={false} isManager={isManager} onSuccess={handleCreate} onCancel={() => setShowAdd(false)} />
         </Modal>
       )}
 
-      {/* ── Edit User Modal ── */}
+      {/* Edit User Modal */}
       {editUser && (
         <Modal title={`Edit User — ${editUser.full_name}`} onClose={() => setEditUser(null)}>
-          <UserForm
-            isEdit={true}
-            isManager={isManager}
-            initial={editUser}
-            onSuccess={handleUpdate}
-            onCancel={() => setEditUser(null)}
-          />
+          <UserForm isEdit={true} isManager={isManager} initial={editUser} onSuccess={handleUpdate} onCancel={() => setEditUser(null)} />
         </Modal>
       )}
 
-      {/* ── Delete Confirmation Modal ── */}
+      {/* Delete Confirmation */}
       {confirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-6 max-w-sm w-full border border-gray-200 dark:border-slate-700">
@@ -318,7 +303,7 @@ export default function UsersView({ roleFilter, label }) {
               </svg>
             </div>
             <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">Delete User</h3>
-            <p className="text-sm text-gray-500 dark:text-slate-400 mb-5">This action is permanent and cannot be undone. The user and all associated data will be removed.</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mb-5">This action is permanent and cannot be undone.</p>
             <div className="flex gap-3 justify-end">
               <button onClick={() => setConfirm(null)}
                 className="px-4 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">

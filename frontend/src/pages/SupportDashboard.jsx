@@ -21,7 +21,7 @@ const VIEW_LABELS = {
   'personal-performance': 'Personal Performance',
 };
 
-export default function SupportDashboard({ activeModule, sidebarCollapsed }) {
+export default function SupportDashboard({ activeModule, sidebarCollapsed, onOpenMobileSidebar }) {
   const { user, logout } = useAuth();
   const { settings }     = useSystemSettings();
   const navigate = useNavigate();
@@ -64,20 +64,28 @@ export default function SupportDashboard({ activeModule, sidebarCollapsed }) {
   };
 
   return (
-    <div className={`${sidebarCollapsed ? 'ml-16' : 'ml-60'} h-screen flex flex-col bg-gray-50 dark:bg-slate-900 overflow-hidden transition-all duration-300`}>
+    <div className="flex-1 h-screen flex flex-col bg-gray-50 dark:bg-slate-900 overflow-hidden min-w-0">
 
       {/* ── Top bar ── */}
-      <header className="h-14 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center px-6 gap-4 shrink-0 shadow-sm">
+      <header className="h-14 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center px-4 sm:px-6 gap-3 sm:gap-4 shrink-0 shadow-sm">
+
+        {/* Hamburger — mobile only */}
+        <button onClick={onOpenMobileSidebar}
+          className="md:hidden p-1.5 rounded-lg text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors shrink-0">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-gray-400 dark:text-slate-500">Support Officer</span>
-          <span className="text-gray-300 dark:text-slate-600">/</span>
-          <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{VIEW_LABELS[activeModule] || 'Dashboard'}</span>
+          <span className="hidden sm:block text-xs text-gray-400 dark:text-slate-500">Support Officer</span>
+          <span className="hidden sm:block text-gray-300 dark:text-slate-600">/</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-slate-100 truncate max-w-[140px] sm:max-w-none">{VIEW_LABELS[activeModule] || 'Dashboard'}</span>
         </div>
 
-        {/* Instant search */}
-        <div className="relative flex-1 max-w-md mx-auto">
+        {/* Instant search — hidden on small mobile */}
+        <div className="relative flex-1 max-w-md mx-auto hidden sm:block">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 pointer-events-none">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -114,9 +122,9 @@ export default function SupportDashboard({ activeModule, sidebarCollapsed }) {
         </div>
 
         {/* Right actions */}
-        <div className="flex items-center gap-3 shrink-0 ml-auto">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
           <DarkModeToggle />
-          <div className="h-6 w-px bg-gray-200 dark:bg-slate-600" />
+          <div className="h-6 w-px bg-gray-200 dark:bg-slate-600 hidden sm:block" />
           <button className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-slate-400">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -127,30 +135,30 @@ export default function SupportDashboard({ activeModule, sidebarCollapsed }) {
               </span>
             )}
           </button>
-          <div className="h-6 w-px bg-gray-200 dark:bg-slate-600" />
+          <div className="h-6 w-px bg-gray-200 dark:bg-slate-600 hidden sm:block" />
           <ProfileDropdown />
         </div>
       </header>
 
       {/* ── Main workspace ── */}
-      <main className="flex-1 overflow-y-auto p-6 min-h-0">
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6 min-h-0">
         {renderView()}
       </main>
 
       {/* ── Footer ── */}
-      <footer className="h-10 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0">
-        <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-slate-500">
-          <span className="flex items-center gap-1.5">
+      <footer className="h-10 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center justify-between px-4 sm:px-6 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-400 dark:text-slate-500 truncate">
+          <span className="flex items-center gap-1.5 shrink-0">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-            {displayName} · Online
+            <span className="truncate max-w-[100px] sm:max-w-none">{displayName} · Online</span>
           </span>
-          <span className="text-gray-200 dark:text-slate-700">|</span>
-          <span>© 2026 JavaPA Software Limited.</span>
+          <span className="hidden sm:inline text-gray-200 dark:text-slate-700">|</span>
+          <span className="hidden sm:inline">© 2026 JavaPA Software Limited.</span>
         </div>
-        <div className="flex gap-4">
-          <a href={settings.termsUrl}          className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Terms</a>
-          <a href={settings.privacyPolicyUrl}  className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Privacy</a>
-          <a href={settings.slaPolicyUrl}      className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">SLA Policy</a>
+        <div className="flex gap-3 sm:gap-4 shrink-0">
+          <a href={settings.termsUrl}         className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Terms</a>
+          <a href={settings.privacyPolicyUrl} className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors">Privacy</a>
+          <a href={settings.slaPolicyUrl}     className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 transition-colors hidden sm:block">SLA Policy</a>
         </div>
       </footer>
     </div>

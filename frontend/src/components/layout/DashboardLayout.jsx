@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemSettings } from '../../context/SystemSettingsContext';
 import ProfileDropdown from '../ProfileDropdown';
@@ -41,25 +41,27 @@ function DevSidebar({ activeView, onSelect, settings, sidebarCollapsed, onToggle
 
   return (
     <aside
-      className={`fixed left-0 top-0 bottom-0 ${sidebarCollapsed ? 'w-16' : 'w-56'} flex flex-col z-50 border-r border-gray-200 dark:border-slate-700/50 transition-all duration-300`}
+      className={`relative h-full ${sidebarCollapsed ? 'w-16' : 'w-56'} flex flex-col z-50 border-r border-gray-200 dark:border-slate-700/50 transition-all duration-300`}
       style={{ background: settings.sidebarBg }}
     >
       {/* Logo + collapse toggle */}
       <div className="flex items-center gap-2.5 px-4 py-4 border-b border-white/10 shrink-0 relative">
-        {settings.logoUrl ? (
-          <img src={settings.logoUrl} alt="logo" className="w-7 h-7 rounded-lg object-contain" />
-        ) : (
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: settings.primaryColor }}>
-            <FiZap size={14} className="text-white" />
-          </div>
-        )}
-        {!sidebarCollapsed && (
-          <div>
-            <p className="text-white font-bold text-sm">{settings.companyName}</p>
-            <p className="text-white/40 text-[10px]">Engineering Portal</p>
-          </div>
-        )}
+        <Link to="/" className="flex items-center gap-2.5 min-w-0 flex-1">
+          {settings.logoUrl ? (
+            <img src={settings.logoUrl} alt="logo" className="w-7 h-7 rounded-lg object-contain shrink-0" />
+          ) : (
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+              style={{ background: settings.primaryColor }}>
+              <FiZap size={14} className="text-white" />
+            </div>
+          )}
+          {!sidebarCollapsed && (
+            <div className="min-w-0">
+              <p className="text-white font-bold text-sm truncate">{settings.companyName}</p>
+              <p className="text-white/40 text-[10px]">Engineering Portal</p>
+            </div>
+          )}
+        </Link>
         <button
           onClick={onToggleSidebar}
           className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10"
@@ -156,13 +158,13 @@ function DevSidebar({ activeView, onSelect, settings, sidebarCollapsed, onToggle
   );
 }
 
-// ─── Layout ───────────────────────────────────────────────────────────────────
 const DashboardLayout = ({ children }) => {
   const { user, loading } = useAuth();
   const { settings }      = useSystemSettings();
   const navigate          = useNavigate();
   const [activeView,       setActiveView]       = useState('assigned-bugs');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   if (loading) return (
     <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-slate-900">
@@ -175,25 +177,40 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
-      <DevSidebar
-        activeView={activeView}
-        onSelect={setActiveView}
-        settings={settings}
-        sidebarCollapsed={sidebarCollapsed}
-        onToggleSidebar={() => setSidebarCollapsed(v => !v)}
-      />
+      {/* Mobile backdrop */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileSidebarOpen(false)} />
+      )}
 
-      <div className={`flex-1 ${sidebarCollapsed ? 'ml-16' : 'ml-56'} flex flex-col overflow-hidden transition-all duration-300`}>
+      <div className={`fixed md:relative inset-y-0 left-0 z-50 md:z-auto h-screen transition-transform duration-300
+        ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <DevSidebar
+          activeView={activeView}
+          onSelect={(v) => { setActiveView(v); setMobileSidebarOpen(false); }}
+          settings={settings}
+          sidebarCollapsed={sidebarCollapsed}
+          onToggleSidebar={() => setSidebarCollapsed(v => !v)}
+        />
+      </div>
+
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0 transition-all duration-300">
         {/* Header */}
-        <header className="h-12 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-5 shrink-0 shadow-sm">
+        <header className="h-12 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-4 sm:px-5 shrink-0 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 dark:text-slate-500">Developer Portal</span>
-            <span className="text-gray-300 dark:text-slate-600 mx-1">/</span>
+            {/* Hamburger — mobile only */}
+            <button onClick={() => setMobileSidebarOpen(v => !v)}
+              className="md:hidden p-1.5 rounded-lg text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors mr-1">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <span className="hidden sm:block text-xs text-gray-400 dark:text-slate-500">Developer Portal</span>
+            <span className="hidden sm:block text-gray-300 dark:text-slate-600 mx-1">/</span>
             <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">Engineering Backlog</span>
           </div>
           <div className="flex items-center gap-3">
             <DarkModeToggle />
-            <div className="h-5 w-px bg-gray-200 dark:bg-slate-700" />
+            <div className="h-5 w-px bg-gray-200 dark:bg-slate-700 hidden sm:block" />
             <ProfileDropdown accentColor={settings.primaryColor} />
           </div>
         </header>

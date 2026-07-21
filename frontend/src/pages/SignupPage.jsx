@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../api/auth';
+import { useSystemSettings } from '../context/SystemSettingsContext';
 import AuthNavbar from '../components/AuthNavbar';
 import heroBg from '../assets/hero.png';
 
@@ -22,6 +23,7 @@ const EyeIcon = ({ open }) => (
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const { settings } = useSystemSettings();
   const [form, setForm]       = useState({ full_name: '', email: '', password: '', role: 'Client' });
   const [showPw, setShowPw]   = useState(false);
   const [agreed, setAgreed]   = useState(false);
@@ -77,7 +79,7 @@ export default function SignupPage() {
       <div className="flex-1 flex overflow-hidden">
 
         {/* ── LEFT: form ── */}
-        <div className="w-1/2 flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-6 py-4 overflow-y-auto">
+        <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4 sm:px-6 py-4 overflow-y-auto">
           <div className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 px-7 py-5">
 
             {/* Heading */}
@@ -110,8 +112,9 @@ export default function SignupPage() {
                 <button key={t.val} type="button" onClick={() => setForm(f => ({ ...f, role: t.val }))}
                   className={`flex-1 flex items-center justify-center gap-1 py-2 text-xs font-semibold transition-all
                     ${form.role === t.val
-                      ? 'bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400 border-b-2 border-blue-600'
-                      : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700'}`}>
+                      ? 'text-white border-b-2'
+                      : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700'}`}
+                  style={form.role === t.val ? { background: `${settings.primaryColor}20`, borderColor: settings.primaryColor || '#2563eb', color: settings.primaryColor || '#2563eb' } : {}}>
                   <span>{t.icon}</span>{t.label}
                 </button>
               ))}
@@ -178,7 +181,8 @@ export default function SignupPage() {
 
               {/* Submit */}
               <button type="submit" disabled={submitting || !agreed}
-                className="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2 text-sm mt-1">
+                className="w-full py-2.5 text-white font-bold rounded-xl disabled:opacity-60 transition-colors flex items-center justify-center gap-2 text-sm mt-1"
+                style={{ background: settings.primaryColor || '#2563eb' }}>
                 {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
                 {submitting ? 'Creating…' : 'Create Account'}
               </button>
@@ -186,13 +190,14 @@ export default function SignupPage() {
 
             <p className="text-center text-xs text-gray-500 dark:text-slate-400 mt-3">
               Already have an account?{' '}
-              <Link to="/login" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">Sign In</Link>
+              <Link to="/login" className="font-semibold hover:opacity-80 transition-opacity"
+                style={{ color: settings.primaryColor || '#2563eb' }}>Sign In</Link>
             </p>
           </div>
         </div>
 
         {/* ── RIGHT: hero image ── */}
-        <div className="w-1/2 relative overflow-hidden">
+        <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
           <img src={heroBg} alt="JavaPA" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-slate-900/40 to-slate-900/80" />
           <div className="absolute inset-0 flex flex-col justify-end px-10 py-10">

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemSettings } from '../../context/SystemSettingsContext';
 
@@ -77,25 +77,27 @@ export default function ClientSidebar({ activeSection, onNavigate, collapsed, on
 
   return (
     <aside
-      className={`fixed left-0 top-0 bottom-0 ${w} flex flex-col z-50 overflow-y-auto transition-all duration-300`}
+      className={`relative h-full ${w} flex flex-col z-50 overflow-y-auto transition-all duration-300`}
       style={{ background: settings.sidebarBg }}
     >
       {/* Logo + collapse toggle */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/10 shrink-0 relative">
-        {settings.logoUrl
-          ? <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
-          : <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: settings.primaryColor }}>
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+        <Link to="/" className="flex items-center gap-3 min-w-0 flex-1">
+          {settings.logoUrl
+            ? <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
+            : <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: settings.primaryColor }}>
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+          }
+          {!collapsed && (
+            <div className="min-w-0 flex-1">
+              <p className="text-white font-bold text-sm leading-tight truncate">{settings.companyName}</p>
+              <p className="text-white/40 text-[10px]">Client Portal</p>
             </div>
-        }
-        {!collapsed && (
-          <div className="min-w-0 flex-1">
-            <p className="text-white font-bold text-sm leading-tight truncate">{settings.companyName}</p>
-            <p className="text-white/40 text-[10px]">Client Portal</p>
-          </div>
-        )}
+          )}
+        </Link>
         {/* Collapse toggle */}
         <button
           onClick={onToggle}

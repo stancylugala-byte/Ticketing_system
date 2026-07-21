@@ -1,5 +1,7 @@
 ﻿import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import DarkModeToggle from '../components/DarkModeToggle';
+import { useSystemSettings } from '../context/SystemSettingsContext';
 
 const features = [
   { icon: '🛡', title: 'SLA Compliance', desc: 'Automated alerts and escalation rules ensure you never miss a contractual deadline or critical response window.' },
@@ -37,7 +39,7 @@ const pricing = [
     sub: 'per agent / month',
     color: 'border-blue-500 ring-2 ring-blue-500/20',
     badge: 'Most Popular',
-    btn: 'bg-blue-600 text-white hover:bg-blue-700',
+    btn: 'primary',
     features: ['Everything in Starter', 'Unlimited agents', 'Custom SLA rules', 'Analytics dashboard', 'Developer escalation', 'Priority support'],
   },
   {
@@ -51,65 +53,99 @@ const pricing = [
 ];
 
 export default function LandingPage() {
+  const { settings } = useSystemSettings();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navLinks = [
+    { label: 'Home',         href: '#home' },
+    { label: 'Features',     href: '#features' },
+    { label: 'Pricing',      href: '#pricing' },
+    { label: 'Testimonials', href: '#testimonials' },
+    { label: 'Contact',      href: '#contact' },
+  ];
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors">
 
       {/* ── Navbar ── */}
-      <nav className="bg-gray-900 dark:bg-slate-950 sticky top-0 z-50 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <span className="text-white font-bold text-[15px]">JavaPA</span>
-          </div>
+      <nav className="sticky top-0 z-50 border-b border-white/10" style={{ background: settings.sidebarBg || '#111827' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          {/* Logo — clicking takes you to home */}
+          <Link to="/" className="flex items-center gap-2.5 group">
+            {settings.logoUrl ? (
+              <img src={settings.logoUrl} alt={settings.companyName} className="w-8 h-8 object-contain rounded-lg shrink-0" />
+            ) : (
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: settings.primaryColor || '#2563eb' }}>
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            )}
+            <span className="text-white font-bold text-[15px] group-hover:opacity-80 transition-opacity">
+              {settings.companyName || 'JavaPA'}
+            </span>
+          </Link>
 
-          {/* Nav links — each href matches a section id below */}
+          {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
-            {[
-              { label: 'Home',         href: '#home' },
-              { label: 'Features',     href: '#features' },
-              { label: 'Pricing',      href: '#pricing' },
-              { label: 'Testimonials', href: '#testimonials' },
-              { label: 'Contact',      href: '#contact' },
-            ].map(({ label, href }) => (
-              <a key={label} href={href}
-                className="text-white/70 text-sm hover:text-white transition-colors">
-                {label}
-              </a>
+            {navLinks.map(({ label, href }) => (
+              <a key={label} href={href} className="text-white/70 text-sm hover:text-white transition-colors">{label}</a>
             ))}
           </div>
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
             <DarkModeToggle />
-            <Link to="/login"  className="text-white/80 text-sm font-medium hover:text-white transition-colors px-2">Login</Link>
-            <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">Sign Up</Link>
+            <Link to="/login" className="hidden sm:block text-white/80 text-sm font-medium hover:text-white transition-colors px-2">Login</Link>
+            <Link to="/signup"
+              className="px-4 py-2 text-white text-sm font-semibold rounded-lg transition-all border border-white/30 hover:border-white/60 hover:brightness-110 active:scale-95"
+              style={{ background: settings.primaryColor || '#2563eb' }}>
+              Sign Up
+            </Link>
+            {/* Hamburger — mobile only */}
+            <button onClick={() => setMobileMenuOpen(v => !v)}
+              className="md:hidden p-2 text-white/70 hover:text-white transition-colors ml-1">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                {mobileMenuOpen
+                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
+              </svg>
+            </button>
           </div>
         </div>
+        {/* Mobile menu dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-white/10 px-4 py-3 flex flex-col gap-1"
+            style={{ background: settings.sidebarBg || '#111827' }}>
+            {navLinks.map(({ label, href }) => (
+              <a key={label} href={href} onClick={() => setMobileMenuOpen(false)}
+                className="text-white/70 text-sm hover:text-white py-2 px-2 rounded-lg hover:bg-white/5 transition-colors">{label}</a>
+            ))}
+            <Link to="/login" onClick={() => setMobileMenuOpen(false)}
+              className="text-white/80 text-sm font-medium py-2 px-2 rounded-lg hover:bg-white/5 transition-colors">Login</Link>
+          </div>
+        )}
       </nav>
 
       {/* ── Hero ── */}
-      <section id="home" className="bg-gray-50 dark:bg-slate-900 pt-20 pb-16">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-1">
+      <section id="home" className="bg-gray-50 dark:bg-slate-900 pt-12 sm:pt-20 pb-12 sm:pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
+          <div className="flex-1 text-center lg:text-left">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-full mb-6">
               <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
               New: AI-Powered Incident Resolution v2.4
             </span>
-            <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight mb-6">
               Master Your<br />
               <span className="text-blue-600">Incident<br />Lifecycle</span> with<br />
               Enterprise Ease.
             </h1>
-            <p className="text-gray-500 dark:text-slate-400 text-lg leading-relaxed mb-8 max-w-md">
+            <p className="text-gray-500 dark:text-slate-400 text-base sm:text-lg leading-relaxed mb-8 max-w-md mx-auto lg:mx-0">
               JavaPA Software Limited provides a modern, high-performance SaaS platform for support ticketing, automated incident response, and SLA management.
             </p>
-            <div className="flex items-center gap-4 mb-10">
-              <Link to="/signup" className="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200/50 text-sm">
+            <div className="flex items-center justify-center lg:justify-start gap-4 flex-wrap mb-10">
+              <Link to="/signup"
+                className="flex items-center gap-2 px-5 py-3 sm:px-6 sm:py-3.5 text-white font-bold rounded-xl transition-all shadow-lg text-sm border border-white/20 hover:brightness-110 hover:shadow-xl active:scale-95"
+                style={{ background: settings.primaryColor || '#2563eb' }}>
                 Get Started Free
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -188,7 +224,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map(s => (
               <div key={s.num} className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-all">
-                <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full mb-4">Step {s.num}</span>
+                <span className="inline-block px-3 py-1 text-white text-xs font-bold rounded-full mb-4"
+                  style={{ background: settings.primaryColor || '#2563eb' }}>Step {s.num}</span>
                 <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">{s.title}</h3>
                 <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed">{s.desc}</p>
               </div>
@@ -202,7 +239,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
             <div>
-              <div className="w-1 h-8 bg-blue-600 rounded inline-block mr-4 align-middle" />
+              <div className="w-1 h-8 rounded inline-block mr-4 align-middle"
+                style={{ background: settings.primaryColor || '#2563eb' }} />
               <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white inline">What Our Clients Say</h2>
               <p className="text-gray-500 dark:text-slate-400 mt-2 ml-5">Join thousands of companies who trust JavaPA for mission-critical support.</p>
             </div>
@@ -221,7 +259,8 @@ export default function LandingPage() {
                 </div>
                 <p className="text-gray-700 dark:text-slate-300 text-sm leading-relaxed mb-4 italic">{t.quote}</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">{t.author[0]}</div>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                    style={{ background: settings.primaryColor || '#2563eb' }}>{t.author[0]}</div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">{t.author}</p>
                     <p className="text-xs text-gray-400 dark:text-slate-500">{t.role}</p>
@@ -244,7 +283,8 @@ export default function LandingPage() {
             {pricing.map(p => (
               <div key={p.name} className={`bg-white dark:bg-slate-800 rounded-2xl border p-6 flex flex-col relative ${p.color}`}>
                 {p.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">{p.badge}</span>
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-white text-xs font-bold rounded-full"
+                    style={{ background: settings.primaryColor || '#2563eb' }}>{p.badge}</span>
                 )}
                 <p className="text-sm font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-2">{p.name}</p>
                 <p className="text-4xl font-extrabold text-gray-900 dark:text-white mb-1">{p.price}</p>
@@ -256,7 +296,13 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link to="/signup" className={`block text-center py-2.5 rounded-xl text-sm font-bold transition-colors ${p.btn}`}>
+                <Link to="/signup"
+                  className={`block text-center py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 ${
+                    p.btn === 'primary'
+                      ? 'text-white border border-white/20 hover:brightness-110'
+                      : p.btn
+                  }`}
+                  style={p.btn === 'primary' ? { background: settings.primaryColor || '#2563eb' } : {}}>
                   {p.price === 'Free' ? 'Get Started' : p.price === 'Custom' ? 'Contact Sales' : 'Start Free Trial'}
                 </Link>
               </div>
@@ -284,7 +330,9 @@ export default function LandingPage() {
             ))}
           </div>
           <div className="flex items-center justify-center gap-4">
-            <Link to="/signup" className="px-8 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors text-sm">Get Started Now</Link>
+            <Link to="/signup"
+              className="px-8 py-3.5 text-white font-bold rounded-xl transition-all text-sm border border-white/20 hover:brightness-110 active:scale-95"
+              style={{ background: settings.primaryColor || '#2563eb' }}>Get Started Now</Link>
             <a href="mailto:support@javapa.com" className="px-8 py-3.5 border-2 border-gray-300 dark:border-slate-600 text-gray-800 dark:text-slate-200 font-bold rounded-xl hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm">Email Sales</a>
           </div>
         </div>
@@ -296,7 +344,9 @@ export default function LandingPage() {
           <h2 className="text-4xl font-extrabold text-white mb-4">Ready to streamline your support?</h2>
           <p className="text-white/60 text-lg mb-8">Start your 14-day free trial today. No credit card required. Cancel anytime.</p>
           <div className="flex items-center justify-center gap-4 mb-4">
-            <Link to="/signup" className="px-8 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors text-sm">Get Started Now</Link>
+            <Link to="/signup"
+              className="px-8 py-3.5 text-white font-bold rounded-xl transition-all text-sm border border-white/20 hover:brightness-110 active:scale-95"
+              style={{ background: settings.primaryColor || '#2563eb' }}>Get Started Now</Link>
             <a href="#contact" className="px-8 py-3.5 border-2 border-white/30 text-white font-bold rounded-xl hover:border-white/60 transition-colors text-sm">Contact Sales</a>
           </div>
           <p className="text-white/40 text-xs">Free forever for teams up to 3 users.</p>
@@ -304,18 +354,25 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-gray-900 dark:bg-slate-950 pt-12 pb-6">
+      <footer className="pt-12 pb-6" style={{ background: settings.sidebarBg || '#111827' }}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <span className="text-white font-bold">JavaPA</span>
-              </div>
+              <Link to="/" className="flex items-center gap-2 mb-4 group">
+                {settings.logoUrl ? (
+                  <img src={settings.logoUrl} alt={settings.companyName} className="w-8 h-8 object-contain rounded-lg shrink-0" />
+                ) : (
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: settings.primaryColor || '#2563eb' }}>
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                )}
+                <span className="text-white font-bold group-hover:opacity-80 transition-opacity">
+                  {settings.companyName || 'JavaPA'}
+                </span>
+              </Link>
               <p className="text-white/40 text-xs leading-relaxed mb-4">Enterprise-grade incident management and support ticketing for modern teams.</p>
               <div className="flex gap-3">
                 {['T','in','G'].map(s => (

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
+import { useSystemSettings } from '../context/SystemSettingsContext';
 import AuthNavbar from '../components/AuthNavbar';
 import heroBg from '../assets/hero.png';
 
@@ -17,6 +18,7 @@ export default function LoginPage() {
   const navigate        = useNavigate();
   const location        = useLocation();
   const { login }       = useAuth();
+  const { settings }    = useSystemSettings();
 
   const [form, setForm]         = useState({ email: '', password: '' });
   const [showPw, setShowPw]     = useState(false);
@@ -61,7 +63,7 @@ export default function LoginPage() {
       <div className="flex-1 flex overflow-hidden">
 
         {/* ── LEFT: form card centered ── */}
-        <div className="w-1/2 flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-8 py-4">
+        <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4 sm:px-8 py-4">
           <div className="w-full max-w-[380px] bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 px-8 py-7">
 
             <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-1">Welcome back</h1>
@@ -133,7 +135,8 @@ export default function LoginPage() {
               </label>
 
               <button type="submit" disabled={submitting}
-                className="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 text-sm">
+                className="w-full py-2.5 text-white font-bold rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 text-sm"
+                style={{ background: settings.primaryColor || '#2563eb' }}>
                 {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
                 {submitting ? 'Signing in...' : 'Sign In'}
               </button>
@@ -158,13 +161,14 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-500 dark:text-slate-400 mt-4">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700">Create an account</Link>
+              <Link to="/signup" className="font-semibold hover:opacity-80 transition-opacity"
+                style={{ color: settings.primaryColor || '#2563eb' }}>Create an account</Link>
             </p>
           </div>
         </div>
 
         {/* ── RIGHT: full-height hero image ── */}
-        <div className="w-1/2 relative overflow-hidden">
+        <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
           <img src={heroBg} alt="JavaPA" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-slate-900/40 to-slate-900/70" />
           <div className="absolute inset-0 flex flex-col justify-end px-10 py-10">

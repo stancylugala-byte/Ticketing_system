@@ -49,7 +49,7 @@ export default function SystemSettingsView() {
   const handleLogoUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 500 * 1024) { alert('Logo must be under 500 KB.'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert('Logo must be under 5 MB.'); return; }
     const reader = new FileReader();
     reader.onload = (ev) => {
       const dataUrl = ev.target.result;
@@ -126,7 +126,7 @@ export default function SystemSettingsView() {
 
           {/* Logo upload — full width */}
           <div className="col-span-2">
-            <Field label="Company Logo" hint="PNG/SVG recommended. Max 500 KB. Displayed in sidebars and navbars.">
+            <Field label="Company Logo" hint="PNG/SVG recommended. Max 5 MB. Displayed in sidebars and navbars.">
               <div className="flex items-center gap-5">
                 <div className="w-24 h-16 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-600 flex items-center justify-center bg-gray-50 dark:bg-slate-800 overflow-hidden shrink-0">
                   {logoPreview ? (

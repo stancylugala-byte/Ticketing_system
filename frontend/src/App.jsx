@@ -29,16 +29,28 @@ export const ROLE_DASHBOARDS = {
 function SupportLayout() {
   const [activeModule, setActiveModule] = useState('ticket-queue');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   return (
-    <>
-      <Sidebar
-        activePage={activeModule}
-        onNavigate={setActiveModule}
-        collapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(v => !v)}
+    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
+      {/* Mobile backdrop */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileSidebarOpen(false)} />
+      )}
+      <div className={`fixed md:relative inset-y-0 left-0 z-50 md:z-auto h-screen transition-transform duration-300
+        ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <Sidebar
+          activePage={activeModule}
+          onNavigate={(id) => { setActiveModule(id); setMobileSidebarOpen(false); }}
+          collapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed(v => !v)}
+        />
+      </div>
+      <SupportDashboard
+        activeModule={activeModule}
+        sidebarCollapsed={sidebarCollapsed}
+        onOpenMobileSidebar={() => setMobileSidebarOpen(v => !v)}
       />
-      <SupportDashboard activeModule={activeModule} sidebarCollapsed={sidebarCollapsed} />
-    </>
+    </div>
   );
 }
 

@@ -16,17 +16,17 @@ export default function ManagerKPIs() {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-4 mb-1">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-1">
       {cards.map(c => (
-        <div key={c.label} className={`bg-white dark:bg-slate-800 rounded-xl border ${c.border} px-5 py-4 shadow-sm flex items-center gap-4`}>
-          <div className={`w-11 h-11 ${c.bg} rounded-xl flex items-center justify-center text-xl shrink-0`}>{c.icon}</div>
+        <div key={c.label} className={`bg-white dark:bg-slate-800 rounded-xl border ${c.border} px-4 py-3 sm:px-5 sm:py-4 shadow-sm flex items-center gap-3 sm:gap-4`}>
+          <div className={`w-9 h-9 sm:w-11 sm:h-11 ${c.bg} rounded-xl flex items-center justify-center text-lg sm:text-xl shrink-0`}>{c.icon}</div>
           <div className="min-w-0">
-            <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1 truncate">{c.label}</p>
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1 truncate">{c.label}</p>
             {!data
-              ? <div className="h-7 w-16 bg-gray-200 dark:bg-slate-700 rounded animate-pulse" />
-              : <p className={`text-2xl font-bold leading-none ${c.color}`}>{c.value}</p>
+              ? <div className="h-6 w-12 bg-gray-200 dark:bg-slate-700 rounded animate-pulse" />
+              : <p className={`text-xl sm:text-2xl font-bold leading-none ${c.color}`}>{c.value}</p>
             }
-            <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-1">{c.sub}</p>
+            <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-1 hidden sm:block">{c.sub}</p>
           </div>
         </div>
       ))}

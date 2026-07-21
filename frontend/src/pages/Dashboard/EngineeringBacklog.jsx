@@ -468,36 +468,55 @@ const EngineeringBacklog = ({ activeView: propView, setActiveView: propSet }) =>
 
   const viewLabel    = VIEWS[activeView]?.label || 'Tickets';
   const primaryColor = settings.primaryColor || '#2563EB';
+  // Mobile: which panel to show ('list' or 'detail')
+  const [mobilePanel, setMobilePanel] = useState('list');
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-gray-50 dark:bg-slate-900">
 
       {/* Top terminal bar */}
-      <div className="px-5 py-3 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-between shrink-0 gap-4">
+      <div className="px-4 sm:px-5 py-3 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-between shrink-0 gap-3 sm:gap-4">
         <div className="flex items-center gap-2">
           <FiZap size={15} style={{ color: primaryColor }} />
-          <span className="text-gray-800 dark:text-slate-100 font-bold text-sm">JavaPA Developer Terminal</span>
+          <span className="text-gray-800 dark:text-slate-100 font-bold text-sm hidden sm:block">JavaPA Developer Terminal</span>
+          <span className="text-gray-800 dark:text-slate-100 font-bold text-sm sm:hidden">Dev Terminal</span>
         </div>
         <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5">
           <FiSearch size={13} className="text-gray-400 dark:text-slate-500" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tickets…"
-            className="bg-transparent text-gray-800 dark:text-slate-100 text-xs placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none w-40 md:w-48" />
+            className="bg-transparent text-gray-800 dark:text-slate-100 text-xs placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none w-28 sm:w-40 md:w-48" />
         </div>
       </div>
 
       {/* KPI strip */}
-      <div className="px-5 py-3 grid grid-cols-2 xl:grid-cols-4 gap-3 border-b border-gray-200 dark:border-slate-700 shrink-0">
+      <div className="px-4 sm:px-5 py-3 grid grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-3 border-b border-gray-200 dark:border-slate-700 shrink-0">
         <KpiCard label="Assigned Bugs"   value={kpis?.assigned} icon={FiTool}          accent="bg-blue-500" />
         <KpiCard label="Critical Issues" value={kpis?.critical} icon={FiAlertTriangle} accent="bg-red-500" />
         <KpiCard label="Open Incidents"  value={kpis?.open}     icon={FiActivity}      accent="bg-orange-500" />
         <KpiCard label="Resolved Issues" value={kpis?.resolved} icon={FiCheckSquare}   accent="bg-green-500" />
       </div>
 
+      {/* Mobile panel toggle tabs */}
+      <div className="flex md:hidden border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0">
+        <button onClick={() => setMobilePanel('list')}
+          className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${mobilePanel === 'list'
+            ? 'border-b-2 text-blue-600' : 'text-gray-500 dark:text-slate-400'}`}
+          style={mobilePanel === 'list' ? { borderColor: primaryColor, color: primaryColor } : {}}>
+          Ticket List ({filtered.length})
+        </button>
+        <button onClick={() => setMobilePanel('detail')}
+          className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${mobilePanel === 'detail'
+            ? 'border-b-2 text-blue-600' : 'text-gray-500 dark:text-slate-400'}`}
+          style={mobilePanel === 'detail' ? { borderColor: primaryColor, color: primaryColor } : {}}>
+          Workspace
+        </button>
+      </div>
+
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* Ticket list */}
-        <div className="w-72 xl:w-80 shrink-0 border-r border-gray-200 dark:border-slate-700 flex flex-col overflow-hidden bg-white dark:bg-slate-800">
+        {/* Ticket list — full width on mobile when panel='list', fixed width on md+ */}
+        <div className={`${mobilePanel === 'list' ? 'flex' : 'hidden'} md:flex w-full md:w-72 xl:w-80 md:shrink-0 border-r border-gray-200 dark:border-slate-700 flex-col overflow-hidden bg-white dark:bg-slate-800`}>
           <div className="px-4 py-3 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
             <p className="text-gray-800 dark:text-slate-100 text-xs font-semibold uppercase tracking-wide">{viewLabel}</p>
             <button onClick={loadList} title="Refresh"
@@ -515,15 +534,24 @@ const EngineeringBacklog = ({ activeView: propView, setActiveView: propSet }) =>
               </div>
             )}
             {!loading && filtered.map(t => (
-              <TicketCard key={t.id} t={t} selected={selectedId === t.id} onClick={handleSelect} primaryColor={primaryColor} />
+              <TicketCard key={t.id} t={t} selected={selectedId === t.id}
+                onClick={(ticket) => { handleSelect(ticket); setMobilePanel('detail'); }}
+                primaryColor={primaryColor} />
             ))}
           </div>
         </div>
 
-        {/* Workspace */}
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0 bg-gray-50 dark:bg-slate-900">
-          <div className="px-5 py-2.5 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex items-center gap-2">
-            <span className="text-gray-400 dark:text-slate-500 text-xs uppercase tracking-wider">Active Workspace:</span>
+        {/* Workspace — full width on mobile when panel='detail', flex-1 on md+ */}
+        <div className={`${mobilePanel === 'detail' ? 'flex' : 'hidden'} md:flex flex-1 flex-col overflow-hidden min-w-0 bg-gray-50 dark:bg-slate-900`}>
+          <div className="px-4 sm:px-5 py-2.5 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex items-center gap-2">
+            {/* Back button on mobile */}
+            <button onClick={() => setMobilePanel('list')}
+              className="md:hidden p-1 rounded text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-white mr-1">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span className="text-gray-400 dark:text-slate-500 text-xs uppercase tracking-wider hidden sm:block">Active Workspace:</span>
             <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>{viewLabel}</span>
           </div>
           <div className="flex-1 overflow-hidden">
@@ -533,31 +561,31 @@ const EngineeringBacklog = ({ activeView: propView, setActiveView: propSet }) =>
       </div>
 
       {/* Footer: performance */}
-      <div className="px-5 py-2.5 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-wrap items-center gap-5 shrink-0">
+      <div className="px-4 sm:px-5 py-2.5 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-wrap items-center gap-3 sm:gap-5 shrink-0">
         <div className="flex items-center gap-1.5 text-xs">
           <FiUser size={11} className="text-gray-400 dark:text-slate-500" />
           <span className="text-gray-800 dark:text-slate-100 font-medium">{user?.full_name || 'Developer'}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-xs">
+        <div className="hidden sm:flex items-center gap-1.5 text-xs">
           <span className="text-gray-400 dark:text-slate-500">Branch:</span>
           <span className="font-mono text-emerald-600 dark:text-emerald-400">hotfix/auth-leak</span>
         </div>
-        <div className="flex items-center gap-1.5 text-xs">
+        <div className="hidden sm:flex items-center gap-1.5 text-xs">
           <span className="text-gray-400 dark:text-slate-500">Pipeline:</span>
           <span className="text-emerald-600 dark:text-emerald-400">Build Success ✓</span>
         </div>
-        <div className="ml-auto flex items-center gap-5 text-xs">
+        <div className="ml-auto flex items-center gap-3 sm:gap-5 text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-gray-400 dark:text-slate-500">Fixed Bugs:</span>
+            <span className="text-gray-400 dark:text-slate-500 hidden sm:inline">Fixed Bugs:</span>
             <div className="flex items-center gap-1.5">
-              <div className="w-20 h-1.5 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div className="w-16 sm:w-20 h-1.5 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
                 <div className="h-full rounded-full transition-all bg-green-500"
                   style={{ width: `${Math.min(perf?.fixedRatio ?? 0, 100)}%` }} />
               </div>
               <span className="text-emerald-600 dark:text-emerald-400 font-mono">{perf?.fixedRatio ?? 0}%</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="hidden sm:flex items-center gap-1.5">
             <span className="text-gray-400 dark:text-slate-500">Avg Fix Time:</span>
             <span className="text-gray-800 dark:text-slate-100 font-mono">{perf?.mttr ?? '—'}h</span>
           </div>

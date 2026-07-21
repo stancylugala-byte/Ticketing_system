@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiList, FiSettings, FiBook, FiLogOut, FiMessageSquare, FiBarChart2, FiInbox, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useSystemSettings } from '../context/SystemSettingsContext';
@@ -42,25 +42,27 @@ const Sidebar = ({ activePage, onNavigate, collapsed: collapsedProp, onToggle })
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-screen ${collapsed ? 'w-16' : 'w-60'} flex flex-col z-40 border-r border-white/10 transition-all duration-300`}
+      className={`relative h-full ${collapsed ? 'w-16' : 'w-60'} flex flex-col z-40 border-r border-white/10 transition-all duration-300`}
       style={{ background: settings.sidebarBg }}
     >
       {/* Logo + collapse toggle */}
       <div className="px-4 py-5 border-b border-white/10 shrink-0 relative flex items-center gap-3">
-        {settings.logoUrl ? (
-          <img src={settings.logoUrl} alt="logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
-        ) : (
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-white font-bold text-sm"
-            style={{ background: settings.primaryColor }}>
-            {(settings.companyName || 'J')[0]}
-          </div>
-        )}
-        {!collapsed && (
-          <div className="min-w-0">
-            <p className="text-white font-bold text-sm truncate">{settings.companyName || 'JavaPA'}</p>
-            <p className="text-white/40 text-xs">{settings.tagline || 'Support Hub'}</p>
-          </div>
-        )}
+        <Link to="/" className="flex items-center gap-3 min-w-0 flex-1">
+          {settings.logoUrl ? (
+            <img src={settings.logoUrl} alt="logo" className="w-8 h-8 object-contain rounded-lg shrink-0" />
+          ) : (
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-white font-bold text-sm"
+              style={{ background: settings.primaryColor }}>
+              {(settings.companyName || 'J')[0]}
+            </div>
+          )}
+          {!collapsed && (
+            <div className="min-w-0">
+              <p className="text-white font-bold text-sm truncate">{settings.companyName || 'JavaPA'}</p>
+              <p className="text-white/40 text-xs">{settings.tagline || 'Support Hub'}</p>
+            </div>
+          )}
+        </Link>
         <CollapseBtn collapsed={collapsed} onToggle={handleToggle} />
       </div>
 
