@@ -17,7 +17,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true   // null for OAuth users
+    },
+    google_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true
     },
     role: {
       type: DataTypes.ENUM('Client', 'SupportOfficer', 'Developer', 'Manager', 'Admin'),

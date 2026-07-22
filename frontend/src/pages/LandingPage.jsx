@@ -130,10 +130,6 @@ export default function LandingPage() {
       <section id="home" className="bg-gray-50 dark:bg-slate-900 pt-12 sm:pt-20 pb-12 sm:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
           <div className="flex-1 text-center lg:text-left">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-full mb-6">
-              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-              New: AI-Powered Incident Resolution v2.4
-            </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight mb-6">
               Master Your<br />
               <span className="text-blue-600">Incident<br />Lifecycle</span> with<br />

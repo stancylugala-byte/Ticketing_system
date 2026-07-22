@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path   = require('path');
+const passport = require('./config/passport');
 const errorHandler = require('./middleware/errorHandler');
 
 const authRoutes          = require('./routes/authRoutes');
@@ -18,10 +19,11 @@ const developerRoutes     = require('./routes/developerRoutes');
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+app.use(passport.initialize());
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

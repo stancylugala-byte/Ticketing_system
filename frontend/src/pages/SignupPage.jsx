@@ -88,6 +88,7 @@ export default function SignupPage() {
 
             {/* Google SSO */}
             <button type="button"
+              onClick={() => { window.location.href = 'http://localhost:5000/api/auth/google'; }}
               className="w-full py-2 border border-gray-200 dark:border-slate-600 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold
                 text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors mb-3">
               <svg className="w-4 h-4" viewBox="0 0 24 24">

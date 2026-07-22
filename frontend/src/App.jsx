@@ -14,6 +14,7 @@ import ProfilePage        from './pages/ProfilePage';
 import EngineeringBacklog from './pages/Dashboard/EngineeringBacklog';
 import DashboardLayout    from './components/layout/DashboardLayout';
 import Sidebar            from './components/Sidebar';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import ProtectedRoute     from './components/ProtectedRoute';
 
 // Role → dashboard path (single source of truth)
@@ -66,6 +67,9 @@ function DeveloperDashboard() {
 export default function App() {
   return (
     <Routes>
+      {/* OAuth callback */}
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
       {/* Public */}
       <Route path="/"                element={<LandingPage />} />
       <Route path="/login"           element={<LoginPage />} />
