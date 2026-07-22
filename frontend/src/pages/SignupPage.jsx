@@ -24,7 +24,8 @@ const EyeIcon = ({ open }) => (
 export default function SignupPage() {
   const navigate = useNavigate();
   const { settings } = useSystemSettings();
-  const [form, setForm]       = useState({ full_name: '', email: '', password: '', role: 'Client' });
+  const [accountType, setAccountType] = useState('individual');
+  const [form, setForm]       = useState({ full_name: '', email: '', password: '' });
   const [showPw, setShowPw]   = useState(false);
   const [agreed, setAgreed]   = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -47,7 +48,7 @@ export default function SignupPage() {
     setError('');
     setFieldErrors({});
     try {
-      await registerUser({ full_name: form.full_name, email: form.email, password: form.password, role: form.role });
+      await registerUser({ full_name: form.full_name, email: form.email, password: form.password, role: 'Client' });
       navigate('/login', { state: { message: 'Account created! Please sign in.' } });
     } catch (err) {
       const data = err.response?.data;
@@ -107,16 +108,17 @@ export default function SignupPage() {
               <div className="flex-1 h-px bg-gray-200 dark:bg-slate-700" />
             </div>
 
-            {/* Account type */}
+            {/* Account type — both options create a Client account */}
             <div className="flex mb-3 border border-gray-200 dark:border-slate-600 rounded-xl overflow-hidden">
-              {[{ val: 'Client', icon: '👤', label: 'Individual' }, { val: 'SupportOfficer', icon: '🏢', label: 'Company' }].map(t => (
-                <button key={t.val} type="button" onClick={() => setForm(f => ({ ...f, role: t.val }))}
+              {[{ val: 'individual', label: '👤 Individual' }, { val: 'company', label: '🏢 Company' }].map(t => (
+                <button key={t.val} type="button"
+                  onClick={() => setAccountType(t.val)}
                   className={`flex-1 flex items-center justify-center gap-1 py-2 text-xs font-semibold transition-all
-                    ${form.role === t.val
+                    ${accountType === t.val
                       ? 'text-white border-b-2'
                       : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700'}`}
-                  style={form.role === t.val ? { background: `${settings.primaryColor}20`, borderColor: settings.primaryColor || '#2563eb', color: settings.primaryColor || '#2563eb' } : {}}>
-                  <span>{t.icon}</span>{t.label}
+                  style={accountType === t.val ? { background: `${settings.primaryColor}20`, borderColor: settings.primaryColor || '#2563eb', color: settings.primaryColor || '#2563eb' } : {}}>
+                  {t.label}
                 </button>
               ))}
             </div>
